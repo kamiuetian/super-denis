@@ -10,6 +10,8 @@ body, html {
     height: 100%;
     margin: 0;
     background-color: black;
+    padding: 0;
+    overflow: hidden;
 }
 
 .bg {
@@ -69,8 +71,57 @@ a:hover {
 }
 
 #game-container {
+    position: relative;
+    float: left;
     width: 100%;
     height: 100%;
+}
+
+#skills-container {
+    float: right;
+    width: 250px;
+    background-color: rgba(0, 0, 0, 0.8);
+    border: 2px solid #FFD700;
+    border-radius: 10px;
+    padding: 15px;
+    margin-left: 20px;
+    color: white;
+    font-family: Arial, sans-serif;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+#skills-container h2 {
+    color: #FFD700;
+    text-align: center;
+    margin-top: 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #555;
+}
+
+#skills-list {
+    list-style-type: none;
+    padding-left: 10px;
+    min-height: 210px;
+}
+
+#skills-list li {
+    padding: 8px 0;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.5s, transform 0.5s;
+}
+
+#skills-list li.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+#skills-counter {
+    text-align: center;
+    font-weight: bold;
+    margin-top: 15px;
+    font-size: 18px;
+    color: #FFD700;
 }
 
 .game-container {
