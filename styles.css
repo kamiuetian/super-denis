@@ -106,3 +106,51 @@ canvas, #game {
     background-size: cover;
     background-position: center;
 }
+
+/* Add these styles to your existing CSS file */
+
+@keyframes codTextGlow {
+  0% { text-shadow: 0 0 5px rgba(255, 204, 0, 0.5); }
+  50% { text-shadow: 0 0 15px rgba(255, 204, 0, 0.8); }
+  100% { text-shadow: 0 0 5px rgba(255, 204, 0, 0.5); }
+}
+
+#intro-container {
+  font-family: 'Arial', sans-serif;
+  background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.9)), 
+                    url('assets/background.png');
+  background-size: cover;
+  background-position: center;
+  transition: opacity 1s ease-out;
+}
+
+#intro-dialog {
+  box-shadow: 0 0 20px rgba(255, 204, 0, 0.3);
+  border-radius: 3px;
+  letter-spacing: 0.5px;
+  line-height: 1.5;
+}
+
+#intro-dialog button {
+  font-family: 'Arial', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: background-color 0.3s ease;
+}
+
+#intro-dialog button:hover {
+  background-color: #fff;
+}
+
+#intro-character {
+  box-shadow: 0 0 15px rgba(255, 68, 68, 0.6);
+}
+
+/* Make sure game menu is centered nicely */
+#game-menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
