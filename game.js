@@ -506,14 +506,23 @@ function createLevel1(bgRepeat) {
     .setScrollFactor(0);
 
   // Create skill text objects
+  // Update the skill text creation in createLevel1 function (around line 482)
+
+  // Create skill text objects
   this.skillTexts = [];
   for (let i = 0; i < skills.length; i++) {
+    // Properly format using the icon and name from the skill object
     const skillText = this.add
-      .text(this.scale.width - 195, 60 + i * 28, "• " + skills[i], {
-        fontSize: "14px",
-        fill: "#FFFFFF",
-        fontFamily: "Arial",
-      })
+      .text(
+        this.scale.width - 195,
+        60 + i * 28,
+        "• " + skills[i].icon + " " + skills[i].name,
+        {
+          fontSize: "14px",
+          fill: "#FFFFFF",
+          fontFamily: "Arial",
+        }
+      )
       .setScrollFactor(0);
 
     // Initially hide skill text by setting alpha to 0
@@ -894,9 +903,13 @@ function collectCoin(player, coin) {
     particles.destroy();
   });
 
-  // Update skills UI
   if (this.coinCount > 0 && this.coinCount <= skills.length) {
+    // Get the skill that was just collected
+    const skill = skills[this.coinCount - 1];
     const skillText = this.skillTexts[this.coinCount - 1];
+
+    // Update the text with the proper format using icon and name
+    skillText.setText("• " + skill.icon + " " + skill.name);
 
     // Fade in animation
     this.tweens.add({
@@ -1587,7 +1600,7 @@ function hitBoss(ball, boss) {
   // Calculate new health
   const newHealth = currentHealth - 1;
   console.log(`Boss hit! Health: ${currentHealth} → ${newHealth}`);
-  
+
   // Update localStorage
   try {
     localStorage.setItem("bossHealth", newHealth.toString());
@@ -1601,7 +1614,7 @@ function hitBoss(ball, boss) {
 
   // Visual feedback
   this.cameras.main.flash(100, 255, 255, 255, 0.3);
-  
+
   // Create hit effect
   const hitEffect = this.add.circle(bossX, bossY, 40, 0xff0000, 0.6);
   this.tweens.add({
@@ -1609,7 +1622,7 @@ function hitBoss(ball, boss) {
     scale: 2,
     alpha: 0,
     duration: 300,
-    onComplete: () => hitEffect.destroy()
+    onComplete: () => hitEffect.destroy(),
   });
 
   // Update health display UI
@@ -1632,25 +1645,28 @@ function hitBoss(ball, boss) {
   // Check if boss is defeated
   if (newHealth <= 0) {
     console.log("BOSS DEFEATED!");
-    
+
     // Victory sequence
     this.physics.pause();
-    const victoryText = this.add.text(
-      this.scale.width / 2,
-      this.scale.height / 3,
-      "YOU DEFEATED JOHANN!",
-      {
-        fontSize: '24px',
-        fontFamily: 'Arial',
-        fontWeight: 'bold',
-        fill: '#ffffff',
-        stroke: '#000000',
-        strokeThickness: 4,
-        backgroundColor: '#00800088',
-        padding: { x: 16, y: 8 }
-      }
-    ).setScrollFactor(0).setOrigin(0.5);
-    
+    const victoryText = this.add
+      .text(
+        this.scale.width / 2,
+        this.scale.height / 3,
+        "YOU DEFEATED JOHANN!",
+        {
+          fontSize: "24px",
+          fontFamily: "Arial",
+          fontWeight: "bold",
+          fill: "#ffffff",
+          stroke: "#000000",
+          strokeThickness: 4,
+          backgroundColor: "#00800088",
+          padding: { x: 16, y: 8 },
+        }
+      )
+      .setScrollFactor(0)
+      .setOrigin(0.5);
+
     // Complete level after delay
     this.time.delayedCall(4000, () => {
       gameWin.call(this);
@@ -1659,25 +1675,26 @@ function hitBoss(ball, boss) {
     // FIXED: Respawn boss with correct settings for movement and shooting
     const screenWidth = this.scale.width;
     const screenHeight = this.scale.height;
-    
+
     // IMPORTANT: Fixed position - always use the right side of screen
     const fixedX = screenWidth * 0.8;
-    
+
     console.log(`Respawning boss at ${fixedX}, ${screenHeight - 120}`);
-    
+
     // FIXED: Always spawn at safe height to avoid the early return in update
-    this.boss = this.physics.add.sprite(fixedX, screenHeight - 120, "toad")
+    this.boss = this.physics.add
+      .sprite(fixedX, screenHeight - 120, "toad")
       .setScale(0.15)
       .setVisible(true)
       .setAlpha(1)
       .setDepth(100);
-      
+
     // Add a flash effect to make the respawn obvious
     this.boss.setTintFill(0xff00ff);
     this.time.delayedCall(100, () => {
       if (this.boss && this.boss.active) this.boss.clearTint();
     });
-    
+
     // Set properties - IMPORTANT: Store scene reference
     this.boss.health = newHealth;
     this.boss.direction = -1;
@@ -1685,59 +1702,62 @@ function hitBoss(ball, boss) {
     this.boss.setCollideWorldBounds(true);
     this.boss.flipX = true;
     this.boss.scene = this; // CRITICAL: Explicitly set scene reference
-    
+
     console.log("Boss properties set:", this.boss);
-    
+
     // Add collision detection
     this.physics.add.collider(this.boss, this.platforms);
     this.physics.add.overlap(this.tennisBalls, this.boss, hitBoss, null, this);
-    
+
     // FIXED: Store screen dimensions directly on boss object
     this.boss.screenWidth = screenWidth;
     this.boss.screenHeight = screenHeight;
-    
+
     // IMPROVED update function with better debugging
-    this.boss.update = function(time) {
+    this.boss.update = function (time) {
       console.log("Boss update function called");
-      
+
       // REMOVED height check - always allow movement
-      
+
       // Move back and forth
       this.x += this.direction * 2;
-      
+
       // Check position and log periodically
       if (time % 300 === 0) {
-        console.log(`Boss position: ${this.x}, ${this.y}, direction: ${this.direction}`);
+        console.log(
+          `Boss position: ${this.x}, ${this.y}, direction: ${this.direction}`
+        );
       }
-      
+
       // Change direction at boundaries
       if (this.x < this.screenWidth * 0.6 || this.x > this.screenWidth * 0.9) {
         this.direction *= -1;
         this.flipX = this.direction > 0;
         console.log(`Boss changed direction to: ${this.direction}`);
       }
-      
+
       // Tennis ball shooting logic with direct scene access
       const currentTime = this.scene.time.now;
       const elapsedSinceLastShot = currentTime - (this.lastShotTime || 0);
-      
+
       if (elapsedSinceLastShot > 3000) {
         console.log("BOSS SHOOTING NOW");
-        
+
         // Create tennis ball with fixed scene reference
-        const ball = this.scene.physics.add.sprite(this.x, this.y - 20, "tennis")
+        const ball = this.scene.physics.add
+          .sprite(this.x, this.y - 20, "tennis")
           .setScale(0.3)
           .setTint(0xff0000)
           .setDepth(100);
-        
+
         // Aim at player
         const dx = this.scene.player.x - this.x;
         const dy = this.scene.player.y - this.y;
         const angle = Math.atan2(dy, dx);
         const speed = 150;
-        
+
         ball.setVelocity(Math.cos(angle) * speed, Math.sin(angle) * speed);
-        
+
         // Add collisions with direct function references
         this.scene.physics.add.overlap(
           ball,
@@ -1751,7 +1771,7 @@ function hitBoss(ball, boss) {
           null,
           this
         );
-        
+
         this.scene.physics.add.collider(
           ball,
           this.scene.platforms,
@@ -1759,56 +1779,56 @@ function hitBoss(ball, boss) {
           null,
           this
         );
-        
+
         this.lastShotTime = currentTime;
       }
     };
-    
+
     // Make sure updateList exists
     if (!this.updateList) {
       this.updateList = [];
     }
-    
+
     // Add to update list
     this.updateList.push(this.boss);
-    console.log("Boss added to update list. List size:", this.updateList.length);
-    
+    console.log(
+      "Boss added to update list. List size:",
+      this.updateList.length
+    );
+
     // Also create a timer to call update directly as a fallback
     this.time.addEvent({
-      delay: 100, 
+      delay: 100,
       callback: () => {
         if (this.boss && this.boss.active) {
           this.boss.update(this.time.now);
         }
       },
       callbackScope: this,
-      loop: true
+      loop: true,
     });
-    
+
     // Message to player
     const messages = ["Good shot!", "One more hit!", "Final blow!"];
     const messageIndex = Math.max(0, Math.min(2, 3 - newHealth - 1));
-    
-    const hitText = this.add.text(
-      this.player.x, 
-      this.player.y - 50, 
-      messages[messageIndex], 
-      {
-        fontSize: '18px',
-        fontFamily: 'Arial',
-        fill: '#ffffff',
-        stroke: '#000000',
+
+    const hitText = this.add
+      .text(this.player.x, this.player.y - 50, messages[messageIndex], {
+        fontSize: "18px",
+        fontFamily: "Arial",
+        fill: "#ffffff",
+        stroke: "#000000",
         strokeThickness: 3,
-        padding: { x: 8, y: 4 }
-      }
-    ).setOrigin(0.5);
-    
+        padding: { x: 8, y: 4 },
+      })
+      .setOrigin(0.5);
+
     this.tweens.add({
       targets: hitText,
       y: hitText.y - 30,
       alpha: 0,
       duration: 1000,
-      onComplete: () => hitText.destroy()
+      onComplete: () => hitText.destroy(),
     });
   }
 }
