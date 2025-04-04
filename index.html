@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Super Bro Denis</title>
+        <link rel="stylesheet" href="styles.css">
+        <script src="index.js"></script>
+    </head>
+    <body>
+        <div id="game-menu" class="bg">
+            <h1 id="main-title">Super Bro Denis</h1>
+            <a class="menu-option" href="#" onclick="showLevels()">Play for free!!</a>
+            <a class="menu-option" href="#">Go to videos</a>
+            <a class="level-option" href="#" onclick="startGame(1)">Level 1</a>
+            <a class="level-option" href="#" onclick="startGame(2)">Level 2</a>
+            <a class="level-option" href="#" onclick="startGame(3)">Level 3</a>
+            <a id="go-back" class="level-option" href="#" onclick="goBackMainMenu()">Go back</a>
+        </div>
+
+        <div id="game-container"></div>
+
+        <!-- Phaser Library -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.70.0/phaser.min.js"></script>
+        
+        <!-- Your game script -->
+        <script src="game.js"></script>
+    </body>
+</html>
