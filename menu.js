@@ -174,7 +174,7 @@ function createIntroScreen() {
   character.style.height = "80px";
   character.style.bottom = "50px";
   character.style.left = "50px";
-  character.style.transition = "left 2s ease-in-out";
+  character.style.transition = "left 4s ease-in-out"; // Double the duration from 2s to 4s
 
   // Create dialog box as a speech bubble
   const dialogBox = document.createElement("div");
@@ -240,24 +240,6 @@ function createIntroScreen() {
 
   // Next button with updated styling
   const nextButton = document.createElement("button");
-  nextButton.textContent = "CONTINUE";
-  nextButton.style.backgroundColor = "#4A89DC"; // Blue to match name
-  nextButton.style.color = "#FFFFFF";
-  nextButton.style.border = "none";
-  nextButton.style.borderRadius = "10px"; // Rounded button corners
-  nextButton.style.padding = "8px 15px";
-  nextButton.style.marginTop = "15px";
-  nextButton.style.cursor = "pointer";
-  nextButton.style.fontWeight = "bold";
-  nextButton.style.transition = "background-color 0.3s";
-  nextButton.onmouseover = () => {
-    nextButton.style.backgroundColor = "#3D7AC8";
-  }; // Darker on hover
-  nextButton.onmouseout = () => {
-    nextButton.style.backgroundColor = "#4A89DC";
-  }; // Back to original
-  nextButton.onclick = showNextIntroDialog;
-  dialogBox.appendChild(nextButton);
 
   // Add the speech tail elements to the dialog box
   dialogBox.appendChild(speechTailBorder);
@@ -282,7 +264,7 @@ function createIntroScreen() {
           currentDialogIndex === introDialogs.length - 1
         );
       }, 100);
-    }, 2100); // Show dialog after character reaches position
+    }, 4100); // Increased to match the longer character movement (was 2100)
   }, 500); // Small delay before starting animation
 }
 
@@ -291,13 +273,93 @@ function typeText(text, isLastDialog = false) {
   dialogText.textContent = "";
   let i = 0;
 
-  // Modify the next button visibility based on dialog position
-  const nextButton = document.querySelector("#intro-dialog button");
+  // Get the button container or create one if it doesn't exist
+  let buttonContainer = document.querySelector(
+    "#intro-dialog .button-container"
+  );
+  if (!buttonContainer) {
+    buttonContainer = document.createElement("div");
+    buttonContainer.className = "button-container";
+    buttonContainer.style.display = "flex";
+    buttonContainer.style.justifyContent = "center";
+    buttonContainer.style.gap = "15px";
+    buttonContainer.style.marginTop = "15px";
+    document.querySelector("#intro-dialog").appendChild(buttonContainer);
+  }
+
+  // Clear any existing buttons
+  buttonContainer.innerHTML = "";
+
+  // Modify buttons based on dialog position
   if (!isLastDialog) {
-    nextButton.style.display = "none"; // Hide button for auto-advance dialogs
+    // Hide buttons for auto-advance dialogs
+    buttonContainer.style.display = "none";
   } else {
-    nextButton.style.display = "block"; // Show button only for last dialog
-    nextButton.textContent = "START GAME";
+    // Show buttons only for last dialog
+    buttonContainer.style.display = "flex";
+
+    // Add Start Game button
+    const startGameButton = document.createElement("button");
+    startGameButton.textContent = "START GAME";
+    startGameButton.style.backgroundColor = "#4A89DC";
+    startGameButton.style.color = "#FFFFFF";
+    startGameButton.style.border = "none";
+    startGameButton.style.borderRadius = "10px";
+    startGameButton.style.padding = "8px 15px";
+    startGameButton.style.cursor = "pointer";
+    startGameButton.style.fontWeight = "bold";
+    startGameButton.style.transition = "background-color 0.3s";
+    startGameButton.onmouseover = () => {
+      startGameButton.style.backgroundColor = "#3D7AC8";
+    };
+    startGameButton.onmouseout = () => {
+      startGameButton.style.backgroundColor = "#4A89DC";
+    };
+    startGameButton.onclick = () => {
+      // End dialog and show main menu
+      fadeOutIntroMusic(1500);
+      const introContainer = document.getElementById("intro-container");
+      introContainer.style.opacity = "0";
+      setTimeout(() => {
+        introContainer.remove();
+        // Show the game menu div
+        document.getElementById("game-menu").style.display = "flex";
+        // Immediately call showLevels to display level buttons
+        showLevels();
+      }, 1000);
+    };
+    buttonContainer.appendChild(startGameButton);
+
+    // Add Go to Videos button
+    const videoButton = document.createElement("button");
+    videoButton.textContent = "GO TO VIDEOS";
+    videoButton.style.backgroundColor = "#FF5722"; // Different color to distinguish
+    videoButton.style.color = "#FFFFFF";
+    videoButton.style.border = "none";
+    videoButton.style.borderRadius = "10px";
+    videoButton.style.padding = "8px 15px";
+    videoButton.style.cursor = "pointer";
+    videoButton.style.fontWeight = "bold";
+    videoButton.style.transition = "background-color 0.3s";
+    videoButton.onmouseover = () => {
+      videoButton.style.backgroundColor = "#E64A19";
+    };
+    videoButton.onmouseout = () => {
+      videoButton.style.backgroundColor = "#FF5722";
+    };
+    videoButton.onclick = () => {
+      // Show confirmation dialog
+      showConfirmationModal(
+        "Playing through the game will give you the full experience of my interactive resume. Are you sure you want to skip to the videos?",
+        "Continue to Videos",
+        "Stay Here",
+        () => {
+          // This function runs if they confirm
+          window.open("videos.html", "_blank");
+        }
+      );
+    };
+    buttonContainer.appendChild(videoButton);
   }
 
   // Typewriter effect
@@ -305,22 +367,20 @@ function typeText(text, isLastDialog = false) {
     if (i < text.length) {
       dialogText.textContent += text.charAt(i);
       i++;
-      // Play typing sound (if you have one)
-      // playTypingSound();
     } else {
       clearInterval(typeInterval);
 
       // If not the last dialog, automatically advance to next dialog after delay
       if (!isLastDialog) {
         setTimeout(() => {
-          showNextIntroDialog(true); // Changed from showNextDialog to showNextIntroDialog
-        }, 1000); // 1 second delay before showing next message
+          showNextIntroDialog(true);
+        }, 2000);
       }
     }
-  }, 30); // Adjust speed as needed
+  }, 60);
 }
 
-// Change the function name from showNextDialog to showNextIntroDialog
+// Update showNextIntroDialog function to NOT add the button since we're handling it in typeText
 function showNextIntroDialog(isAutoAdvance = false) {
   currentDialogIndex++;
 
@@ -329,12 +389,11 @@ function showNextIntroDialog(isAutoAdvance = false) {
     const isLastDialog = currentDialogIndex === introDialogs.length - 1;
     typeText(introDialogs[currentDialogIndex], isLastDialog);
   } else {
-    // End of dialog, fade out music and show menu
-    fadeOutIntroMusic(1500); // Fade out over 1.5 seconds
-
+    // This else block should never be reached now since we handle the transition in the button click
+    // But keep it as a fallback
+    fadeOutIntroMusic(1500);
     const introContainer = document.getElementById("intro-container");
     introContainer.style.opacity = "0";
-
     setTimeout(() => {
       introContainer.remove();
       document.getElementById("game-menu").style.display = "flex";
@@ -357,6 +416,119 @@ function initMenu() {
 
   // Start with the start screen instead of intro
   createStartScreen();
+}
+
+// Add this function at the appropriate place in your file
+function showConfirmationModal(message, confirmText, cancelText, onConfirm) {
+  // Create modal container with background overlay
+  const modalContainer = document.createElement("div");
+  modalContainer.style.position = "fixed";
+  modalContainer.style.top = "0";
+  modalContainer.style.left = "0";
+  modalContainer.style.width = "100%";
+  modalContainer.style.height = "100%";
+  modalContainer.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
+  modalContainer.style.display = "flex";
+  modalContainer.style.justifyContent = "center";
+  modalContainer.style.alignItems = "center";
+  modalContainer.style.zIndex = "2000";
+  modalContainer.style.opacity = "0";
+  modalContainer.style.transition = "opacity 0.3s ease";
+
+  // Create modal content
+  const modalContent = document.createElement("div");
+  modalContent.style.backgroundColor = "#FFFFFF";
+  modalContent.style.padding = "25px";
+  modalContent.style.borderRadius = "15px";
+  modalContent.style.width = "80%";
+  modalContent.style.maxWidth = "500px";
+  modalContent.style.textAlign = "center";
+  modalContent.style.boxShadow = "0 5px 15px rgba(0, 0, 0, 0.3)";
+  modalContent.style.transform = "scale(0.8)";
+  modalContent.style.transition = "transform 0.3s ease";
+
+  // Message
+  const messageElement = document.createElement("p");
+  messageElement.textContent = message;
+  messageElement.style.fontSize = "18px";
+  messageElement.style.marginBottom = "20px";
+  messageElement.style.color = "#333";
+  messageElement.style.fontFamily = "Comic Sans MS, Arial, sans-serif";
+
+  // Button container
+  const buttonContainer = document.createElement("div");
+  buttonContainer.style.display = "flex";
+  buttonContainer.style.justifyContent = "center";
+  buttonContainer.style.gap = "15px";
+
+  // Continue button
+  const confirmButton = document.createElement("button");
+  confirmButton.textContent = confirmText;
+  confirmButton.style.backgroundColor = "#FF5722";
+  confirmButton.style.color = "#FFFFFF";
+  confirmButton.style.border = "none";
+  confirmButton.style.borderRadius = "10px";
+  confirmButton.style.padding = "10px 20px";
+  confirmButton.style.cursor = "pointer";
+  confirmButton.style.fontWeight = "bold";
+  confirmButton.style.transition = "background-color 0.3s";
+  confirmButton.onmouseover = () => {
+    confirmButton.style.backgroundColor = "#E64A19";
+  };
+  confirmButton.onmouseout = () => {
+    confirmButton.style.backgroundColor = "#FF5722";
+  };
+  confirmButton.onclick = () => {
+    // Fade out and remove
+    modalContainer.style.opacity = "0";
+    modalContent.style.transform = "scale(0.8)";
+    setTimeout(() => {
+      document.body.removeChild(modalContainer);
+      onConfirm(); // Execute the confirm callback
+    }, 300);
+  };
+
+  // Cancel button
+  const cancelButton = document.createElement("button");
+  cancelButton.textContent = cancelText;
+  cancelButton.style.backgroundColor = "#4A89DC";
+  cancelButton.style.color = "#FFFFFF";
+  cancelButton.style.border = "none";
+  cancelButton.style.borderRadius = "10px";
+  cancelButton.style.padding = "10px 20px";
+  cancelButton.style.cursor = "pointer";
+  cancelButton.style.fontWeight = "bold";
+  cancelButton.style.transition = "background-color 0.3s";
+  cancelButton.onmouseover = () => {
+    cancelButton.style.backgroundColor = "#3D7AC8";
+  };
+  cancelButton.onmouseout = () => {
+    cancelButton.style.backgroundColor = "#4A89DC";
+  };
+  cancelButton.onclick = () => {
+    // Fade out and remove
+    modalContainer.style.opacity = "0";
+    modalContent.style.transform = "scale(0.8)";
+    setTimeout(() => {
+      document.body.removeChild(modalContainer);
+    }, 300);
+  };
+
+  // Append elements
+  buttonContainer.appendChild(cancelButton); // Cancel first (left)
+  buttonContainer.appendChild(confirmButton); // Confirm second (right)
+  modalContent.appendChild(messageElement);
+  modalContent.appendChild(buttonContainer);
+  modalContainer.appendChild(modalContent);
+
+  // Add to document
+  document.body.appendChild(modalContainer);
+
+  // Trigger animation
+  setTimeout(() => {
+    modalContainer.style.opacity = "1";
+    modalContent.style.transform = "scale(1)";
+  }, 10);
 }
 
 // Run initialization when the script loads
