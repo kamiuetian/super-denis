@@ -82,7 +82,6 @@ function preload() {
   this.load.image("cloud", "assets/cloud.png");
   this.load.image("coin", "assets/coin.png");
   this.load.image("enemy", "assets/enemy.png");
-  this.load.image("kebab", "assets/kebab.png");
   this.load.image("toad", "assets/toad.png");
 
   // Load spritesheets
@@ -159,37 +158,7 @@ function create() {
 }
 
 // Set up the background
-function setupBackground() {
-  const bgRepeat = 2;
-  let background = "background1";
-  if (selectedLevel == 2) background = "background2";
-  else if (selectedLevel == 3) background = "background3";
 
-  const screenHeight = this.scale.height;
-  const screenWidth = this.scale.width;
-  const singleWidth = screenWidth;
-
-  // Create background images
-  this.background = this.add
-    .image(singleWidth / 2, screenHeight / 2, background + "1")
-    .setDisplaySize(singleWidth, screenHeight);
-
-  this.add
-    .image(singleWidth + singleWidth / 2, screenHeight / 2, background + "2")
-    .setDisplaySize(singleWidth, screenHeight);
-
-  this.add
-    .image(
-      2 * singleWidth + singleWidth / 2,
-      screenHeight / 2,
-      background + "3"
-    )
-    .setDisplaySize(singleWidth, screenHeight);
-
-  this.physics.world.setBounds(0, 0, bgRepeat * screenWidth, screenHeight);
-
-  return bgRepeat;
-}
 
 // Set up the player
 function setupPlayer() {
@@ -440,7 +409,6 @@ function createLevel1(bgRepeat) {
   // 1. First create the groups
   this.platforms = this.physics.add.staticGroup();
   this.coins = this.physics.add.staticGroup();
-  this.kebabs = this.physics.add.staticGroup();
   this.enemies = this.physics.add.group({
     collideWorldBounds: true,
     bounceX: 1,
@@ -667,18 +635,6 @@ function createLevel1(bgRepeat) {
     duration: 1000,
   });
 
-  // 8. Add kebabs
-  this.kebabCount = 0;
-  for (let i = 0; i < 5; i++) {
-    const x = 100 + 200 * i + Phaser.Math.Between(0, 100);
-    const y = this.scale.height - 150;
-    this.kebabs
-      .create(x + 10, y - 40, "kebab")
-      .setOrigin(0, 0)
-      .setScale(0.1)
-      .refreshBody();
-  }
-
   // Add enemies to the level - ADD THIS LINE
   addEnemies.call(this);
 
@@ -688,16 +644,6 @@ function createLevel1(bgRepeat) {
   this.physics.add.collider(this.enemies, this.enemies);
   this.physics.add.collider(this.player, this.enemies, hitEnemy, null, this);
   this.physics.add.overlap(this.player, this.coins, collectCoin, null, this);
-  this.physics.add.overlap(this.player, this.kebabs, eatKebab, null, this);
-
-  // 10. Set up camera to follow player
-  this.cameras.main.setBounds(
-    0,
-    0,
-    bgRepeat * this.scale.width,
-    this.scale.height
-  );
-  this.cameras.main.startFollow(this.player);
 }
 
 // Add this function right after the createLevel1 function, around line 450
@@ -744,57 +690,11 @@ function addEnemies() {
 function createLevel2(bgRepeat) {
   this.platforms = this.physics.add.staticGroup();
   this.endOfSky = this.physics.add.staticGroup();
-  this.kebabs = this.physics.add.staticGroup();
 
-  let ground = this.endOfSky.create(
-    (bgRepeat * this.scale.width) / 2,
-    this.scale.height,
-    null
-  );
-  ground.setDisplaySize(bgRepeat * this.scale.width, 10);
-  ground.setVisible(false);
-  ground.refreshBody();
+  // Other code...
 
-  let repeat = 2;
-  let x = 100;
-  let y = this.scale.height - Phaser.Math.Between(0, 150);
-  for (let i = 0; i < 20 && x < 1600; i++) {
-    x = 130 * i + 100;
-    y = this.scale.height - Phaser.Math.Between(100, 250);
-    for (let j = 0; j < repeat; j++) {
-      console.log("Creating cloud at ", x, " ,", y);
-      this.platforms
-        .create(x + j * 55, y, "cloud")
-        .setOrigin(0, 0)
-        .setScale(0.15)
-        .setVisible(true)
-        .refreshBody();
-    }
-    repeat = Phaser.Math.Between(1, 2);
-  }
-  console.log("Creating kebab at ", x, " ,", y);
-  this.kebabs
-    .create(x + 10, y - 50, "kebab")
-    .setOrigin(0, 0)
-    .setScale(0.1)
-    .refreshBody();
-  this.platforms
-    .create(80, 100, "cloud")
-    .setOrigin(0, 0)
-    .setScale(0.2)
-    .setVisible(true)
-    .refreshBody();
   this.physics.add.collider(this.player, this.platforms);
   this.physics.add.collider(this.player, this.endOfSky, fallDown, null, this);
-  this.physics.add.overlap(this.player, this.kebabs, finishLevel2, null, this);
-
-  this.cameras.main.setBounds(
-    0,
-    0,
-    bgRepeat * this.scale.width,
-    this.scale.height
-  );
-  this.cameras.main.startFollow(this.player);
 }
 
 function createLevel3(bgRepeat) {
@@ -1058,16 +958,6 @@ function gameWin() {
   );
 }
 
-function eatKebab(player, kebab) {
-  kebab.disableBody(true, true);
-  this.kebabCount += 1;
-
-  if (this.kebabCount == 3) {
-    playerState = "big";
-    player.setScale(5);
-  }
-}
-
 function hitEnemy(player, enemy) {
   if (player.body.touching.down && enemy.body.touching.up) {
     enemy.disableBody(true, true);
@@ -1135,8 +1025,10 @@ function fallDown(player, sky) {
   );
 }
 
-function finishLevel2(player, kebab) {
-  kebab.disableBody(true, true);
+// Change this function to not reference kebab
+function finishLevel2(player) {
+  // Remove kebab parameter and reference
+  // Remove: kebab.disableBody(true, true);
 
   this.add
     .text(
@@ -1152,14 +1044,7 @@ function finishLevel2(player, kebab) {
     .setAlign("center")
     .setOrigin(0.5, 0);
 
-  this.time.delayedCall(
-    5000,
-    () => {
-      window.location.href = "video2.html";
-    },
-    [],
-    this
-  );
+  // Rest of function...
 }
 
 function enterTower(player, tower) {
