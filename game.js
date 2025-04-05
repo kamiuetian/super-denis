@@ -1186,20 +1186,57 @@ function activateBossArea() {
       this.tennisBalls = this.physics.add.group();
     }
 
+    // Remove all platforms except ground
+    if (this.platforms) {
+      try {
+        // Store reference to the original ground
+        let ground = null;
+
+        // First try to get children safely
+        const platformChildren = this.platforms.getChildren
+          ? this.platforms.getChildren()
+          : [];
+
+        // Then process each platform
+        platformChildren.forEach((platform) => {
+          // Skip the ground (which is usually invisible and spans the entire level)
+          if (
+            platform.y >= this.scale.height - 50 &&
+            platform.displayWidth > this.scale.width
+          ) {
+            ground = platform;
+          } else {
+            // Remove all other platforms
+            platform.destroy();
+          }
+        });
+
+        // If we didn't find the ground, we'll create a new one
+        if (!ground) {
+          // Create a new ground platform for the boss area
+          const screenWidth = this.scale.width;
+          const screenHeight = this.scale.height;
+          const groundHeight = 40;
+
+          ground = this.platforms.create(
+            screenWidth / 2,
+            screenHeight - groundHeight / 2,
+            null
+          );
+          ground.setDisplaySize(screenWidth, groundHeight);
+          ground.setVisible(false); // Keep it invisible
+          ground.refreshBody();
+        }
+      } catch (error) {
+        console.error("Error cleaning up platforms:", error);
+      }
+    }
+
     // Rest of boss area setup...
     const screenWidth = this.scale.width;
     const screenHeight = this.scale.height;
 
-    // Remove old background
-    if (this.background) this.background.setVisible(false);
-
-    // Add tennis court background
-    const bossBackground = this.add
-      .image(screenWidth / 2, screenHeight / 2, "tennisbackground") // Changed to tennis court background
-      .setDisplaySize(screenWidth, screenHeight)
-      .setScrollFactor(0);
-
-    // Optional: Add a slight darkening overlay for better visibility of sprites
+    // Keep just the darkening overlay for better visibility of sprites
     const darkOverlay = this.add
       .rectangle(0, 0, screenWidth, screenHeight, 0x000000, 0.3)
       .setOrigin(0, 0)
@@ -1207,7 +1244,7 @@ function activateBossArea() {
 
     // CRITICAL FIX: Clear any velocity and ensure player is visible
     this.player.setVelocity(0, 0);
-    this.player.setPosition(100, screenHeight - 100);
+    this.player.setPosition(100, screenHeight - 100); // This line sets the player position
     this.player.setVisible(true);
     this.player.setAlpha(1);
     this.player.clearTint();
@@ -1253,7 +1290,15 @@ function activateBossArea() {
     this.physics.add.collider(this.player, this.platforms);
 
     // Set camera to follow player
-    this.cameras.main.startFollow(this.player);
+    // FIXED: Instead of simply following the player, use an offset to keep player at the left
+    // this.cameras.main.startFollow(this.player); // Remove this line
+
+    // Set fixed camera position instead of following player
+    this.cameras.main.setScroll(0, 0);
+    this.cameras.main.stopFollow();
+
+    // Or if you still want to follow the player but with an offset:
+    // this.cameras.main.startFollow(this.player, true, 0.1, 0.1, -screenWidth/3, 0);
 
     // Create boss at the right side - DO NOT ATTACK YET
     this.boss = this.physics.add
