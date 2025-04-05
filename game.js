@@ -84,6 +84,9 @@ function preload() {
   this.load.image("enemy", "assets/enemy.png");
   this.load.image("toad", "assets/toad.png");
 
+  // Load Mario-style mystery blocks
+  this.load.image("mysteryBlock", "assets/overworld/misteryBlock.png");
+
   // Load spritesheets
   this.load.spritesheet("mario", "assets/mario-sprite-sheet.png", {
     frameWidth: 16,
@@ -101,8 +104,8 @@ function preload() {
   });
 
   // New assets for Level 1 requirements
-  this.load.image("skillBox", "assets/skillBox.png");
-  this.load.image("tennisBall", "assets/skillBox.png");
+  this.load.image("skillBox", "assets/overworld/misteryBlock.png"); // Now using mystery block
+  this.load.image("tennisBall", "assets/tennisball.png");
   this.load.image("checkpoint", "assets/skillBox.png");
   this.load.image("sparkle", "assets/skillBox.png");
   this.load.image("goompa", "assets/skillBox.png");
@@ -128,6 +131,10 @@ function preload() {
   // Load tennis-themed images
   this.load.image("tennisbackground", "assets/tennisbackground.jpg");
   this.load.image("tennis", "assets/tennis.jpeg");
+  this.load.image("tennisball", "assets/tennisball.png"); // Add the tennis ball image
+
+  // Load sound effects for tennis balls
+  this.load.audio("bossBounceSound", "assets/hit.mp3");
 }
 
 // Create game scene
@@ -160,31 +167,24 @@ function create() {
 // Set up the background
 function setupBackground() {
   const bgRepeat = 2;
-  let background = "background1";
-  if (selectedLevel == 2) background = "background2";
-  else if (selectedLevel == 3) background = "background3";
-
   const screenHeight = this.scale.height;
   const screenWidth = this.scale.width;
-  const singleWidth = screenWidth;
 
-  // Create background images
-  this.background = this.add
-    .image(singleWidth / 2, screenHeight / 2, background + "1")
-    .setDisplaySize(singleWidth, screenHeight);
+  // Create plain white background rectangle
+  const whiteBackground = this.add.rectangle(
+    0,
+    0,
+    screenWidth * bgRepeat,
+    screenHeight,
+    0xffffff // White color
+  );
+  whiteBackground.setOrigin(0, 0);
+  whiteBackground.setDepth(-2); // Make sure it's behind everything
 
-  this.add
-    .image(singleWidth + singleWidth / 2, screenHeight / 2, background + "2")
-    .setDisplaySize(singleWidth, screenHeight);
+  // Store reference to background
+  this.background = whiteBackground;
 
-  this.add
-    .image(
-      2 * singleWidth + singleWidth / 2,
-      screenHeight / 2,
-      background + "3"
-    )
-    .setDisplaySize(singleWidth, screenHeight);
-
+  // Set physics world bounds
   this.physics.world.setBounds(0, 0, bgRepeat * screenWidth, screenHeight);
 
   return bgRepeat;
@@ -351,14 +351,14 @@ function shootTennisBall() {
     `Creating ball at position ${this.player.x}, ${this.player.y - 20}`
   );
 
-  // Use a more visible sprite and larger scale
+  // CHANGED: Use proper tennisball sprite instead of coin
   const ball = this.tennisBalls
     .create(
       this.player.x,
       this.player.y - 20,
-      "coin" // We're using coin sprite - make sure this asset is loaded
+      "tennisball" // Now using proper tennis ball sprite
     )
-    .setScale(0.15); // Increase size for visibility
+    .setScale(0.1); // Adjust scale for tennisball sprite
 
   console.log("Ball created:", ball);
 
@@ -370,6 +370,25 @@ function shootTennisBall() {
   // Add gravity to create arc
   ball.setGravityY(100);
 
+  // IMPROVED PHYSICS: Set proper bounce physics and ensure collision detection
+  ball.setBounce(0.6); // Add bounce factor
+  ball.setCollideWorldBounds(true); // Keep ball in world bounds
+  ball.body.setSize(20, 20); // Ensure hit area is large enough
+  ball.body.setOffset(-2, -2); // Center the collision body
+
+  ball.isVelocityPositive = direction > 0;
+
+  // Track if ball has been destroyed by collision
+  ball.dead = false;
+  ball.exploded = false;
+
+  // IMPROVED PHYSICS: Add proper collision detection properties
+  ball.setBounce(0.7); // Add bounce factor for better bouncing
+  ball.setCollideWorldBounds(true); // Keep ball within the world bounds
+
+  // Adjust body size for better collision detection with platforms
+  ball.body.setSize(ball.width * 0.8, ball.height * 0.8);
+
   // Set strong color to make it visible - BRIGHT YELLOW
   ball.setTint(0xffff00);
   console.log("Set ball tint to bright yellow");
@@ -377,6 +396,14 @@ function shootTennisBall() {
   // Set high depth to ensure it's visible
   ball.setDepth(100);
   console.log("Set ball depth to 100 (should be on top of everything)");
+
+  // Add a rotation effect
+  this.tweens.add({
+    targets: ball,
+    rotation: direction * Math.PI * 4, // Rotate based on direction
+    duration: 1000,
+    repeat: -1,
+  });
 
   // Add a flashing effect to make it more noticeable
   this.tweens.add({
@@ -387,6 +414,9 @@ function shootTennisBall() {
     repeat: -1,
   });
   console.log("Added flashing effect to ball");
+
+  // Start tracking the ball's animation state
+  updateTennisBallAnimation.call(this, ball);
 
   // Add debug info directly on screen
   const debugText = this.add
@@ -410,28 +440,198 @@ function shootTennisBall() {
 
   // Destroy after 3 seconds
   this.time.delayedCall(3000, () => {
-    if (ball.active) {
+    if (ball.active && !ball.dead) {
       console.log("Destroying ball after timeout");
-      ball.destroy();
+      ball.dead = true;
+      this.tweens.add({
+        targets: ball,
+        alpha: { from: 1, to: 0 },
+        duration: 100,
+        onComplete: () => ball.destroy(),
+      });
     }
   });
 
-  // Add collision with platforms
+  // Add collision with platforms with bouncing
   this.physics.add.collider(
     ball,
     this.platforms,
-    (ball) => {
-      console.log("Ball hit platform, destroying");
-      ball.destroy();
+    (ball, platform) => {
+      tennisBallBounce.call(this, ball, platform);
     },
     null,
     this
   );
 
+  // Add collision with enemies
+  if (this.enemies) {
+    this.physics.add.overlap(
+      ball,
+      this.enemies,
+      tennisBallHitEnemy,
+      null,
+      this
+    );
+  }
+
   // Show feedback
   showSpeechBubble.call(this, this.player, "Take that!", 500);
 
   console.log("--- TENNIS BALL CREATION COMPLETE ---");
+}
+
+// Function to update tennis ball animation based on velocity
+function updateTennisBallAnimation(ball) {
+  // Stop if ball has been destroyed
+  if (ball.exploded || ball.dead || !ball.active) {
+    return;
+  }
+
+  // Change visual properties based on vertical velocity
+  if (ball.body.velocity.y > 0) {
+    // Going down - make slightly larger
+    ball.setScale(0.17);
+  } else {
+    // Going up - make slightly smaller
+    ball.setScale(0.13);
+  }
+
+  // Call this function again after a short delay
+  this.time.delayedCall(150, () => {
+    if (ball.active && !ball.dead) {
+      updateTennisBallAnimation.call(this, ball);
+    }
+  });
+}
+
+// Function to handle tennis ball bouncing physics
+function tennisBallBounce(ball, collider) {
+  // Don't process if ball is already dead
+  if (ball.dead || ball.exploded) {
+    return;
+  }
+
+  // Handle side collisions - reverse direction
+  if (ball.body.blocked.left || ball.body.blocked.right) {
+    // Reverse horizontal velocity with slight loss of momentum
+    ball.setVelocityX(-ball.body.velocity.x * 0.8);
+    ball.isVelocityPositive = ball.body.velocity.x > 0;
+
+    // Play bounce sound if available
+    if (this.sound && this.sound.play && this.hitSound) {
+      this.hitSound.play({ volume: 0.3 });
+    }
+  }
+
+  // Handle vertical bouncing
+  if (ball.body.blocked.down) {
+    // Bounce up with reduced velocity on each bounce
+    const currentBounce = ball.bounce || 1;
+    const bounceVelocity = -250 / (currentBounce * 0.5);
+    ball.setVelocityY(bounceVelocity);
+    ball.bounce = currentBounce + 0.5;
+
+    // Play bounce sound if available
+    if (this.sound && this.sound.play && this.hitSound) {
+      this.hitSound.play({ volume: 0.2 });
+    }
+
+    // Create a small bounce effect
+    const bounceEffect = this.add.circle(ball.x, ball.y + 5, 5, 0xffff00, 0.7);
+    this.tweens.add({
+      targets: bounceEffect,
+      alpha: 0,
+      scale: 2,
+      duration: 200,
+      onComplete: () => bounceEffect.destroy(),
+    });
+  }
+
+  // Handle ceiling collisions
+  if (ball.body.blocked.up) {
+    ball.setVelocityY(100);
+  }
+}
+
+// Function to handle tennis ball hitting enemies
+function tennisBallHitEnemy(ball, enemy) {
+  // Prevent multiple collisions
+  if (ball.exploded || ball.dead) {
+    return;
+  }
+
+  console.log("Tennis ball hit enemy!");
+
+  // Mark ball as exploded
+  ball.exploded = true;
+  ball.dead = true;
+  ball.body.moves = false;
+
+  // Create an explosion effect
+  explodeTennisBall.call(this, ball);
+
+  // Enemy defeat logic
+  enemy.setVelocityY(-150);
+  enemy.setVelocityX(0);
+
+  // If we have an enemy group, remove it
+  if (this.enemies.remove) {
+    this.enemies.remove(enemy, true, true);
+  }
+
+  // Play squash sound if available
+  if (this.sound && this.sound.play && this.squashSound) {
+    this.squashSound.play();
+  }
+
+  // Make enemy fall down
+  this.tweens.add({
+    targets: enemy,
+    alpha: 0,
+    y: `+=${this.scale.height}`,
+    rotation: 5,
+    duration: 1000,
+    onComplete: () => enemy.destroy(),
+  });
+}
+
+// Function to create a tennis ball explosion effect
+function explodeTennisBall(ball) {
+  // Create particles for the explosion
+  const particles = this.add.particles(ball.x, ball.y, "coin", {
+    speed: { min: 50, max: 150 },
+    scale: { start: 0.1, end: 0.01 },
+    lifespan: 500,
+    quantity: 15,
+    blendMode: "ADD",
+    tint: 0xffff00,
+  });
+
+  // Emit a burst of particles
+  particles.explode();
+
+  // Create a flash effect
+  const flash = this.add.circle(ball.x, ball.y, 30, 0xffffff, 0.8);
+  this.tweens.add({
+    targets: flash,
+    alpha: 0,
+    scale: 2,
+    duration: 300,
+    onComplete: () => flash.destroy(),
+  });
+
+  // Destroy the ball with a fade
+  this.tweens.add({
+    targets: ball,
+    alpha: 0,
+    scale: 0.5,
+    duration: 200,
+    onComplete: () => {
+      ball.destroy();
+      // Destroy particles after they finish
+      this.time.delayedCall(500, () => particles.destroy());
+    },
+  });
 }
 
 // Fix the createLevel1 function to ensure coins are visible
@@ -1302,8 +1502,8 @@ function activateBossArea() {
 
     // Create boss at the right side - DO NOT ATTACK YET
     this.boss = this.physics.add
-      .sprite(screenWidth * 0.8, -100, "toad")
-      .setScale(0.1);
+      .sprite(screenWidth * 0.8, -100, "enemy") // CHANGED: Using enemy sprite
+      .setScale(0.3); // Adjusted scale for enemy sprite
 
     // Set boss properties
     this.boss.health = 3;
@@ -1319,7 +1519,7 @@ function activateBossArea() {
     this.boss.lastShotTime = this.time.now + 10000; // 10 second delay before first attack
     this.boss.setCollideWorldBounds(true);
     this.boss.setDepth(20);
-    this.boss.setTint(0xff00ff);
+    this.boss.setTint(0xffff00); // CHANGED: Yellow overlay instead of magenta
     this.boss.flipX = true;
 
     // Add boss health display
@@ -1362,67 +1562,165 @@ function activateBossArea() {
       const elapsedSinceLastShot = currentTime - (this.lastShotTime || 0);
 
       if (elapsedSinceLastShot > 3000 && !this.scene.playerImmune) {
-        console.log(
-          "BOSS SHOOTING NOW - Time since last shot:",
-          elapsedSinceLastShot
-        );
+        console.log("BOSS SHOOTING NOW");
 
-        // Create a highly visible ball
+        // Create tennis ball with fixed scene reference
         const ball = this.scene.physics.add
-          .sprite(this.x, this.y - 20, "coin")
-          .setScale(0.3)
-          .setTint(0xff0000)
+          .sprite(this.x, this.y - 20, "tennisball") // Using same tennisball sprite
+          .setScale(0.1) // Match player ball scale
+          .setTint(0xff0000) // Red overlay for Johann's balls
           .setDepth(100);
 
-        // Add a visible debug message
-        this.scene.add
-          .text(
-            this.scene.cameras.main.scrollX + 10,
-            200,
-            "BOSS FIRED BALL at " + Math.floor(currentTime / 1000),
-            {
-              fontSize: "14px",
-              backgroundColor: "#000",
-              fill: "#ff0000",
-              padding: 5,
-            }
-          )
-          .setScrollFactor(0)
-          .setDepth(1000)
-          .setAlpha(0.8);
+        // ADDED: Rotation effect like player's tennis balls
+        this.scene.tweens.add({
+          targets: ball,
+          rotation: -Math.PI * 4, // Rotate based on boss direction (opposite of player)
+          duration: 1000,
+          repeat: -1,
+        });
 
-        // Aim at player with very clear trajectory
+        // ADDED: Flashing effect to make it more noticeable like player's tennis balls
+        this.scene.tweens.add({
+          targets: ball,
+          alpha: { from: 0.4, to: 1 },
+          duration: 200,
+          yoyo: true,
+          repeat: -1,
+        });
+
+        // ADDED: Track the ball's animation state
+        updateTennisBallAnimation.call(this.scene, ball);
+
+        // Aim at player with existing code...
         const dx = this.scene.player.x - this.x;
         const dy = this.scene.player.y - this.y;
         const angle = Math.atan2(dy, dx);
         const speed = 150;
 
-        // Set velocity
         ball.setVelocity(Math.cos(angle) * speed, Math.sin(angle) * speed);
+
+        // ADDED: Set physics properties like player's tennis balls
+        ball.setBounce(0.6);
+        ball.setCollideWorldBounds(true);
 
         // Clear collision function to avoid closure issues
         function ballHitPlayer(ball, player) {
           console.log("BALL HIT PLAYER");
-          hitByBossBall.call(this.scene, player, ball);
+          // FIX: Store a direct reference to the scene
+          const sceneRef = this.scene;
+
+          // Direct handler instead of using call with incorrect context
+          if (ball && ball.active) {
+            ball.destroy();
+            if (!sceneRef.playerImmune) {
+              // FIX: Access the physics directly from sceneRef
+              sceneRef.physics.pause();
+              player.setTint(0xff0000);
+
+              // Create full screen black overlay
+              const overlay = sceneRef.add
+                .rectangle(
+                  0,
+                  0,
+                  sceneRef.scale.width,
+                  sceneRef.scale.height,
+                  0x000000,
+                  0.8
+                )
+                .setOrigin(0, 0)
+                .setScrollFactor(0)
+                .setDepth(999);
+
+              // Show death message with proper text about HR rules
+              const gameOverText = sceneRef.add
+                .text(
+                  sceneRef.scale.width / 2,
+                  sceneRef.scale.height / 2 - 100,
+                  "Game Over\nKilling applicants is against HR rules!\nPlease be mindful",
+                  {
+                    fontSize: "18px",
+                    fill: "#ff0000",
+                    align: "center",
+                    padding: 10,
+                  }
+                )
+                .setScrollFactor(0)
+                .setAlign("center")
+                .setOrigin(0.5, 0)
+                .setDepth(1000);
+
+              // Add restart button instead of automatic restart
+              const restartButton = sceneRef.add
+                .text(
+                  sceneRef.scale.width / 2,
+                  sceneRef.scale.height / 2 + 80,
+                  "[ Restart Level ]",
+                  {
+                    fontSize: "20px",
+                    fill: "#ffffff",
+                    backgroundColor: "#880000",
+                    padding: { x: 15, y: 10 },
+                  }
+                )
+                .setScrollFactor(0)
+                .setAlign("center")
+                .setOrigin(0.5, 0.5)
+                .setDepth(1000)
+                .setInteractive({ useHandCursor: true });
+
+              // Add hover effect to button
+              restartButton.on("pointerover", () => {
+                restartButton.setStyle({ fill: "#ffff00" });
+              });
+
+              restartButton.on("pointerout", () => {
+                restartButton.setStyle({ fill: "#ffffff" });
+              });
+
+              // Add click handler to restart
+              restartButton.on("pointerdown", () => {
+                sceneRef.scene.restart();
+              });
+            }
+          }
         }
 
-        function destroyBall(ball) {
-          ball.destroy();
-        }
+        // Add collisions with proper context
+        this.scene.physics.add.overlap(
+          ball,
+          this.scene.player,
+          ballHitPlayer,
+          null,
+          this // 'this' here is the boss object with scene reference
+        );
+
+        // Replace the platform collision with proper bouncing:
+        this.scene.physics.add.collider(
+          ball,
+          this.scene.platforms,
+          (ball, platform) => {
+            tennisBallBounce.call(this.scene, ball, platform);
+          },
+          null,
+          this
+        );
+
+        // Keep track of the ball's initial scale for animation
+        ball.initialScale = 0.3;
+
+        // Make sure the ball is destroyed after a certain time
+        this.scene.time.delayedCall(3000, () => {
+          if (ball.active) {
+            ball.destroy();
+            if (ball.glow) ball.glow.destroy();
+          }
+        });
 
         // Add collisions
         this.scene.physics.add.overlap(
           ball,
           this.scene.player,
           ballHitPlayer,
-          null,
-          this
-        );
-
-        this.scene.physics.add.collider(
-          ball,
-          this.scene.platforms,
-          destroyBall,
           null,
           this
         );
@@ -1620,18 +1918,20 @@ function hitBoss(ball, boss) {
 
     console.log(`Respawning boss at ${fixedX}, ${screenHeight - 120}`);
 
-    // FIXED: Always spawn at safe height to avoid the early return in update
+    // FIXED: Always spawn at safe height with CONSISTENT appearance
     this.boss = this.physics.add
-      .sprite(fixedX, screenHeight - 120, "toad")
-      .setScale(0.15)
+      .sprite(fixedX, screenHeight - 120, "enemy") // FIXED: Use enemy sprite consistently
+      .setScale(0.3) // FIXED: Use same scale as original (0.3)
       .setVisible(true)
       .setAlpha(1)
       .setDepth(100);
 
     // Add a flash effect to make the respawn obvious
-    this.boss.setTintFill(0xff00ff);
+    this.boss.setTintFill(0xffff00); // FIXED: Use yellow tint to match original
     this.time.delayedCall(100, () => {
       if (this.boss && this.boss.active) this.boss.clearTint();
+      // Add back the normal tint
+      this.boss.setTint(0xffff00); // FIXED: Maintain yellow tint after flash
     });
 
     // Set properties - IMPORTANT: Store scene reference
@@ -1684,10 +1984,30 @@ function hitBoss(ball, boss) {
 
         // Create tennis ball with fixed scene reference
         const ball = this.scene.physics.add
-          .sprite(this.x, this.y - 20, "tennis")
-          .setScale(0.3)
+          .sprite(this.x, this.y - 20, "tennisball") // FIXED: Use tennisball consistently
+          .setScale(0.05) // FIXED: Use consistent scale of 0.1
           .setTint(0xff0000)
           .setDepth(100);
+
+        // FIXED: Add same rotation animation
+        this.scene.tweens.add({
+          targets: ball,
+          rotation: -Math.PI * 4,
+          duration: 1000,
+          repeat: -1,
+        });
+
+        // FIXED: Add same flashing effect
+        this.scene.tweens.add({
+          targets: ball,
+          alpha: { from: 0.4, to: 1 },
+          duration: 200,
+          yoyo: true,
+          repeat: -1,
+        });
+
+        // FIXED: Use same animation function
+        updateTennisBallAnimation.call(this.scene, ball);
 
         // Aim at player
         const dx = this.scene.player.x - this.x;
@@ -1697,7 +2017,11 @@ function hitBoss(ball, boss) {
 
         ball.setVelocity(Math.cos(angle) * speed, Math.sin(angle) * speed);
 
-        // Add collisions with direct function references
+        // FIXED: Set same physics properties
+        ball.setBounce(0.6);
+        ball.setCollideWorldBounds(true);
+
+        // Add collisions with player
         this.scene.physics.add.overlap(
           ball,
           this.scene.player,
@@ -1711,13 +2035,29 @@ function hitBoss(ball, boss) {
           this
         );
 
+        // FIXED: Use same bounce physics instead of destroying on contact
         this.scene.physics.add.collider(
           ball,
           this.scene.platforms,
-          (ball) => ball.destroy(),
+          (ball, platform) => {
+            tennisBallBounce.call(this.scene, ball, platform);
+          },
           null,
           this
         );
+
+        // FIXED: Only destroy after reasonable time (let it bounce around)
+        this.scene.time.delayedCall(5000, () => {
+          if (ball && ball.active) {
+            this.scene.tweens.add({
+              targets: ball,
+              alpha: 0,
+              scale: 0.05,
+              duration: 200,
+              onComplete: () => ball.destroy(),
+            });
+          }
+        });
 
         this.lastShotTime = currentTime;
       }
@@ -1787,27 +2127,65 @@ function hitByBossBall(player, ball) {
   this.physics.pause();
   player.setTint(0xff0000);
 
-  // Show death message
-  this.add
+  // Create full screen black overlay
+  const overlay = this.add
+    .rectangle(0, 0, this.scale.width, this.scale.height, 0x000000, 0.8)
+    .setOrigin(0, 0)
+    .setScrollFactor(0)
+    .setDepth(999);
+
+  // Show death message with proper text about HR rules
+  const gameOverText = this.add
     .text(
       this.scale.width / 2,
       this.scale.height / 2 - 100,
-      "Ouch! Watch out for Johann's tennis balls!",
+      "Game Over\nKilling applicants is against HR rules!\nPlease be mindful",
       {
         fontSize: "18px",
         fill: "#ff0000",
-        backgroundColor: "#000000",
+        align: "center",
         padding: 10,
       }
     )
     .setScrollFactor(0)
     .setAlign("center")
-    .setOrigin(0.5, 0);
+    .setOrigin(0.5, 0)
+    .setDepth(1000);
 
-  // Restart level after delay
-  this.time.delayedCall(3000, () => {
+  // Add restart button instead of automatic restart
+  const restartButton = this.add
+    .text(
+      this.scale.width / 2,
+      this.scale.height / 2 + 80,
+      "[ Restart Level ]",
+      {
+        fontSize: "20px",
+        fill: "#ffffff",
+        backgroundColor: "#880000",
+        padding: { x: 15, y: 10 },
+      }
+    )
+    .setScrollFactor(0)
+    .setAlign("center")
+    .setOrigin(0.5, 0.5)
+    .setDepth(1000)
+    .setInteractive({ useHandCursor: true });
+
+  // Add hover effect to button
+  restartButton.on("pointerover", () => {
+    restartButton.setStyle({ fill: "#ffff00" });
+  });
+
+  restartButton.on("pointerout", () => {
+    restartButton.setStyle({ fill: "#ffffff" });
+  });
+
+  // Add click handler to restart
+  restartButton.on("pointerdown", () => {
     this.scene.restart();
   });
+
+  // REMOVED: Automatic restart timer
 }
 
 // Update the showBossDialogue function to create a speech bubble over Johann
