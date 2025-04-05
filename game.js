@@ -158,7 +158,37 @@ function create() {
 }
 
 // Set up the background
+function setupBackground() {
+  const bgRepeat = 2;
+  let background = "background1";
+  if (selectedLevel == 2) background = "background2";
+  else if (selectedLevel == 3) background = "background3";
 
+  const screenHeight = this.scale.height;
+  const screenWidth = this.scale.width;
+  const singleWidth = screenWidth;
+
+  // Create background images
+  this.background = this.add
+    .image(singleWidth / 2, screenHeight / 2, background + "1")
+    .setDisplaySize(singleWidth, screenHeight);
+
+  this.add
+    .image(singleWidth + singleWidth / 2, screenHeight / 2, background + "2")
+    .setDisplaySize(singleWidth, screenHeight);
+
+  this.add
+    .image(
+      2 * singleWidth + singleWidth / 2,
+      screenHeight / 2,
+      background + "3"
+    )
+    .setDisplaySize(singleWidth, screenHeight);
+
+  this.physics.world.setBounds(0, 0, bgRepeat * screenWidth, screenHeight);
+
+  return bgRepeat;
+}
 
 // Set up the player
 function setupPlayer() {
@@ -426,10 +456,11 @@ function createLevel1(bgRepeat) {
   ground.setVisible(false);
   ground.refreshBody();
 
-  this.platforms
-    .create(1500, 565, "terrain", 2)
-    .setDisplaySize(600, 50)
-    .refreshBody();
+  // REMOVED: Big green platform at 1500, 565
+  // this.platforms
+  //   .create(1500, 565, "terrain", 2)
+  //   .setDisplaySize(600, 50)
+  //   .refreshBody();
 
   // 3. Create a darkening overlay for better visibility
   const darkOverlay = this.add.rectangle(
@@ -466,15 +497,11 @@ function createLevel1(bgRepeat) {
   // Skills counter
   this.skillsCounter = this.add
     .text(this.scale.width - 190, 260, "Skills: 0/6", {
-      // Change from 0/7 to 0/6
       fontSize: "16px",
       fill: "#FFD700",
       fontWeight: "bold",
     })
     .setScrollFactor(0);
-
-  // Create skill text objects
-  // Update the skill text creation in createLevel1 function (around line 482)
 
   // Create skill text objects
   this.skillTexts = [];
@@ -484,7 +511,7 @@ function createLevel1(bgRepeat) {
       .text(
         this.scale.width - 195,
         60 + i * 28,
-        "• " + skills[i].icon + " " + skills[i].name,
+        skills[i].icon + " " + skills[i].name, // Removed bullet point for cleaner look
         {
           fontSize: "14px",
           fill: "#FFFFFF",
@@ -501,7 +528,6 @@ function createLevel1(bgRepeat) {
   // Small skills counter in bottom left (traditional location)
   this.smallCounter = this.add
     .text(20, 20, "Skills: 0/6", {
-      // Change from 0/7 to 0/6
       fontSize: "20px",
       fill: "#ffffff",
     })
@@ -533,26 +559,17 @@ function createLevel1(bgRepeat) {
     ease: "Power2",
   });
 
-  // 7. Create improved platform and coin arrangement
+  // 7. MODIFIED: Create ONLY green platforms, NO brown stepping stones
   const platformPositions = [
-    { x: 200, y: this.scale.height - 150, width: 150, height: 30 }, // Ground level platform
-    { x: 400, y: this.scale.height - 220, width: 120, height: 30 }, // Medium height
-    { x: 600, y: this.scale.height - 300, width: 150, height: 30 }, // Higher platform
-    { x: 800, y: this.scale.height - 220, width: 130, height: 30 }, // Medium height again
-    { x: 1000, y: this.scale.height - 180, width: 140, height: 30 }, // Lower platform
-    { x: 1200, y: this.scale.height - 270, width: 120, height: 30 }, // Higher platform
-    { x: 1400, y: this.scale.height - 350, width: 180, height: 30 }, // Highest platform
-
-    // Add stepping stone platforms to help player climb
-    { x: 300, y: this.scale.height - 180, width: 80, height: 20 }, // Stepping stone
-    { x: 500, y: this.scale.height - 260, width: 80, height: 20 }, // Stepping stone
-    { x: 700, y: this.scale.height - 260, width: 80, height: 20 }, // Stepping stone
-    { x: 900, y: this.scale.height - 200, width: 80, height: 20 }, // Stepping stone
-    { x: 1100, y: this.scale.height - 230, width: 80, height: 20 }, // Stepping stone
-    { x: 1300, y: this.scale.height - 310, width: 80, height: 20 }, // Stepping stone
+    { x: 200, y: this.scale.height - 150, width: 150, height: 30 },
+    { x: 400, y: this.scale.height - 220, width: 120, height: 30 },
+    { x: 600, y: this.scale.height - 300, width: 150, height: 30 },
+    { x: 800, y: this.scale.height - 220, width: 130, height: 30 },
+    { x: 1000, y: this.scale.height - 180, width: 140, height: 30 },
+    { x: 1200, y: this.scale.height - 270, width: 120, height: 30 },
   ];
 
-  // Create visually distinct platforms
+  // Create ONLY green platforms - NO brown platforms
   for (let i = 0; i < platformPositions.length; i++) {
     const pos = platformPositions[i];
     // Create platform with custom size
@@ -560,57 +577,49 @@ function createLevel1(bgRepeat) {
     platform.displayWidth = pos.width;
     platform.displayHeight = pos.height;
     platform.refreshBody();
+    platform.setTint(0x88cc88); // Green tint for ALL platforms
 
-    // Make platform stand out with tint if it's a main platform
-    if (i < 6) {
-      // Change from i < 7 to i < 6
-      platform.setTint(0x88cc88); // Green tint for main platforms
-    }
+    // Add coin above each platform
+    // Position coin above the platform
+    const coin = this.coins
+      .create(
+        pos.x + pos.width / 2, // Center on platform
+        pos.y - 40, // Above platform
+        "coin"
+      )
+      .setOrigin(0.5, 0.5) // Center origin
+      .setScale(0.05) // Slightly bigger for better visibility
+      .refreshBody();
 
-    // Add coin above main platforms only
-    if (i < 6) {
-      // Change from i < 7 to i < 6
-      // Position coin above the platform
-      const coin = this.coins
-        .create(
-          pos.x + pos.width / 2, // Center on platform
-          pos.y - 40, // Above platform
-          "coin"
-        )
-        .setOrigin(0.5, 0.5) // Center origin
-        .setScale(0.05) // Slightly bigger for better visibility
-        .refreshBody();
+    // Increase coin visibility with brighter appearance
+    coin.setTint(0xffff00); // Bright yellow tint
 
-      // Increase coin visibility with brighter appearance
-      coin.setTint(0xffff00); // Bright yellow tint
+    // Add a pulsating glow effect around coins
+    const glow = this.add
+      .sprite(coin.x, coin.y, "coin")
+      .setScale(0.08)
+      .setAlpha(0.6)
+      .setTint(0xffffaa);
 
-      // Add a pulsating glow effect around coins
-      const glow = this.add
-        .sprite(coin.x, coin.y, "coin")
-        .setScale(0.08)
-        .setAlpha(0.6)
-        .setTint(0xffffaa);
+    // Same animation code as before...
+    this.tweens.add({
+      targets: coin,
+      y: coin.y - 5,
+      duration: 1000,
+      yoyo: true,
+      repeat: -1,
+      ease: "Sine.easeInOut",
+    });
 
-      // Same animation code as before...
-      this.tweens.add({
-        targets: coin,
-        y: coin.y - 5,
-        duration: 1000,
-        yoyo: true,
-        repeat: -1,
-        ease: "Sine.easeInOut",
-      });
-
-      this.tweens.add({
-        targets: glow,
-        scale: { from: 0.08, to: 0.1 },
-        alpha: { from: 0.6, to: 0.3 },
-        yoyo: true,
-        repeat: -1,
-        duration: 800,
-        ease: "Sine.easeInOut",
-      });
-    }
+    this.tweens.add({
+      targets: glow,
+      scale: { from: 0.08, to: 0.1 },
+      alpha: { from: 0.6, to: 0.3 },
+      yoyo: true,
+      repeat: -1,
+      duration: 800,
+      ease: "Sine.easeInOut",
+    });
   }
 
   // Add a hint about jumping
