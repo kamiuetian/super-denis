@@ -79,7 +79,7 @@ function preload() {
 
   // Load game objects
   this.load.image("commerz", "assets/commerz.png");
-  this.load.image("cloud", "assets/cloud.png");
+  this.load.image("cloud", "assets/overworld/cloud.png");
   this.load.image("coin", "assets/coin.png");
   this.load.image("enemy", "assets/enemy.png");
   this.load.image("toad", "assets/toad.png");
@@ -776,7 +776,7 @@ function createLevel1(bgRepeat) {
   // First make sure the block images are loaded in preload function
   // Make sure to add this to the preload function:
   this.load.image("block", "assets/overworld/block.png");
-   this.load.image("emptyBlock", "assets/overworld/emptyBlock.png");
+  this.load.image("emptyBlock", "assets/overworld/emptyBlock.png");
 
   // Define positions for 15 new block-based platforms
   const blockPlatforms = [
@@ -2472,6 +2472,15 @@ function hitMysteryBox(player, box) {
     y: skillIcon.y - 60,
     duration: 800,
     ease: "Bounce",
+    onComplete: () => {
+      // Fade out and destroy after bounce animation
+      this.tweens.add({
+        targets: skillIcon,
+        alpha: { from: 1, to: 0 },
+        duration: 200,
+        onComplete: () => skillIcon.destroy(),
+      });
+    },
   });
 
   // Show skill name
@@ -2485,13 +2494,13 @@ function hitMysteryBox(player, box) {
     })
     .setOrigin(0.5);
 
-  // Fade out skill name
+  // Fade out skill name faster (1 second total)
   this.tweens.add({
     targets: skillName,
     alpha: { from: 1, to: 0 },
     y: skillName.y - 20,
-    duration: 1500,
-    delay: 1000,
+    duration: 1000, // Changed from 1500
+    delay: 0, // Changed from 1000
     onComplete: () => skillName.destroy(),
   });
 
