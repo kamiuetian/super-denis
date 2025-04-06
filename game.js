@@ -170,15 +170,16 @@ function create() {
 
 // Set up the background
 function setupBackground() {
-  const bgRepeat = 2;
+  const bgRepeat = 3; // Explicitly set to 3 for consistency
   const screenHeight = this.scale.height;
   const screenWidth = this.scale.width;
+  const worldWidth = screenWidth * bgRepeat;
 
-  // Create plain white background rectangle
+  // Create plain white background rectangle that covers the entire world
   const whiteBackground = this.add.rectangle(
     0,
     0,
-    screenWidth * bgRepeat,
+    worldWidth,
     screenHeight,
     0xffffff // White color
   );
@@ -188,8 +189,11 @@ function setupBackground() {
   // Store reference to background
   this.background = whiteBackground;
 
-  // Set physics world bounds
-  this.physics.world.setBounds(0, 0, bgRepeat * screenWidth, screenHeight);
+  // Set physics world bounds to match the background size
+  this.physics.world.setBounds(0, 0, worldWidth, screenHeight);
+
+  // Ensure the camera won't show beyond the world bounds
+  this.cameras.main.setBounds(0, 0, worldWidth, screenHeight);
 
   return bgRepeat;
 }
@@ -764,29 +768,81 @@ function createLevel1(bgRepeat) {
   });
 
   // 7. MODIFIED: Create ONLY green platforms with mystery boxes below
+  const worldWidth = bgRepeat * this.scale.width;
+  // Add this after your existing platform creation loop in createLevel1 function,
+  // around line 826 (after the existing platform creation code)
+
+  // Create additional set of block-based platforms
+  // First make sure the block images are loaded in preload function
+  // Make sure to add this to the preload function:
+  this.load.image("block", "assets/overworld/block.png");
+   this.load.image("emptyBlock", "assets/overworld/emptyBlock.png");
+
+  // Define positions for 15 new block-based platforms
+  const blockPlatforms = [
+    { x: 350, y: this.scale.height - 350, width: 3, type: "block" },
+    { x: 550, y: this.scale.height - 400, width: 2, type: "emptyBlock" },
+    { x: 750, y: this.scale.height - 450, width: 4, type: "block" },
+    { x: 950, y: this.scale.height - 370, width: 2, type: "emptyBlock" },
+    { x: 1150, y: this.scale.height - 320, width: 3, type: "block" },
+    { x: 1350, y: this.scale.height - 280, width: 5, type: "block" },
+    { x: 1550, y: this.scale.height - 420, width: 2, type: "emptyBlock" },
+    { x: 1750, y: this.scale.height - 380, width: 4, type: "block" },
+    { x: 1950, y: this.scale.height - 440, width: 3, type: "block" },
+    { x: 2150, y: this.scale.height - 360, width: 2, type: "emptyBlock" },
+    { x: 2350, y: this.scale.height - 410, width: 6, type: "block" },
+    { x: 2550, y: this.scale.height - 330, width: 3, type: "emptyBlock" },
+    { x: 2750, y: this.scale.height - 390, width: 4, type: "block" },
+    { x: 3100, y: this.scale.height - 350, width: 3, type: "emptyBlock" },
+    { x: 3300, y: this.scale.height - 420, width: 5, type: "block" },
+  ];
+
+  // Create the block-based platforms
+  for (let i = 0; i < blockPlatforms.length; i++) {
+    const pos = blockPlatforms[i];
+    const blockSize = 32; // Standard size for a block - adjust based on your actual image size
+
+    // Calculate total width based on number of blocks
+    const totalWidth = pos.width * blockSize;
+
+    // Create platform using the specified block type
+    const platform = this.platforms.create(pos.x, pos.y, pos.type);
+    platform.displayWidth = totalWidth;
+    platform.displayHeight = blockSize;
+    platform.refreshBody();
+
+    // Add a subtle bounce effect to make the platform noticeable
+    this.tweens.add({
+      targets: platform,
+      y: platform.y - 2,
+      duration: 1500,
+      yoyo: true,
+      repeat: -1,
+      ease: "Sine.easeInOut",
+    });
+  }
   const platformPositions = [
-    { x: 200, y: this.scale.height - 150, width: 150, height: 30 },
-    { x: 400, y: this.scale.height - 220, width: 120, height: 30 },
-    { x: 600, y: this.scale.height - 300, width: 150, height: 30 },
-    { x: 800, y: this.scale.height - 220, width: 130, height: 30 },
-    { x: 1000, y: this.scale.height - 180, width: 140, height: 30 },
-    { x: 1200, y: this.scale.height - 270, width: 120, height: 30 },
+    { x: 200, y: this.scale.height - 150, width: 200, height: 30 }, // Longer
+    { x: 600, y: this.scale.height - 220, width: 100, height: 30 }, // Shorter
+    { x: 1500, y: this.scale.height - 300, width: 180, height: 30 }, // Longer
+    { x: 2300, y: this.scale.height - 220, width: 90, height: 30 }, // Shorter
+    { x: 3000, y: this.scale.height - 180, width: 220, height: 30 }, // Longer
+    { x: 4000, y: this.scale.height - 270, width: 110, height: 30 }, // Shorter
   ];
 
   // Rename coins group to mysteryBoxes
   this.mysteryBoxes = this.physics.add.staticGroup();
 
-  // Create ONLY green platforms with mystery boxes below
+  // Create brick platforms with mystery boxes below
   for (let i = 0; i < platformPositions.length; i++) {
     const pos = platformPositions[i];
 
-    // Create platform with custom size
-    const platform = this.platforms.create(pos.x, pos.y, "terrain", 4);
+    // Create brick platform with custom size
+    // Use terrain spritesheet frame 0 which typically has brick texture
+    const platform = this.platforms.create(pos.x, pos.y, "terrain", 0);
     platform.displayWidth = pos.width;
     platform.displayHeight = pos.height;
     platform.refreshBody();
-    platform.setTint(0x88cc88); // Green tint for ALL platforms
-
     // Add mystery box below the platform
     // Position mystery box below the platform where it can be hit
     const mysteryBox = this.mysteryBoxes
@@ -870,6 +926,15 @@ function createLevel1(bgRepeat) {
     null,
     this
   );
+
+  // Set up camera to follow the player
+  this.cameras.main.setBounds(
+    0,
+    0,
+    bgRepeat * this.scale.width,
+    this.scale.height
+  );
+  this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
 }
 
 // Add this function right after the createLevel1 function, around line 450
@@ -880,8 +945,8 @@ function addEnemies() {
   // Create patrolling goompa enemies with proper positioning
   const enemyPositions = [
     { x: 350, y: this.scale.height - 80, range: 150 },
-    { x: 900, y: this.scale.height - 80, range: 200 },
-    { x: 1500, y: this.scale.height - 80, range: 180 },
+    { x: 1000, y: this.scale.height - 80, range: 200 },
+    { x: 1800, y: this.scale.height - 80, range: 180 },
   ];
 
   for (const pos of enemyPositions) {
@@ -965,7 +1030,7 @@ function createLevel3(bgRepeat) {
     bgRepeat * this.scale.width,
     this.scale.height
   );
-  this.cameras.main.startFollow(this.player);
+  this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
 }
 
 // Update the collectCoin function to display speech bubbles
