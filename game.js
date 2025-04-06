@@ -2389,8 +2389,14 @@ function hitMysteryBox(player, box) {
     });
   }
 
-  // Show skill icon popping out of the box
+  // Get the current skill
   const skill = skills[skillIndex];
+
+  // Check if this is the guitar skill (skill index 5 is typically the last one with tennis racket)
+  const isGuitarSkill =
+    skill.name.toLowerCase().includes("racket") || skillIndex === 5;
+
+  // Show skill icon popping out of the box
   const skillIcon = this.add
     .text(boxX, boxY - 40, skill.icon + " " + skill.name, { fontSize: "32px" })
     .setOrigin(0.5);
@@ -2431,6 +2437,44 @@ function hitMysteryBox(player, box) {
 
   // Show speech bubble with skill message
   showSpeechBubble.call(this, player, skill.message, 3000);
+
+  // Activate boss area immediately if it's the guitar skill
+  if (isGuitarSkill) {
+    console.log("Guitar skill activated! Entering boss area...");
+
+    // Enable tennis ball shooting ability
+    this.hasTennisRacket = true;
+
+    // Show message about guitar challenge
+    const challengeMessage = this.add
+      .text(
+        this.scale.width / 2,
+        100,
+        "You found a guitar! Johann challenges you to a duel!",
+        {
+          fontSize: "18px",
+          fill: "#ffffff",
+          stroke: "#000000",
+          strokeThickness: 3,
+          align: "center",
+        }
+      )
+      .setOrigin(0.5, 0.5)
+      .setScrollFactor(0);
+
+    // Make message fade out
+    this.tweens.add({
+      targets: challengeMessage,
+      alpha: { from: 1, to: 0 },
+      delay: 3000,
+      duration: 1000,
+    });
+
+    // Activate boss area with short delay
+    this.time.delayedCall(2000, () => {
+      activateBossArea.call(this);
+    });
+  }
 
   // Particle effect
   const particles = this.add.particles(boxX, boxY - 10, "coin", {
