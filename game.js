@@ -85,7 +85,11 @@ function preload() {
   this.load.image("toad", "assets/toad.png");
 
   // Load Mario-style mystery blocks
-  this.load.image("mysteryBlock", "assets/overworld/misteryBlock.png");
+  this.load.spritesheet("mysteryBlock", "assets/overworld/misteryBlock.png", {
+    frameWidth: 16,
+    frameHeight: 16,
+    spacing: 3,
+  });
 
   // Load spritesheets
   this.load.spritesheet("mario", "assets/mario-sprite-sheet.png", {
@@ -759,7 +763,7 @@ function createLevel1(bgRepeat) {
     ease: "Power2",
   });
 
-  // 7. MODIFIED: Create ONLY green platforms, NO brown stepping stones
+  // 7. MODIFIED: Create ONLY green platforms with mystery boxes below
   const platformPositions = [
     { x: 200, y: this.scale.height - 150, width: 150, height: 30 },
     { x: 400, y: this.scale.height - 220, width: 120, height: 30 },
@@ -769,9 +773,13 @@ function createLevel1(bgRepeat) {
     { x: 1200, y: this.scale.height - 270, width: 120, height: 30 },
   ];
 
-  // Create ONLY green platforms - NO brown platforms
+  // Rename coins group to mysteryBoxes
+  this.mysteryBoxes = this.physics.add.staticGroup();
+
+  // Create ONLY green platforms with mystery boxes below
   for (let i = 0; i < platformPositions.length; i++) {
     const pos = platformPositions[i];
+
     // Create platform with custom size
     const platform = this.platforms.create(pos.x, pos.y, "terrain", 4);
     platform.displayWidth = pos.width;
@@ -779,45 +787,48 @@ function createLevel1(bgRepeat) {
     platform.refreshBody();
     platform.setTint(0x88cc88); // Green tint for ALL platforms
 
-    // Add coin above each platform
-    // Position coin above the platform
-    const coin = this.coins
+    // Add mystery box below the platform
+    // Position mystery box below the platform where it can be hit
+    const mysteryBox = this.mysteryBoxes
       .create(
-        pos.x + pos.width / 2, // Center on platform
-        pos.y - 40, // Above platform
-        "coin"
+        pos.x, // Centered horizontally
+        pos.y + pos.height - 120, // Below platform
+        "mysteryBlock"
       )
-      .setOrigin(0.5, 0.5) // Center origin
-      .setScale(0.05) // Slightly bigger for better visibility
+      .setOrigin(0.5, 0.5)
+      .setScale(1.5) // Proper size for mystery box
+      .setData("skillIndex", i) // Store which skill is in this box
+      .setData("hit", false) // Track if box has been hit already
       .refreshBody();
 
-    // Increase coin visibility with brighter appearance
-    coin.setTint(0xffff00); // Bright yellow tint
-
-    // Add a pulsating glow effect around coins
+    // Add a pulsating glow effect around mysteryBoxes
     const glow = this.add
-      .sprite(coin.x, coin.y, "coin")
-      .setScale(0.08)
-      .setAlpha(0.6)
-      .setTint(0xffffaa);
+      .sprite(mysteryBox.x, mysteryBox.y, "mysteryBlock")
+      .setScale(1.7)
+      .setAlpha(0.3)
+      .setTint(0xffff44);
 
-    // Same animation code as before...
+    // Store reference to glow for later removal
+    mysteryBox.setData("glow", glow);
+
+    // Bounce animation for mystery box
     this.tweens.add({
-      targets: coin,
-      y: coin.y - 5,
-      duration: 1000,
+      targets: mysteryBox,
+      y: mysteryBox.y - 5,
+      duration: 1200,
       yoyo: true,
       repeat: -1,
       ease: "Sine.easeInOut",
     });
 
+    // Glow animation
     this.tweens.add({
       targets: glow,
-      scale: { from: 0.08, to: 0.1 },
-      alpha: { from: 0.6, to: 0.3 },
+      scale: { from: 1.7, to: 1.9 },
+      alpha: { from: 0.3, to: 0.1 },
       yoyo: true,
       repeat: -1,
-      duration: 800,
+      duration: 1000,
       ease: "Sine.easeInOut",
     });
   }
@@ -852,7 +863,13 @@ function createLevel1(bgRepeat) {
   this.physics.add.collider(this.enemies, this.platforms);
   this.physics.add.collider(this.enemies, this.enemies);
   this.physics.add.collider(this.player, this.enemies, hitEnemy, null, this);
-  this.physics.add.overlap(this.player, this.coins, collectCoin, null, this);
+  this.physics.add.collider(
+    this.player,
+    this.mysteryBoxes,
+    hitMysteryBox,
+    null,
+    this
+  );
 }
 
 // Add this function right after the createLevel1 function, around line 450
@@ -2328,3 +2345,182 @@ this.boss.update = function (time) {
     // ... rest of existing code for ball collision and movement ...
   }
 };
+
+// Add this function to replace collectCoin
+function hitMysteryBox(player, box) {
+  // Only trigger when hitting from below and not already hit
+  if (!player.body.touching.up || box.getData("hit")) {
+    return;
+  }
+
+  // Mark box as hit
+  box.setData("hit", true);
+
+  // Store box position for effects
+  const boxX = box.x;
+  const boxY = box.y;
+
+  // Create "bump" effect
+  this.tweens.add({
+    targets: box,
+    y: box.y - 10,
+    duration: 100,
+    yoyo: true,
+    onComplete: () => {
+      // Remove box completely from gameplay
+      box.destroy();
+    },
+  });
+
+  // Get skill index from the box
+  const skillIndex = box.getData("skillIndex");
+
+  // Find and remove any glow effects
+  const glow = box.getData("glow");
+  if (glow) {
+    this.tweens.add({
+      targets: glow,
+      alpha: 0,
+      scale: 0,
+      duration: 300,
+      onComplete: function () {
+        glow.destroy();
+      },
+    });
+  }
+
+  // Show skill icon popping out of the box
+  const skill = skills[skillIndex];
+  const skillIcon = this.add
+    .text(boxX, boxY - 40, skill.icon + " " + skill.name, { fontSize: "32px" })
+    .setOrigin(0.5);
+
+  // Animate skill icon bouncing up
+  this.tweens.add({
+    targets: skillIcon,
+    y: skillIcon.y - 60,
+    duration: 800,
+    ease: "Bounce",
+  });
+
+  // Show skill name
+  const skillName = this.add
+    .text(boxX, boxY - 20, skill.name, {
+      fontSize: "16px",
+      fontStyle: "bold",
+      fill: "#fff",
+      stroke: "#000",
+      strokeThickness: 3,
+    })
+    .setOrigin(0.5);
+
+  // Fade out skill name
+  this.tweens.add({
+    targets: skillName,
+    alpha: { from: 1, to: 0 },
+    y: skillName.y - 20,
+    duration: 1500,
+    delay: 1000,
+    onComplete: () => skillName.destroy(),
+  });
+
+  // Update counters
+  this.coinCount = (this.coinCount || 0) + 1;
+  this.skillsCounter.setText("Skills: " + this.coinCount + "/6");
+  this.smallCounter.setText("Skills: " + this.coinCount + "/6");
+
+  // Show speech bubble with skill message
+  showSpeechBubble.call(this, player, skill.message, 3000);
+
+  // Particle effect
+  const particles = this.add.particles(boxX, boxY - 10, "coin", {
+    speed: { min: 50, max: 150 },
+    scale: { start: 0.05, end: 0.01 },
+    lifespan: 800,
+    quantity: 10,
+    blendMode: "ADD",
+    emitting: false,
+  });
+
+  // Emit particles once
+  particles.explode(10);
+
+  // Destroy the particles after animation completes
+  this.time.delayedCall(800, () => {
+    particles.destroy();
+  });
+
+  // Update skills panel
+  if (this.coinCount > 0 && this.coinCount <= skills.length) {
+    const skillText = this.skillTexts[this.coinCount - 1];
+
+    // Update the text and animate appearance
+    skillText.setText("• " + skill.icon + " " + skill.name);
+
+    // Fade in animation
+    this.tweens.add({
+      targets: skillText,
+      alpha: { from: 0, to: 1 },
+      duration: 300,
+      ease: "Power2",
+    });
+
+    // Scale animation
+    this.tweens.add({
+      targets: skillText,
+      scaleX: { from: 0.5, to: 1 },
+      scaleY: { from: 0.5, to: 1 },
+      duration: 300,
+      ease: "Back.easeOut",
+    });
+  }
+
+  // Handle tennis racket (last skill)
+  if (this.coinCount == 6) {
+    // Enable tennis ball shooting ability
+    this.hasTennisRacket = true;
+
+    // Show a message about shooting tennis balls
+    const shootText = this.add
+      .text(this.scale.width / 2, 80, "Press SPACE to shoot tennis balls!", {
+        fontSize: "18px",
+        fill: "#ffffff",
+        stroke: "#000000",
+        strokeThickness: 3,
+      })
+      .setOrigin(0.5, 0.5)
+      .setScrollFactor(0);
+
+    // Fade out after delay
+    this.tweens.add({
+      targets: shootText,
+      alpha: { from: 1, to: 0 },
+      delay: 5000,
+      duration: 1000,
+    });
+
+    // Also show boss battle instruction
+    const bossText = this.add
+      .text(
+        this.scale.width / 2,
+        120,
+        "Find Johann to the right and defeat him!",
+        {
+          fontSize: "18px",
+          fill: "#ffffff",
+          stroke: "#000000",
+          strokeThickness: 3,
+        }
+      )
+      .setOrigin(0.5, 0.5)
+      .setScrollFactor(0);
+
+    // Fade out after delay
+    this.tweens.add({
+      targets: bossText,
+      alpha: { from: 1, to: 0 },
+      delay: 5000,
+      duration: 1000,
+    });
+  }
+}
