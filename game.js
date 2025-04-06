@@ -362,7 +362,7 @@ function shootTennisBall() {
       this.player.y - 20,
       "tennisball" // Now using proper tennis ball sprite
     )
-    .setScale(0.1); // Adjust scale for tennisball sprite
+    .setScale(0.05); // Adjust scale for tennisball sprite
 
   console.log("Ball created:", ball);
 
@@ -494,10 +494,10 @@ function updateTennisBallAnimation(ball) {
   // Change visual properties based on vertical velocity
   if (ball.body.velocity.y > 0) {
     // Going down - make slightly larger
-    ball.setScale(0.17);
+    ball.setScale(0.05);
   } else {
     // Going up - make slightly smaller
-    ball.setScale(0.13);
+    ball.setScale(0.05);
   }
 
   // Call this function again after a short delay
@@ -1584,7 +1584,7 @@ function activateBossArea() {
         // Create tennis ball with fixed scene reference
         const ball = this.scene.physics.add
           .sprite(this.x, this.y - 20, "tennisball") // Using same tennisball sprite
-          .setScale(0.1) // Match player ball scale
+          .setScale(0.05) // Match player ball scale
           .setTint(0xff0000) // Red overlay for Johann's balls
           .setDepth(100);
 
@@ -1726,7 +1726,7 @@ function activateBossArea() {
         ball.initialScale = 0.3;
 
         // Make sure the ball is destroyed after a certain time
-        this.scene.time.delayedCall(3000, () => {
+        this.scene.time.delayedCall(5000, () => {
           if (ball.active) {
             ball.destroy();
             if (ball.glow) ball.glow.destroy();
@@ -1746,7 +1746,7 @@ function activateBossArea() {
         this.lastShotTime = currentTime;
         console.log(
           "Shot fired, next shot after:",
-          (currentTime + 3000) / 1000,
+          (currentTime + 1000) / 1000,
           "seconds"
         );
       }
@@ -1776,13 +1776,13 @@ function activateBossArea() {
           );
 
           // After 3 seconds, show Denis's response
-          this.time.delayedCall(3000, () => {
+          this.time.delayedCall(1000, () => {
             createSpeechBubble.call(
               this,
               this.player.x,
               this.player.y - 60,
               "Challenge accepted!",
-              3000
+              1000
             );
 
             // Turn off immunity 1 second after dialogue completes
