@@ -65,7 +65,21 @@ function startGame(level) {
 // Preload assets
 function preload() {
   if (!gameStarted) return;
+  // Load Level 3 skill images
+  this.load.image("customBlock", "assets/overworld/customBlock.png");
 
+  this.load.image("tech1", "assets/level3/ai-assistant.png");
+  this.load.image("tech2", "assets/level3/analytics.png");
+  this.load.image("tech3", "assets/level3/atm-card.png");
+  this.load.image("tech4", "assets/level3/bank.png");
+  this.load.image("tech5", "assets/level3/bitcoin.png");
+  this.load.image("finance1", "assets/level3/encryption.png");
+  this.load.image("finance2", "assets/level3/increase.png");
+  this.load.image("finance3", "assets/level3/money-bag.png");
+  this.load.image("finance4", "assets/level3/programming.png");
+  this.load.image("finance5", "assets/level3/satellite.png");
+
+  this.load.image("finance6", "assets/level3/smartphone.png");
   // Load background images
   this.load.image("background11", "assets/Level 1 - Image 1.png");
   this.load.image("background12", "assets/Level 1 - Image 2.png");
@@ -334,28 +348,31 @@ function update(time, delta) {
   }
 
   // Handle movement
-  if (this.cursors.left.isDown) {
-    this.player.setVelocityX(-250);
-    this.player.setFlipX(true);
-    this.player.anims.play("right", true);
-  } else if (this.cursors.right.isDown) {
-    this.player.setVelocityX(250);
-    this.player.setFlipX(false);
-    this.player.anims.play("right", true);
-  } else {
-    this.player.setVelocityX(0);
-    this.player.anims.play("stand");
+  if (this.player && this.player.body && this.player.active) {
+    if (this.cursors.left.isDown) {
+      this.player.setVelocityX(-250);
+      this.player.setFlipX(true);
+      this.player.anims.play("right", true);
+    } else if (this.cursors.right.isDown) {
+      this.player.setVelocityX(250);
+      this.player.setFlipX(false);
+      this.player.anims.play("right", true);
+    } else {
+      this.player.setVelocityX(0);
+      this.player.anims.play("stand");
+    }
   }
 
   // Handle jumping
-  if (!this.player.body.touching.down) {
-    this.player.anims.play("jump");
-  }
+  if (this.player && this.player.body && this.player.active) {
+    if (!this.player.body.touching.down) {
+      this.player.anims.play("jump");
+    }
 
-  if (this.cursors.up.isDown && this.player.body.touching.down) {
-    this.player.setVelocityY(-250);
+    if (this.cursors.up.isDown && this.player.body.touching.down) {
+      this.player.setVelocityY(-250);
+    }
   }
-
   // ADDED: Handle tennis ball shooting
   if (
     this.hasTennisRacket &&
@@ -549,53 +566,65 @@ function updateTennisBallAnimation(ball) {
   });
 }
 
-// Function to handle tennis ball bouncing physics
-function tennisBallBounce(ball, collider) {
-  // Don't process if ball is already dead
-  if (ball.dead || ball.exploded) {
+// Improved tennisBallBounce function with more natural physics
+function tennisBallBounce(ball, platform) {
+  // Skip if ball is already exploded or dead
+  if (ball.exploded || ball.dead) {
     return;
   }
 
-  // Handle side collisions - reverse direction
-  if (ball.body.blocked.left || ball.body.blocked.right) {
-    // Reverse horizontal velocity with slight loss of momentum
-    ball.setVelocityX(-ball.body.velocity.x * 0.8);
-    ball.isVelocityPositive = ball.body.velocity.x > 0;
-
-    // Play bounce sound if available
-    if (this.sound && this.sound.play && this.hitSound) {
-      this.hitSound.play({ volume: 0.3 });
-    }
+  // Check if ball exists and has a body
+  if (!ball || !ball.body) {
+    return;
   }
 
-  // Handle vertical bouncing
-  if (ball.body.blocked.down) {
-    // Bounce up with reduced velocity on each bounce
-    const currentBounce = ball.bounce || 1;
-    const bounceVelocity = -250 / (currentBounce * 0.5);
-    ball.setVelocityY(bounceVelocity);
-    ball.bounce = currentBounce + 0.5;
+  // Get the current velocity for bounce calculations
+  const currentVelocityY = ball.body.velocity.y;
 
-    // Play bounce sound if available
-    if (this.sound && this.sound.play && this.hitSound) {
-      this.hitSound.play({ volume: 0.2 });
-    }
-
-    // Create a small bounce effect
-    const bounceEffect = this.add.circle(ball.x, ball.y + 5, 5, 0xffff00, 0.7);
-    this.tweens.add({
-      targets: bounceEffect,
-      alpha: 0,
-      scale: 2,
-      duration: 200,
-      onComplete: () => bounceEffect.destroy(),
-    });
+  // Handle bounce direction based on collision side
+  if (ball.body.blocked.left || ball.body.touching.left) {
+    // Reverse horizontal velocity with energy loss
+    ball.setVelocityX(-ball.body.velocity.x * 0.7);
+  } else if (ball.body.blocked.right || ball.body.touching.right) {
+    // Reverse horizontal velocity with energy loss
+    ball.setVelocityX(-ball.body.velocity.x * 0.7);
   }
 
+  // Handle vertical bouncing with more natural physics
+  if (ball.body.blocked.down || ball.body.touching.down) {
+    // Calculate bounce velocity based on impact (with damping)
+    const impactVelocity = Math.abs(currentVelocityY);
+    const bounceVelocity = Math.min(impactVelocity * 0.6, 150);
+
+    // Apply smaller upward velocity with slight randomness
+    ball.setVelocityY(-bounceVelocity + (Math.random() * 20 - 10));
+
+    // Create bounce effect (only for harder impacts)
+    if (impactVelocity > 100) {
+      const bounceEffect = this.add.circle(
+        ball.x,
+        ball.y + 5,
+        5,
+        0xffff00,
+        0.5
+      );
+      this.tweens.add({
+        targets: bounceEffect,
+        alpha: 0,
+        scale: 2,
+        duration: 200,
+        onComplete: () => bounceEffect.destroy(),
+      });
+    }
+  }
   // Handle ceiling collisions
-  if (ball.body.blocked.up) {
-    ball.setVelocityY(100);
+  else if (ball.body.blocked.up || ball.body.touching.up) {
+    // Bounce off ceiling with reduced velocity
+    ball.setVelocityY(Math.abs(currentVelocityY) * 0.5);
   }
+
+  // Add a small rotation to the ball for visual effect
+  ball.setAngularVelocity((Math.random() > 0.5 ? 1 : -1) * 100);
 }
 
 // Function to handle tennis ball hitting enemies
@@ -817,21 +846,10 @@ function createLevel1(bgRepeat) {
 
   // Define positions for 15 new block-based platforms
   const blockPlatforms = [
-    { x: 350, y: this.scale.height - 350, width: 3, type: "block" },
-    { x: 550, y: this.scale.height - 400, width: 2, type: "emptyBlock" },
-    { x: 750, y: this.scale.height - 450, width: 4, type: "block" },
-    { x: 950, y: this.scale.height - 370, width: 2, type: "emptyBlock" },
-    { x: 1150, y: this.scale.height - 320, width: 3, type: "block" },
-    { x: 1350, y: this.scale.height - 280, width: 5, type: "block" },
-    { x: 1550, y: this.scale.height - 420, width: 2, type: "emptyBlock" },
-    { x: 1750, y: this.scale.height - 380, width: 4, type: "block" },
-    { x: 1950, y: this.scale.height - 440, width: 3, type: "block" },
-    { x: 2150, y: this.scale.height - 360, width: 2, type: "emptyBlock" },
-    { x: 2350, y: this.scale.height - 410, width: 6, type: "block" },
-    { x: 2550, y: this.scale.height - 330, width: 3, type: "emptyBlock" },
-    { x: 2750, y: this.scale.height - 390, width: 4, type: "block" },
-    { x: 3100, y: this.scale.height - 350, width: 3, type: "emptyBlock" },
-    { x: 3300, y: this.scale.height - 420, width: 5, type: "block" },
+    { x: 1950, y: this.scale.height - 160, width: 20, type: "block" },
+    { x: 2850, y: this.scale.height - 270, width: 30, type: "emptyBlock" },
+    { x: 3700, y: this.scale.height - 350, width: 10, type: "block" },
+    { x: 3700, y: this.scale.height - 320, width: 10, type: "emptyBlock" },
   ];
 
   // Create the block-based platforms
@@ -859,11 +877,11 @@ function createLevel1(bgRepeat) {
     });
   }
   const platformPositions = [
-    { x: 200, y: this.scale.height - 150, width: 200, height: 30 }, // Longer
-    { x: 600, y: this.scale.height - 220, width: 100, height: 30 }, // Shorter
-    { x: 1500, y: this.scale.height - 300, width: 180, height: 30 }, // Longer
-    { x: 2300, y: this.scale.height - 220, width: 90, height: 30 }, // Shorter
-    { x: 3000, y: this.scale.height - 180, width: 220, height: 30 }, // Longer
+    { x: 300, y: this.scale.height - 150, width: 200, height: 30 }, // Longer
+    { x: 800, y: this.scale.height - 220, width: 100, height: 30 }, // Shorter
+    { x: 1500, y: this.scale.height - 40, width: 180, height: 30 }, // Longer
+    { x: 2310, y: this.scale.height - 160, width: 90, height: 30 }, // Shorter
+    { x: 3000, y: this.scale.height - 270, width: 220, height: 30 }, // Longer
     { x: 4000, y: this.scale.height - 270, width: 110, height: 30 }, // Shorter
   ];
 
@@ -973,7 +991,949 @@ function createLevel1(bgRepeat) {
   );
   this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
 }
+// Add this function near the other game functions
+function activateBossArea() {
+  // First pause all physics to prevent anything from happening during the transition
+  this.physics.pause();
 
+  // Fade out
+  this.cameras.main.fadeOut(1000, 0, 0, 0);
+
+  this.cameras.main.once("camerafadeoutcomplete", () => {
+    // Set global immunity flag immediately
+    this.playerImmune = true;
+
+    // SAFER CLEANUP: Handle enemy cleanup with better error checking
+    if (this.enemies) {
+      try {
+        // First try to get children safely
+        const enemyChildren = this.enemies.getChildren
+          ? this.enemies.getChildren()
+          : [];
+
+        // Then process each enemy
+        enemyChildren.forEach((enemy) => {
+          if (this.updateList) {
+            const index = this.updateList.indexOf(enemy);
+            if (index !== -1) this.updateList.splice(index, 1);
+          }
+          if (enemy && enemy.destroy) enemy.destroy();
+        });
+      } catch (error) {
+        console.error("Error cleaning up enemies:", error);
+      }
+    }
+
+    // FIXED: Safe cleanup for tennis balls group
+    if (this.tennisBalls) {
+      try {
+        // Check if the clear method exists before calling it
+        if (this.tennisBalls.clear) {
+          this.tennisBalls.clear(true, true);
+        } else {
+          // Alternative cleanup if clear isn't available
+          const ballChildren = this.tennisBalls.getChildren
+            ? this.tennisBalls.getChildren()
+            : [];
+          ballChildren.forEach((ball) => {
+            if (ball && ball.destroy) ball.destroy();
+          });
+        }
+      } catch (error) {
+        console.error("Error cleaning up tennis balls:", error);
+      }
+
+      // Recreate the group to ensure it's properly initialized
+      this.tennisBalls = this.physics.add.group();
+    } else {
+      // Create the group if it doesn't exist
+      this.tennisBalls = this.physics.add.group();
+    }
+
+    // Remove all platforms except ground
+    if (this.platforms) {
+      try {
+        // Store reference to the original ground
+        let ground = null;
+
+        // First try to get children safely
+        const platformChildren = this.platforms.getChildren
+          ? this.platforms.getChildren()
+          : [];
+
+        // Then process each platform
+        platformChildren.forEach((platform) => {
+          // Skip the ground (which is usually invisible and spans the entire level)
+          if (
+            platform.y >= this.scale.height - 50 &&
+            platform.displayWidth > this.scale.width
+          ) {
+            ground = platform;
+          } else {
+            // Remove all other platforms
+            platform.destroy();
+          }
+        });
+
+        // If we didn't find the ground, we'll create a new one
+        if (!ground) {
+          // Create a new ground platform for the boss area
+          const screenWidth = this.scale.width;
+          const screenHeight = this.scale.height;
+          const groundHeight = 40;
+
+          ground = this.platforms.create(
+            screenWidth / 2,
+            screenHeight - groundHeight / 2,
+            null
+          );
+          ground.setDisplaySize(screenWidth, groundHeight);
+          ground.setVisible(false); // Keep it invisible
+          ground.refreshBody();
+        }
+      } catch (error) {
+        console.error("Error cleaning up platforms:", error);
+      }
+    }
+
+    // Rest of boss area setup...
+    const screenWidth = this.scale.width;
+    const screenHeight = this.scale.height;
+
+    // Keep just the darkening overlay for better visibility of sprites
+    const darkOverlay = this.add
+      .rectangle(0, 0, screenWidth, screenHeight, 0x000000, 0.3)
+      .setOrigin(0, 0)
+      .setScrollFactor(0);
+
+    // CRITICAL FIX: Clear any velocity and ensure player is visible
+    this.player.setVelocity(0, 0);
+    this.player.setPosition(100, screenHeight - 100); // This line sets the player position
+    this.player.setVisible(true);
+    this.player.setAlpha(1);
+    this.player.clearTint();
+    this.player.setDepth(20);
+
+    // ADD THIS: Make sure shooting controls are set up even in boss area
+    this.shootKey = this.input.keyboard.addKey(
+      Phaser.Input.Keyboard.KeyCodes.SPACE
+    );
+    this.lastShotTime = 0;
+
+    // Force the hasTennisRacket flag to be true
+    this.hasTennisRacket = true;
+
+    // Add visual indicator that shooting is available
+    const shootIndicator = this.add
+      .text(150, 30, "🎾 PRESS SPACE TO SHOOT", {
+        fontSize: "18px",
+        fill: "#ffff00",
+        stroke: "#000000",
+        strokeThickness: 3,
+      })
+      .setScrollFactor(0);
+
+    // Make it blink to draw attention
+    this.tweens.add({
+      targets: shootIndicator,
+      alpha: { from: 1, to: 0.3 },
+      duration: 500,
+      yoyo: true,
+      repeat: 5,
+      onComplete: () => {
+        this.tweens.add({
+          targets: shootIndicator,
+          alpha: 0,
+          delay: 2000,
+          duration: 1000,
+        });
+      },
+    });
+
+    // Make sure there's a collision with the new ground
+    this.physics.add.collider(this.player, this.platforms);
+
+    // Set camera to follow player
+    // FIXED: Instead of simply following the player, use an offset to keep player at the left
+    // this.cameras.main.startFollow(this.player); // Remove this line
+
+    // Set fixed camera position instead of following player
+    this.cameras.main.setScroll(0, 0);
+    this.cameras.main.stopFollow();
+
+    // Or if you still want to follow the player but with an offset:
+    // this.cameras.main.startFollow(this.player, true, 0.1, 0.1, -screenWidth/3, 0);
+
+    // Create boss at the right side - DO NOT ATTACK YET
+    this.boss = this.physics.add
+      .sprite(screenWidth * 0.8, -100, "enemy") // CHANGED: Using enemy sprite
+      .setScale(0.3); // Adjusted scale for enemy sprite
+
+    // Set boss properties
+    this.boss.health = 3;
+    // Initialize localStorage for boss health
+    try {
+      localStorage.setItem("bossHealth", "3");
+      console.log("Boss health initialized in localStorage");
+    } catch (e) {
+      console.error("Failed to initialize localStorage for boss health:", e);
+    }
+
+    this.boss.direction = -1;
+    this.boss.lastShotTime = this.time.now + 10000; // 10 second delay before first attack
+    this.boss.setCollideWorldBounds(true);
+    this.boss.setDepth(20);
+    this.boss.setTint(0xffff00); // CHANGED: Yellow overlay instead of magenta
+    this.boss.flipX = true;
+
+    // Add boss health display
+    this.bossHealth = [];
+    for (let i = 0; i < 3; i++) {
+      const heart = this.add
+        .text(screenWidth / 2 - 45 + i * 30, 20, "❤️", { fontSize: "28px" })
+        .setScrollFactor(0);
+      this.bossHealth.push(heart);
+    }
+
+    // Create tennis balls group if needed
+    if (!this.tennisBalls) this.tennisBalls = this.physics.add.group();
+
+    // Setup boss-player interactions
+    this.physics.add.collider(this.boss, this.platforms);
+    this.physics.add.overlap(this.tennisBalls, this.boss, hitBoss, null, this);
+
+    // Initialize update list if needed
+    if (!this.updateList) this.updateList = [];
+
+    // IMPORTANT: Modify the boss update function to ensure tennis balls are thrown
+    this.boss.update = function (time) {
+      // Don't do anything until landed
+      if (this.y < screenHeight - 120) {
+        return; // Early return with proper brackets
+      }
+
+      // SIMPLIFIED MOVEMENT - always move back and forth
+      this.x += this.direction * 2;
+
+      // Change direction at boundaries
+      if (this.x < screenWidth * 0.6 || this.x > screenWidth * 0.9) {
+        this.direction *= -1;
+        this.flipX = this.direction > 0;
+      }
+
+      // SIMPLIFIED SHOOTING - fire every 3 seconds with clear debug
+      const currentTime = this.scene.time.now;
+      const elapsedSinceLastShot = currentTime - (this.lastShotTime || 0);
+
+      if (elapsedSinceLastShot > 3000 && !this.scene.playerImmune) {
+        console.log("BOSS SHOOTING NOW");
+
+        // Create tennis ball with fixed scene reference
+        const ball = this.scene.physics.add
+          .sprite(this.x, this.y - 20, "tennisball") // Using same tennisball sprite
+          .setScale(0.05) // Match player ball scale
+          .setTint(0xff0000) // Red overlay for Johann's balls
+          .setDepth(100);
+
+        // ADDED: Rotation effect like player's tennis balls
+        this.scene.tweens.add({
+          targets: ball,
+          rotation: -Math.PI * 4, // Rotate based on boss direction (opposite of player)
+          duration: 1000,
+          repeat: -1,
+        });
+
+        // ADDED: Flashing effect to make it more noticeable like player's tennis balls
+        this.scene.tweens.add({
+          targets: ball,
+          alpha: { from: 0.4, to: 1 },
+          duration: 200,
+          yoyo: true,
+          repeat: -1,
+        });
+
+        // ADDED: Track the ball's animation state
+        updateTennisBallAnimation.call(this.scene, ball);
+
+        // Aim at player with existing code...
+        const dx = this.scene.player.x - this.x;
+        const dy = this.scene.player.y - this.y;
+        const angle = Math.atan2(dy, dx);
+        const speed = 150;
+
+        ball.setVelocity(Math.cos(angle) * speed, Math.sin(angle) * speed);
+
+        // ADDED: Set physics properties like player's tennis balls
+        ball.setBounce(0.6);
+        ball.setCollideWorldBounds(true);
+
+        // Clear collision function to avoid closure issues
+        function ballHitPlayer(ball, player) {
+          console.log("BALL HIT PLAYER");
+          // FIX: Store a direct reference to the scene
+          const sceneRef = this.scene;
+
+          // Direct handler instead of using call with incorrect context
+          if (ball && ball.active) {
+            ball.destroy();
+            if (!sceneRef.playerImmune) {
+              // FIX: Access the physics directly from sceneRef
+              sceneRef.physics.pause();
+              player.setTint(0xff0000);
+
+              // Create full screen black overlay
+              const overlay = sceneRef.add
+                .rectangle(
+                  0,
+                  0,
+                  sceneRef.scale.width,
+                  sceneRef.scale.height,
+                  0x000000,
+                  0.8
+                )
+                .setOrigin(0, 0)
+                .setScrollFactor(0)
+                .setDepth(999);
+
+              // Show death message with proper text about HR rules
+              const gameOverText = sceneRef.add
+                .text(
+                  sceneRef.scale.width / 2,
+                  sceneRef.scale.height / 2 - 100,
+                  "Game Over\nKilling applicants is against HR rules!\nPlease be mindful",
+                  {
+                    fontSize: "18px",
+                    fill: "#ff0000",
+                    align: "center",
+                    padding: 10,
+                  }
+                )
+                .setScrollFactor(0)
+                .setAlign("center")
+                .setOrigin(0.5, 0)
+                .setDepth(1000);
+
+              // Add restart button instead of automatic restart
+              const restartButton = sceneRef.add
+                .text(
+                  sceneRef.scale.width / 2,
+                  sceneRef.scale.height / 2 + 80,
+                  "[ Restart Level ]",
+                  {
+                    fontSize: "20px",
+                    fill: "#ffffff",
+                    backgroundColor: "#880000",
+                    padding: { x: 15, y: 10 },
+                  }
+                )
+                .setScrollFactor(0)
+                .setAlign("center")
+                .setOrigin(0.5, 0.5)
+                .setDepth(1000)
+                .setInteractive({ useHandCursor: true });
+
+              // Add hover effect to button
+              restartButton.on("pointerover", () => {
+                restartButton.setStyle({ fill: "#ffff00" });
+              });
+
+              restartButton.on("pointerout", () => {
+                restartButton.setStyle({ fill: "#ffffff" });
+              });
+
+              // Add click handler to restart
+              restartButton.on("pointerdown", () => {
+                sceneRef.scene.restart();
+              });
+            }
+          }
+        }
+
+        // Add collisions with proper context
+        this.scene.physics.add.overlap(
+          ball,
+          this.scene.player,
+          ballHitPlayer,
+          null,
+          this // 'this' here is the boss object with scene reference
+        );
+
+        // Replace the platform collision with proper bouncing:
+        this.scene.physics.add.collider(
+          ball,
+          this.scene.platforms,
+          (ball, platform) => {
+            tennisBallBounce.call(this.scene, ball, platform);
+          },
+          null,
+          this
+        );
+
+        // Keep track of the ball's initial scale for animation
+        ball.initialScale = 0.3;
+
+        // Make sure the ball is destroyed after a certain time
+        this.scene.time.delayedCall(5000, () => {
+          if (ball.active) {
+            ball.destroy();
+            if (ball.glow) ball.glow.destroy();
+          }
+        });
+
+        // Add collisions
+        this.scene.physics.add.overlap(
+          ball,
+          this.scene.player,
+          ballHitPlayer,
+          null,
+          this
+        );
+
+        // Update shot time directly using scene time
+        this.lastShotTime = currentTime;
+        console.log(
+          "Shot fired, next shot after:",
+          (currentTime + 1000) / 1000,
+          "seconds"
+        );
+      }
+    };
+
+    // Add boss to update list
+    this.updateList.push(this.boss);
+
+    // Dramatic boss entrance
+    this.tweens.add({
+      targets: this.boss,
+      y: screenHeight - 120,
+      ease: "Bounce.easeOut",
+      duration: 1500,
+      onComplete: () => {
+        this.cameras.main.shake(300, 0.01);
+
+        // Delay dialogue to ensure everything is fully ready
+        this.time.delayedCall(500, () => {
+          // Show boss dialogue with exact text from requirements
+          const johannBubble = createSpeechBubble.call(
+            this,
+            this.boss.x,
+            this.boss.y - 80,
+            "Let's see if your skills are really that impressive!",
+            5000
+          );
+
+          // After 3 seconds, show Denis's response
+          this.time.delayedCall(1000, () => {
+            createSpeechBubble.call(
+              this,
+              this.player.x,
+              this.player.y - 60,
+              "Challenge accepted!",
+              1000
+            );
+
+            // Turn off immunity 1 second after dialogue completes
+            this.time.delayedCall(4000, () => {
+              console.log("Player immunity turned off");
+              this.playerImmune = false;
+            });
+          });
+        });
+      },
+    });
+
+    // Wait until everything is set up, then fade back in and resume physics
+    this.cameras.main.fadeIn(1000, 0, 0, 0);
+    this.cameras.main.once("camerafadeincomplete", () => {
+      this.physics.resume();
+    });
+
+    // Add instruction text after a delay
+    this.time.delayedCall(6000, () => {
+      const instructionText = this.add
+        .text(
+          screenWidth / 2,
+          screenHeight - 80,
+          "Hit Johann with tennis balls 3 times to win! Press SPACE to shoot.",
+          {
+            fontSize: "18px",
+            fill: "#ffffff",
+            stroke: "#000000",
+            strokeThickness: 3,
+          }
+        )
+        .setOrigin(0.5)
+        .setScrollFactor(0);
+
+      this.tweens.add({
+        targets: instructionText,
+        alpha: { from: 1, to: 0 },
+        delay: 5000,
+        duration: 1000,
+      });
+    });
+  });
+}
+
+// Fixed version of hitBoss function focusing on proper boss respawn
+
+function hitBoss(ball, boss) {
+  // Destroy the tennis ball
+  ball.destroy();
+
+  // Ensure we're working with consistent boss data
+  if (!boss || !boss.active) {
+    console.log("Boss hit detection failed - invalid boss object");
+    return;
+  }
+
+  // Get current health from localStorage with better error handling
+  let currentHealth;
+  try {
+    currentHealth = parseInt(localStorage.getItem("bossHealth"));
+    if (isNaN(currentHealth) || currentHealth === null) {
+      currentHealth = 3;
+    }
+  } catch (e) {
+    currentHealth = 3;
+  }
+
+  // Calculate new health
+  const newHealth = currentHealth - 1;
+  console.log(`Boss hit! Health: ${currentHealth} → ${newHealth}`);
+
+  // Update localStorage
+  try {
+    localStorage.setItem("bossHealth", newHealth.toString());
+  } catch (e) {
+    console.error("Failed to update localStorage:", e);
+  }
+
+  // Store position before destroying
+  const bossX = boss.x;
+  const bossY = boss.y;
+
+  // Visual feedback
+  this.cameras.main.flash(100, 255, 255, 255, 0.3);
+
+  // Create hit effect
+  const hitEffect = this.add.circle(bossX, bossY, 40, 0xff0000, 0.6);
+  this.tweens.add({
+    targets: hitEffect,
+    scale: 2,
+    alpha: 0,
+    duration: 300,
+    onComplete: () => hitEffect.destroy(),
+  });
+
+  // Update health display UI
+  if (newHealth >= 0 && newHealth < this.bossHealth.length) {
+    this.bossHealth[newHealth].setText("💔");
+  }
+
+  // Remove from update list
+  if (this.updateList) {
+    const index = this.updateList.indexOf(boss);
+    if (index !== -1) {
+      this.updateList.splice(index, 1);
+    }
+  }
+
+  // Destroy old boss
+  boss.destroy();
+  this.boss = null;
+
+  // Check if boss is defeated
+  if (newHealth <= 0) {
+    console.log("BOSS DEFEATED!");
+
+    // Victory sequence
+    this.physics.pause();
+    const victoryText = this.add
+      .text(
+        this.scale.width / 2,
+        this.scale.height / 3,
+        "YOU DEFEATED JOHANN!",
+        {
+          fontSize: "24px",
+          fontFamily: "Arial",
+          fontWeight: "bold",
+          fill: "#ffffff",
+          stroke: "#000000",
+          strokeThickness: 4,
+          backgroundColor: "#00800088",
+          padding: { x: 16, y: 8 },
+        }
+      )
+      .setScrollFactor(0)
+      .setOrigin(0.5);
+
+    // Complete level after delay
+    this.time.delayedCall(4000, () => {
+      gameWin.call(this);
+    });
+  } else {
+    // FIXED: Respawn boss with correct settings for movement and shooting
+    const screenWidth = this.scale.width;
+    const screenHeight = this.scale.height;
+
+    // IMPORTANT: Fixed position - always use the right side of screen
+    const fixedX = screenWidth * 0.8;
+
+    console.log(`Respawning boss at ${fixedX}, ${screenHeight - 120}`);
+
+    // FIXED: Always spawn at safe height with CONSISTENT appearance
+    this.boss = this.physics.add
+      .sprite(fixedX, screenHeight - 120, "enemy") // FIXED: Use enemy sprite consistently
+      .setScale(0.3) // FIXED: Use same scale as original (0.3)
+      .setVisible(true)
+      .setAlpha(1)
+      .setDepth(100);
+
+    // Add a flash effect to make the respawn obvious
+    this.boss.setTintFill(0xffff00); // FIXED: Use yellow tint to match original
+    this.time.delayedCall(100, () => {
+      if (this.boss && this.boss.active) this.boss.clearTint();
+      // Add back the normal tint
+      this.boss.setTint(0xffff00); // FIXED: Maintain yellow tint after flash
+    });
+
+    // Set properties - IMPORTANT: Store scene reference
+    this.boss.health = newHealth;
+    this.boss.direction = -1;
+    this.boss.lastShotTime = this.time.now;
+    this.boss.setCollideWorldBounds(true);
+    this.boss.flipX = true;
+    this.boss.scene = this; // CRITICAL: Explicitly set scene reference
+
+    console.log("Boss properties set:", this.boss);
+
+    // Add collision detection
+    this.physics.add.collider(this.boss, this.platforms);
+    this.physics.add.overlap(this.tennisBalls, this.boss, hitBoss, null, this);
+
+    // FIXED: Store screen dimensions directly on boss object
+    this.boss.screenWidth = screenWidth;
+    this.boss.screenHeight = screenHeight;
+
+    // IMPROVED update function with better debugging
+    this.boss.update = function (time) {
+      console.log("Boss update function called");
+
+      // REMOVED height check - always allow movement
+
+      // Move back and forth
+      this.x += this.direction * 2;
+
+      // Check position and log periodically
+      if (time % 300 === 0) {
+        console.log(
+          `Boss position: ${this.x}, ${this.y}, direction: ${this.direction}`
+        );
+      }
+
+      // Change direction at boundaries
+      if (this.x < this.screenWidth * 0.6 || this.x > this.screenWidth * 0.9) {
+        this.direction *= -1;
+        this.flipX = this.direction > 0;
+        console.log(`Boss changed direction to: ${this.direction}`);
+      }
+
+      // Tennis ball shooting logic with direct scene access
+      const currentTime = this.scene.time.now;
+      const elapsedSinceLastShot = currentTime - (this.lastShotTime || 0);
+
+      if (elapsedSinceLastShot > 3000) {
+        console.log("BOSS SHOOTING NOW");
+
+        // Create tennis ball with fixed scene reference
+        const ball = this.scene.physics.add
+          .sprite(this.x, this.y - 20, "tennisball") // FIXED: Use tennisball consistently
+          .setScale(0.05) // FIXED: Use consistent scale of 0.1
+          .setTint(0xff0000)
+          .setDepth(100);
+
+        // FIXED: Add same rotation animation
+        this.scene.tweens.add({
+          targets: ball,
+          rotation: -Math.PI * 4,
+          duration: 1000,
+          repeat: -1,
+        });
+
+        // FIXED: Add same flashing effect
+        this.scene.tweens.add({
+          targets: ball,
+          alpha: { from: 0.4, to: 1 },
+          duration: 200,
+          yoyo: true,
+          repeat: -1,
+        });
+
+        // FIXED: Use same animation function
+        updateTennisBallAnimation.call(this.scene, ball);
+
+        // Aim at player
+        const dx = this.scene.player.x - this.x;
+        const dy = this.scene.player.y - this.y;
+        const angle = Math.atan2(dy, dx);
+        const speed = 150;
+
+        ball.setVelocity(Math.cos(angle) * speed, Math.sin(angle) * speed);
+
+        // FIXED: Set same physics properties
+        ball.setBounce(0.6);
+        ball.setCollideWorldBounds(true);
+
+        // Add collisions with player
+        this.scene.physics.add.overlap(
+          ball,
+          this.scene.player,
+          (ball, player) => {
+            ball.destroy();
+            if (!this.scene.playerImmune) {
+              hitByBossBall.call(this.scene, player, ball);
+            }
+          },
+          null,
+          this
+        );
+
+        // FIXED: Use same bounce physics instead of destroying on contact
+        this.scene.physics.add.collider(
+          ball,
+          this.scene.platforms,
+          (ball, platform) => {
+            tennisBallBounce.call(this.scene, ball, platform);
+          },
+          null,
+          this
+        );
+
+        // FIXED: Only destroy after reasonable time (let it bounce around)
+        this.scene.time.delayedCall(5000, () => {
+          if (ball && ball.active) {
+            this.scene.tweens.add({
+              targets: ball,
+              alpha: 0,
+              scale: 0.05,
+              duration: 200,
+              onComplete: () => {
+                if (ball && ball.active) {
+                  ball.destroy();
+                }
+              },
+            });
+          }
+        });
+
+        this.lastShotTime = currentTime;
+      }
+    };
+
+    // Make sure updateList exists
+    if (!this.updateList) {
+      this.updateList = [];
+    }
+
+    // Add to update list
+    this.updateList.push(this.boss);
+    console.log(
+      "Boss added to update list. List size:",
+      this.updateList.length
+    );
+
+    // Also create a timer to call update directly as a fallback
+    this.time.addEvent({
+      delay: 100,
+      callback: () => {
+        if (this.boss && this.boss.active) {
+          this.boss.update(this.time.now);
+        }
+      },
+      callbackScope: this,
+      loop: true,
+    });
+
+    // Message to player
+    const messages = ["Good shot!", "One more hit!", "Final blow!"];
+    const messageIndex = Math.max(0, Math.min(2, 3 - newHealth - 1));
+
+    const hitText = this.add
+      .text(this.player.x, this.player.y - 50, messages[messageIndex], {
+        fontSize: "18px",
+        fontFamily: "Arial",
+        fill: "#ffffff",
+        stroke: "#000000",
+        strokeThickness: 3,
+        padding: { x: 8, y: 4 },
+      })
+      .setOrigin(0.5);
+
+    this.tweens.add({
+      targets: hitText,
+      y: hitText.y - 30,
+      alpha: 0,
+      duration: 1000,
+      onComplete: () => hitText.destroy(),
+    });
+  }
+}
+
+// Handle player hit by boss ball with immunity check
+function hitByBossBall(player, ball) {
+  // FIX: Check if player is immune
+  if (this.playerImmune) {
+    ball.destroy();
+    return;
+  }
+
+  // Remove the ball
+  ball.destroy();
+
+  // Kill the player
+  this.physics.pause();
+  player.setTint(0xff0000);
+
+  // Create full screen black overlay
+  const overlay = this.add
+    .rectangle(0, 0, this.scale.width, this.scale.height, 0x000000, 0.8)
+    .setOrigin(0, 0)
+    .setScrollFactor(0)
+    .setDepth(999);
+
+  // Show death message with proper text about HR rules
+  const gameOverText = this.add
+    .text(
+      this.scale.width / 2,
+      this.scale.height / 2 - 100,
+      "Game Over\nKilling applicants is against HR rules!\nPlease be mindful",
+      {
+        fontSize: "18px",
+        fill: "#ff0000",
+        align: "center",
+        padding: 10,
+      }
+    )
+    .setScrollFactor(0)
+    .setAlign("center")
+    .setOrigin(0.5, 0)
+    .setDepth(1000);
+
+  // Add restart button instead of automatic restart
+  const restartButton = this.add
+    .text(
+      this.scale.width / 2,
+      this.scale.height / 2 + 80,
+      "[ Restart Level ]",
+      {
+        fontSize: "20px",
+        fill: "#ffffff",
+        backgroundColor: "#880000",
+        padding: { x: 15, y: 10 },
+      }
+    )
+    .setScrollFactor(0)
+    .setAlign("center")
+    .setOrigin(0.5, 0.5)
+    .setDepth(1000)
+    .setInteractive({ useHandCursor: true });
+
+  // Add hover effect to button
+  restartButton.on("pointerover", () => {
+    restartButton.setStyle({ fill: "#ffff00" });
+  });
+
+  restartButton.on("pointerout", () => {
+    restartButton.setStyle({ fill: "#ffffff" });
+  });
+
+  // Add click handler to restart
+  restartButton.on("pointerdown", () => {
+    this.scene.restart();
+  });
+
+  // REMOVED: Automatic restart timer
+}
+
+// Update the showBossDialogue function to create a speech bubble over Johann
+function showBossDialogue(text) {
+  if (!this.boss || !this.boss.active) {
+    console.log("Boss not available for dialogue");
+    return;
+  }
+
+  console.log("Showing boss dialogue:", text);
+
+  // Create speech bubble directly using our helper function
+  createSpeechBubble.call(this, this.boss.x, this.boss.y - 80, text, 5000);
+}
+
+// Helper function to create speech bubbles at specific positions
+function createSpeechBubble(x, y, text, duration = 3000) {
+  // Create speech bubble container
+  const bubbleContainer = this.add.container(0, 0);
+  bubbleContainer.setDepth(1000); // Ensure it's on top
+
+  const bubblePadding = 10;
+  const bubbleWidth = Math.min(text.length * 7 + bubblePadding * 2, 220);
+  const bubbleHeight = 40 + bubblePadding * 2;
+
+  // Create speech bubble background
+  const bubble = this.add.graphics();
+  bubble.fillStyle(0xffffff, 0.9);
+  bubble.fillRoundedRect(0, 0, bubbleWidth, bubbleHeight, 10);
+  bubble.lineStyle(3, 0x000000, 1);
+  bubble.strokeRoundedRect(0, 0, bubbleWidth, bubbleHeight, 10);
+
+  // Create speech bubble tail
+  const tail = this.add.graphics();
+  tail.fillStyle(0xffffff, 0.9);
+  tail.lineStyle(3, 0x000000, 1);
+  tail.beginPath();
+  tail.moveTo(bubbleWidth / 2 - 10, bubbleHeight);
+  tail.lineTo(bubbleWidth / 2, bubbleHeight + 15);
+  tail.lineTo(bubbleWidth / 2 + 10, bubbleHeight);
+  tail.closePath();
+  tail.fillPath();
+  tail.strokePath();
+
+  // Create text
+  const bubbleText = this.add
+    .text(bubbleWidth / 2, bubbleHeight / 2, text, {
+      fontSize: "14px",
+      fontFamily: "Arial",
+      color: "#000000",
+      align: "center",
+      wordWrap: { width: bubbleWidth - bubblePadding * 2 },
+    })
+    .setOrigin(0.5, 0.5);
+
+  // Add elements to container
+  bubbleContainer.add(bubble);
+  bubbleContainer.add(tail);
+  bubbleContainer.add(bubbleText);
+
+  // Position bubble at specified coordinates
+  bubbleContainer.x = x - bubbleWidth / 2;
+  bubbleContainer.y = y - bubbleHeight - 20;
+
+  // Remove bubble after duration
+  this.time.delayedCall(duration, () => {
+    // Fade out animation
+    this.tweens.add({
+      targets: bubbleContainer,
+      alpha: 0,
+      y: bubbleContainer.y - 20,
+      duration: 300,
+      onComplete: () => {
+        bubbleContainer.destroy();
+      },
+    });
+  });
+
+  return bubbleContainer;
+}
 // Add this function right after the createLevel1 function, around line 450
 
 // After the platformPositions and loop to create platforms in your createLevel1 function
@@ -1014,7 +1974,61 @@ function addEnemies() {
     );
   }
 }
-
+/**Level 2 skills */
+const level2Skills = [
+  {
+    icon: "🎤",
+    name: "Public Speaking",
+    message: "I'm great at presentations!",
+  },
+  {
+    icon: "🔄",
+    name: "Digital Consultancy",
+    message: "Let me optimize your workflows!",
+  },
+  {
+    icon: "🤖",
+    name: "AI Business Implementation",
+    message: "AI solutions for business problems",
+  },
+  {
+    icon: "👥",
+    name: "Team Collaboration",
+    message: "I work well with others",
+  },
+  {
+    icon: "♟️",
+    name: "Strategic Thinking",
+    message: "Always thinking three steps ahead",
+  },
+  {
+    icon: "☁️",
+    name: "Cloud & Security",
+    message: "Your data is safe with me",
+  },
+  { icon: "💸", name: "Finance", message: "I understand the bottom line" },
+  {
+    icon: "⚡",
+    name: "Fast Learner",
+    message: "Quick to adapt to new challenges",
+  },
+  {
+    icon: "🚀",
+    name: "Initiative",
+    message: "I don't wait for instructions",
+  },
+  {
+    icon: "🗃️",
+    name: "IT Project Coordinator",
+    message: "Keeping projects on track",
+  },
+  {
+    icon: "🖧",
+    name: "ICT Infrastructure",
+    message: "Building solid foundations",
+  },
+  { icon: "🌍", name: "Languages", message: "I speak six languages!" },
+];
 // Replace the existing createLevel2 function with this complete implementation
 function createLevel2(bgRepeat) {
   // 1. First create the groups
@@ -1076,60 +2090,6 @@ function createLevel2(bgRepeat) {
 
   // Create skill text objects - 12 skills for Level 2
   this.skillTexts = [];
-  const level2Skills = [
-    {
-      icon: "🎤",
-      name: "Public Speaking",
-      message: "I'm great at presentations!",
-    },
-    {
-      icon: "🔄",
-      name: "Digital Consultancy",
-      message: "Let me optimize your workflows!",
-    },
-    {
-      icon: "🤖",
-      name: "AI Business Implementation",
-      message: "AI solutions for business problems",
-    },
-    {
-      icon: "👥",
-      name: "Team Collaboration",
-      message: "I work well with others",
-    },
-    {
-      icon: "♟️",
-      name: "Strategic Thinking",
-      message: "Always thinking three steps ahead",
-    },
-    {
-      icon: "☁️",
-      name: "Cloud & Security",
-      message: "Your data is safe with me",
-    },
-    { icon: "💸", name: "Finance", message: "I understand the bottom line" },
-    {
-      icon: "⚡",
-      name: "Fast Learner",
-      message: "Quick to adapt to new challenges",
-    },
-    {
-      icon: "🚀",
-      name: "Initiative",
-      message: "I don't wait for instructions",
-    },
-    {
-      icon: "🗃️",
-      name: "IT Project Coordinator",
-      message: "Keeping projects on track",
-    },
-    {
-      icon: "🖧",
-      name: "ICT Infrastructure",
-      message: "Building solid foundations",
-    },
-    { icon: "🌍", name: "Languages", message: "I speak six languages!" },
-  ];
 
   for (let i = 0; i < level2Skills.length; i++) {
     const skillText = this.add
@@ -1209,7 +2169,7 @@ function createLevel2(bgRepeat) {
     cloud.setScale(0.1); // Adjust scale as needed
     cloud.refreshBody();
     cloud.setData("touched", false);
-
+    cloud.setData("skillIndex", i); // Store index for skill item
     // Add a subtle floating animation to clouds
     this.tweens.add({
       targets: cloud,
@@ -1257,7 +2217,13 @@ function createLevel2(bgRepeat) {
   bossCloud.refreshBody();
 
   // 9. Add collision detection
-  this.physics.add.collider(this.player, this.platforms, hitCloud, null, this);
+  this.physics.add.collider(
+    this.player,
+    this.platforms,
+    playerHitCloud,
+    null,
+    this
+  );
 
   // Set up camera to follow player
   this.cameras.main.setBounds(
@@ -1285,8 +2251,9 @@ function hitCloud(player, cloud) {
   // Make cloud semi-transparent
   this.tweens.add({
     targets: cloud,
-    alpha: 0.5,
+    alpha: 0.3,
     duration: 500,
+    ease: "Power2",
   });
 
   // Retrieve the skill item associated with this cloud
@@ -1668,7 +2635,7 @@ function collectItem(player, item) {
   });
 
   // Emit particles once
-  particles.explode(10);
+  particles.explode(2);
 
   // Destroy the particles after animation completes
   this.time.delayedCall(800, () => {
@@ -1698,8 +2665,8 @@ function collectItem(player, item) {
 
   // Update item count
   this.itemCount++;
-  this.skillsCounter.setText(`Items: ${this.itemCount}/10`);
-  this.smallCounter.setText(`Items: ${this.itemCount}/10`);
+  this.skillsCounter.setText(`Items: ${this.itemCount}/12`);
+  this.smallCounter.setText(`Items: ${this.itemCount}/12`);
 
   // Update skill panel
   const skillTextIndex = itemType === "tech" ? itemIndex : itemIndex;
@@ -1729,30 +2696,70 @@ function collectItem(player, item) {
 
 // Function to handle bridge animation
 function lowerBridge() {
+  if (!this.bridgeGraphics) {
+    // Create a visual placeholder for the bridge (initially raised)
+    this.bridgeGraphics = this.add.graphics();
+    this.bridgeGraphics.fillStyle(0x8b4513); // Brown wood color
+    this.bridgeGraphics.fillRect(-this.gapWidth / 2, -10, this.gapWidth, 20);
+    this.bridgeGraphics.lineStyle(2, 0x663300, 1);
+    this.bridgeGraphics.strokeRect(-this.gapWidth / 2, -10, this.gapWidth, 20);
+    this.bridgeGraphics.setPosition(this.bridgeX, this.bridgeY - 200); // Start raised
+
+    // Mark bridge as created
+    this.bridgeCreated = true;
+  }
   // Play bridge lowering animation
+  if (this.riverCollider) {
+    this.riverCollider.active = false;
+  }
+  // Play bridge lowering animation with corrected ending position
   this.tweens.add({
     targets: this.bridgeGraphics,
-    y: this.scale.height - 100,
+    y: this.scale.height - 30, // Position exactly at ground level
     duration: 1500,
     ease: "Bounce.easeOut",
     onComplete: () => {
       // Create actual collision bridge after animation
-      const bridgeX = this.bridgeGraphics.x;
-      const bridgeY = this.scale.height - 100;
+      const bridgeX = this.bridgeX;
+      const bridgeY = this.scale.height - 30;
+
+      // Check if bridge physics group exists
+      if (!this.bridge) {
+        this.bridge = this.physics.add.staticGroup();
+      }
+
       const bridge = this.bridge.create(bridgeX, bridgeY, null);
       bridge.setDisplaySize(300, 20);
       bridge.setVisible(false); // Invisible but collidable
       bridge.refreshBody();
 
-      // Add collision with bridge
-      this.physics.add.collider(this.player, this.bridge);
+      // Create a trigger zone right after the bridge
+      const bridgeEndX = this.bridgeX + this.gapWidth / 2 + 50; // 50px after bridge end
+      const triggerZone = this.add.zone(
+        bridgeEndX,
+        this.scale.height - 50,
+        30, // narrow width so it triggers just as player crosses
+        100 // tall enough to catch the player
+      );
+      this.physics.world.enable(triggerZone);
+      triggerZone.body.setAllowGravity(false);
+      triggerZone.body.immovable = true;
+
+      // Add overlap with trigger zone
+      this.physics.add.overlap(
+        this.player,
+        triggerZone,
+        triggerFinalDialogue, // Use the existing dialogue function
+        null,
+        this
+      );
 
       // Show "Bridge complete" message
       const bridgeText = this.add
         .text(
           this.scale.width / 2,
           120,
-          "Bridge complete! Make your way to Commerzbank!",
+          "Bridge complete! Cross to meet Johann!",
           {
             fontSize: "20px",
             fill: "#ffffff",
@@ -1782,11 +2789,11 @@ function showLevelStartDialogue() {
     this.player.x,
     this.player.y - 60,
     "Alright, Level 3. Time to get a bit personal. I've always been curious about how tech shapes the world—and how finance can steer that change.",
-    6000
+    3000
   );
 
   // Show second part after delay
-  this.time.delayedCall(6000, () => {
+  this.time.delayedCall(2000, () => {
     const startText2 = createSpeechBubble.call(
       this,
       this.player.x,
@@ -2314,6 +3321,13 @@ this.boss.update = function (time) {
         this.glow.y = this.y;
       }
     };
+    // Add safe cleanup function for when ball is destroyed
+    ball.on("destroy", () => {
+      if (ball.glow) {
+        ball.glow.destroy();
+        ball.glow = null;
+      }
+    });
 
     // Add ball to update list
     if (this.scene.updateList && !this.scene.updateList.includes(ball)) {
@@ -2577,6 +3591,8 @@ function createLevel3(bgRepeat) {
 
   // 2. Set up the ground (invisible, just for preventing falling)
   const groundHeight = 40; // Match Level 1's ground height
+  const groundTop = this.scale.height - groundHeight;
+
   const ground = this.platforms.create(
     (bgRepeat * this.scale.width) / 2,
     this.scale.height - groundHeight / 2, // Position at bottom of visible area
@@ -2739,7 +3755,7 @@ function createLevel3(bgRepeat) {
 
   // 7. Create cloud platforms with skills
   const cloudPositions = [
-    { x: 200, y: this.scale.height - 100 },
+    { x: 250, y: this.scale.height - 100 },
     { x: 500, y: this.scale.height - 210 },
     { x: 800, y: this.scale.height - 190 },
     { x: 1100, y: this.scale.height - 300 },
@@ -2753,36 +3769,47 @@ function createLevel3(bgRepeat) {
     { x: 3500, y: this.scale.height - 300 },
   ];
 
-  // Create clouds and add skills
+  // Create visible skill items on platforms
   for (let i = 0; i < cloudPositions.length; i++) {
     const pos = cloudPositions[i];
 
-    // Create cloud platform
-    const cloud = this.platforms.create(pos.x, pos.y, "cloud");
-    cloud.setScale(0.1); // Adjust scale as needed
-    cloud.refreshBody();
-    cloud.setData("touched", false);
+    // Create platform using customBlock
+    const platform = this.platforms.create(pos.x, pos.y, "customBlock");
+    platform.setScale(3); // Adjust scale as needed
+    platform.refreshBody();
+    platform.setDepth(10);
+    // Determine skill type (tech or finance)
+    const isFinance = i >= 6; // First 6 are tech, next 6 are finance
+    const itemIndex = isFinance ? i - 6 : i;
+    const skillType = isFinance ? "finance" : "tech";
 
-    // Add a subtle floating animation to clouds
+    // Create visible skill item using specific asset
+    const assetKey = `${skillType}${itemIndex + 1}`; // tech1, tech2, finance1, etc.
+    const skill = this.physics.add.staticSprite(pos.x, pos.y - 100, assetKey);
+    skill.setDepth(15);
+    // If asset doesn't exist, use fallback
+    if (!this.textures.exists(assetKey)) {
+      skill.setTexture("tech1");
+      skill.setTint(isFinance ? 0x00ff00 : 0x00ffff);
+    }
+
+    skill.setScale(1);
+    skill.setData("index", i);
+    skill.setData("type", skillType);
+    skill.setData("collected", false);
+
+    // Add floating animation
     this.tweens.add({
-      targets: cloud,
-      y: pos.y - 15,
-      duration: 2000 + Math.random() * 1000, // Randomize duration
+      targets: skill,
+      y: skill.y - 5,
+      duration: 1500,
       yoyo: true,
       repeat: -1,
       ease: "Sine.easeInOut",
     });
 
-    // Create skill item (invisible at first)
-    const skill = this.skillItems.create(pos.x, pos.y - 30, "mysteryBlock");
-    skill.setScale(0);
-    skill.setVisible(false);
-    skill.setData("skillIndex", i);
-    skill.setData("revealed", false);
-
-    // Store reference to cloud and skill
-    cloud.setData("skillItem", skill);
-    skill.setData("cloud", cloud);
+    // Add collection overlap
+    this.physics.add.overlap(this.player, skill, collectSkill, null, this);
   }
 
   // 8. Add Johann (boss) in the top right corner - REMOVED FOR LEVEL 3
@@ -2838,7 +3865,7 @@ function createLevel3(bgRepeat) {
     .setOrigin(0, 0);
 
   // CRITICAL FIX: Make sure player is positioned correctly at start of level
-  this.player.x = 100; // Start position
+  this.player.x = 150; // Start position
   this.player.y = this.scale.height - 150; // Above ground
 
   // CRITICAL FIX: Make sure physics are working properly
@@ -2852,7 +3879,7 @@ function createLevel3(bgRepeat) {
   // Set up bridge and manager properties
   this.bridgeCreated = false;
   this.bridgeX = bgRepeat * this.scale.width - 600; // Position bridge near end of level
-  this.bridgeY = this.scale.height - 100;
+  this.bridgeY = this.scale.height;
   this.gapWidth = 300; // Width of the gap to bridge
 
   // Create the gap/river
@@ -2860,17 +3887,17 @@ function createLevel3(bgRepeat) {
   riverGraphics.fillStyle(0x0077be); // Water blue
   riverGraphics.fillRect(
     this.bridgeX - this.gapWidth / 2,
-    this.scale.height - 100,
+    groundTop, // Position at the top of the ground
     this.gapWidth,
-    100
+    groundHeight // Match the ground height
   );
   riverGraphics.setDepth(1);
 
   // Add Johann as doorman on the other side of the bridge
   this.johann = this.physics.add
     .sprite(
-      this.bridgeX + this.gapWidth / 2 + 100, // On other side of bridge
-      this.scale.height - 150,
+      this.bridgeX + this.gapWidth / 2 + 300, // On other side of bridge
+      this.scale.height - 50,
       "enemy" // Use the existing Johann sprite
     )
     .setScale(0.2)
@@ -2889,7 +3916,29 @@ function createLevel3(bgRepeat) {
     this
   );
 
-  // Rest of existing code...
+  // Create deadly collision area for the river
+  this.deathZone = this.add.zone(
+    this.bridgeX,
+    this.scale.height - 50,
+    this.gapWidth,
+    100
+  );
+  if (this.deathZone) {
+    this.deathZone.y = groundTop + groundHeight / 2;
+    this.physics.world.enable(this.deathZone);
+  }
+  this.physics.world.enable(this.deathZone);
+  this.deathZone.body.setAllowGravity(false);
+  this.deathZone.body.immovable = true;
+
+  // Add collision with the death zone (only active until bridge is created)
+  this.riverCollider = this.physics.add.overlap(
+    this.player,
+    this.deathZone,
+    riverDeath,
+    null,
+    this
+  );
 }
 
 // Function to create bridge when all skills are collected
@@ -3474,4 +4523,278 @@ function showLevel3EndDialogue() {
       });
     });
   });
+}
+
+// Function to handle player falling into river
+function riverDeath(player, river) {
+  // Don't trigger if bridge is already created
+  if (this.bridgeCreated) {
+    // Disable collision if bridge exists
+    this.riverCollider.active = false;
+    return;
+  }
+
+  // Stop player movement
+  this.physics.pause();
+  player.setVelocity(0, 0);
+  player.setTint(0x0000ff); // Blue tint for drowning
+
+  // Create ripple/splash effect
+  const splash = this.add.particles(player.x, this.scale.height - 100, "coin", {
+    speed: { min: 20, max: 70 },
+    scale: { start: 0.05, end: 0 },
+    lifespan: 800,
+    tint: 0x0077be,
+    quantity: 15,
+    angle: { min: 240, max: 300 },
+    emitting: false,
+  });
+
+  splash.explode(15);
+
+  // Create full screen overlay
+  const overlay = this.add
+    .rectangle(0, 0, this.scale.width, this.scale.height, 0x000000, 0.8)
+    .setOrigin(0, 0)
+    .setScrollFactor(0)
+    .setDepth(999);
+
+  // Show custom message
+  const gameOverText = this.add
+    .text(
+      this.scale.width / 2,
+      this.scale.height / 2 - 100,
+      "GAME OVER\n\nYou can't enter a company without an interview!\nWait for the bridge to lower.",
+      {
+        fontSize: "18px",
+        fill: "#ff0000",
+        align: "center",
+        padding: 10,
+      }
+    )
+    .setScrollFactor(0)
+    .setAlign("center")
+    .setOrigin(0.5, 0)
+    .setDepth(1000);
+
+  // Add restart button
+  const restartButton = this.add
+    .text(this.scale.width / 2, this.scale.height / 2 + 80, "[ Try Again ]", {
+      fontSize: "20px",
+      fill: "#ffffff",
+      backgroundColor: "#880000",
+      padding: { x: 15, y: 10 },
+    })
+    .setScrollFactor(0)
+    .setAlign("center")
+    .setOrigin(0.5, 0.5)
+    .setDepth(1000)
+    .setInteractive({ useHandCursor: true });
+
+  // Button hover effects
+  restartButton.on("pointerover", () => {
+    restartButton.setStyle({ fill: "#ffff00" });
+  });
+
+  restartButton.on("pointerout", () => {
+    restartButton.setStyle({ fill: "#ffffff" });
+  });
+
+  // Restart on click
+  restartButton.on("pointerdown", () => {
+    this.scene.restart();
+  });
+}
+
+// Add this function to handle skill collection in Level 3
+
+function collectSkill(player, skill) {
+  // Skip if already collected
+  if (skill.getData("collected")) {
+    return;
+  }
+
+  // Mark as collected
+  skill.setData("collected", true);
+
+  // Get item properties
+  const itemIndex = skill.getData("index");
+  const itemType = skill.getData("type");
+
+  // Create collection particle effect
+  const particles = this.add.particles(skill.x, skill.y, "coin", {
+    speed: { min: 50, max: 150 },
+    scale: { start: 0.1, end: 0.01 },
+    lifespan: 800,
+    quantity: 15,
+    blendMode: "ADD",
+    tint: itemType === "tech" ? 0x00ffff : 0x00ff00,
+    emitting: false,
+  });
+
+  // Explode particles
+  particles.explode(15);
+
+  // Destroy particles after animation completes
+  this.time.delayedCall(800, () => particles.destroy());
+
+  // Hide the item with animation
+  this.tweens.add({
+    targets: skill,
+    alpha: 0,
+    scale: 1.2,
+    duration: 500,
+    onComplete: () => skill.destroy(),
+  });
+
+  // Hide the glow
+  const glow = skill.getData("glow");
+  if (glow) {
+    this.tweens.add({
+      targets: glow,
+      alpha: 0,
+      scale: 1.5,
+      duration: 500,
+      onComplete: () => glow.destroy(),
+    });
+  }
+
+  // Update item count
+  this.itemCount = (this.itemCount || 0) + 1;
+  this.skillsCounter.setText(`Items: ${this.itemCount}/12`);
+  this.smallCounter.setText(`Items: ${this.itemCount}/12`);
+
+  // Update skill panel
+  if (itemIndex < this.skillTexts.length) {
+    const skillText = this.skillTexts[itemIndex];
+
+    // Get emoji icon for this skill type and index
+    const techIcons = ["📊", "📡", "🪙", "🤖", "💻"];
+    const financeIcons = ["🔏", "💳", "📱", "💰", "📈"];
+    const iconToShow =
+      itemType === "tech"
+        ? techIcons[itemIndex % techIcons.length]
+        : financeIcons[(itemIndex - 6) % financeIcons.length];
+
+    // Update the text
+    skillText.setText(`• ${iconToShow}`);
+    skillText.setFill(itemType === "tech" ? "#00FFFF" : "#00FF00");
+    skillText.setAlpha(1);
+
+    // Animate skill text appearance
+    this.tweens.add({
+      targets: skillText,
+      scaleX: { from: 0.5, to: 1 },
+      scaleY: { from: 0.5, to: 1 },
+      duration: 300,
+      ease: "Back.easeOut",
+    });
+  }
+
+  // Check if all items collected to lower bridge
+  if (this.itemCount >= 12) {
+    // Delay bridge animation slightly
+    this.time.delayedCall(1000, () => {
+      lowerBridge.call(this);
+    });
+  }
+}
+
+// In the playerHitCloud function (or whatever handles cloud collision)
+function playerHitCloud(player, cloud) {
+  // Skip if cloud already activated
+  if (cloud.getData("activated")) {
+    return;
+  }
+  if (cloud.getData("isGround") || cloud.getData("activated")) {
+    return;
+  }
+
+  // Mark cloud as activated
+  cloud.setData("activated", true);
+
+  // Get the skill index from cloud's data or its array position
+  const skillIndex = cloud.getData("skillIndex");
+  console.log("Skill index:", skillIndex);
+  // 1. Make the cloud transparent
+  this.tweens.add({
+    targets: cloud,
+    alpha: 0.3,
+    duration: 500,
+    ease: "Power2",
+  });
+
+  // 2. Reveal the skill in the panel
+  if (skillIndex < this.skillTexts.length) {
+    const skillText = this.skillTexts[skillIndex];
+
+    // Get skill data from level2Skills array
+    const skill = level2Skills[skillIndex];
+
+    // Set the text with icon
+    skillText.setText(`${skill.icon} ${skill.name}`);
+    skillText.setFill("#FFFFFF");
+
+    // Make it visible with animation
+    skillText.setAlpha(1);
+    this.tweens.add({
+      targets: skillText,
+      scaleX: { from: 0.5, to: 1 },
+      scaleY: { from: 0.5, to: 1 },
+      duration: 300,
+      ease: "Back.easeOut",
+    });
+  }
+
+  // 3. Create the falling skill symbol effect
+  const symbol = this.add.text(
+    cloud.x,
+    cloud.y,
+    level2Skills[skillIndex].icon,
+    { fontSize: "32px" }
+  );
+
+  // Animate the symbol falling from the cloud
+  this.tweens.add({
+    targets: symbol,
+    y: cloud.y + 100,
+    alpha: { from: 1, to: 0 },
+    duration: 1500,
+    ease: "Bounce.easeOut",
+    onComplete: () => symbol.destroy(),
+  });
+
+  // 4. Update skill counter
+  this.skillCount = (this.skillCount || 0) + 1;
+  this.skillsCounter.setText(
+    `Skills: ${this.skillCount}/${level2Skills.length}`
+  );
+  this.smallCounter.setText(
+    `Skills: ${this.skillCount}/${level2Skills.length}`
+  );
+
+  // 6. Check if all skills collected
+  if (this.skillCount >= level2Skills.length) {
+    this.time.delayedCall(1000, () => {
+      const completionText = this.add
+        .text(
+          this.scale.width / 2,
+          this.scale.height / 2 - 100,
+          "All skills collected!",
+          {
+            fontSize: "24px",
+            fill: "#ffffff",
+            stroke: "#000000",
+            strokeThickness: 4,
+          }
+        )
+        .setOrigin(0.5)
+        .setScrollFactor(0);
+
+      this.time.delayedCall(2000, () => {
+        // Progress to next section or level
+        levelComplete.call(this);
+      });
+    });
+  }
 }
