@@ -4164,7 +4164,7 @@ function showLevel3StartDialogue() {
 
 // Function to create speech bubbles for dialogue
 function createSpeechBubble(x, y, text, duration = 3000) {
-  // Calculate text width for proper bubble sizing
+  // Calculate text width and height for proper bubble sizing
   const textObj = this.make.text({
     x: 0,
     y: 0,
@@ -4178,41 +4178,60 @@ function createSpeechBubble(x, y, text, duration = 3000) {
   const textHeight = textObj.height;
   textObj.destroy(); // We just needed this to measure
 
-  // Create bubble graphics - slightly larger than text
-  const bubble = this.add.graphics({ x: x - 110, y: y - 55 });
+  // Calculate total bubble height and width
+  const bubblePadding = 10;
+  const bubbleWidth = Math.min(textWidth + bubblePadding * 2, 220);
+  const bubbleHeight = textHeight + bubblePadding * 2;
+
+  // Position the bubble above the character with proper spacing
+  const bubbleX = x - bubbleWidth / 2;
+  const bubbleY = y - bubbleHeight - 20; // Position above character
+
+  // Create bubble graphics
+  const bubble = this.add.graphics();
+  bubble.x = bubbleX;
+  bubble.y = bubbleY;
 
   // Bubble background
   bubble.fillStyle(0xffffff, 0.8);
-  bubble.fillRoundedRect(0, 0, textWidth + 20, textHeight + 20, 10);
+  bubble.fillRoundedRect(0, 0, bubbleWidth, bubbleHeight, 10);
 
   // Bubble border
   bubble.lineStyle(2, 0x000000, 1);
-  bubble.strokeRoundedRect(0, 0, textWidth + 20, textHeight + 20, 10);
+  bubble.strokeRoundedRect(0, 0, bubbleWidth, bubbleHeight, 10);
 
   // Add text inside bubble
-  const bubbleText = this.add.text(x - 100, y - 45, text, {
-    fontSize: "16px",
-    fill: "#000000",
-    wordWrap: { width: 200, useAdvancedWrap: true },
-  });
+  const bubbleText = this.add.text(
+    bubbleX + bubblePadding,
+    bubbleY + bubblePadding,
+    text,
+    {
+      fontSize: "16px",
+      fill: "#000000",
+      wordWrap: { width: 200, useAdvancedWrap: true },
+    }
+  );
 
-  // Group bubble and text for easy manipulation
-  const container = this.add.container(0, 0, [bubble, bubbleText]);
-
-  // Add tail/pointer to the bubble
-  const tail = this.add.graphics({ x: x, y: y });
+  // Create the tail/pointer correctly positioned at bottom of bubble
+  const tail = this.add.graphics();
   tail.fillStyle(0xffffff, 0.8);
   tail.lineStyle(2, 0x000000, 1);
+
+  // Draw pointing DOWN triangle at the bottom center of the bubble
+  const tailX = bubbleX + bubbleWidth / 2;
+  const tailY = bubbleY + bubbleHeight; // Position at bottom of bubble
+
   tail.beginPath();
-  tail.moveTo(-20, -30);
-  tail.lineTo(-10, -15);
-  tail.lineTo(-30, -15);
+  tail.moveTo(tailX - 10, tailY); // Left point of triangle
+  tail.lineTo(tailX + 10, tailY); // Right point of triangle
+  tail.lineTo(tailX, tailY + 15); // Bottom point (pointing down)
   tail.closePath();
   tail.fillPath();
   tail.strokePath();
 
-  // Include tail in container
-  container.add(tail);
+  // Group everything for easy manipulation
+  const container = this.add.container(0, 0, [bubble, bubbleText, tail]);
+  container.setDepth(1000); // Make sure it's on top of everything
 
   // Auto-destroy after duration
   if (duration > 0) {
