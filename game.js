@@ -594,13 +594,13 @@ function tennisBallBounce(ball, platform) {
   if (ball.body.blocked.down || ball.body.touching.down) {
     // Calculate bounce velocity based on impact (with damping)
     const impactVelocity = Math.abs(currentVelocityY);
-    const bounceVelocity = Math.min(impactVelocity * 0.6, 150);
+    const bounceVelocity = Math.min(impactVelocity * 0.9, 300);
 
     // Apply smaller upward velocity with slight randomness
-    ball.setVelocityY(-bounceVelocity + (Math.random() * 20 - 10));
+    ball.setVelocityY(-bounceVelocity + (Math.random() * 30 - 10));
 
     // Create bounce effect (only for harder impacts)
-    if (impactVelocity > 100) {
+    if (impactVelocity > 200) {
       const bounceEffect = this.add.circle(
         ball.x,
         ball.y + 5,
@@ -1546,7 +1546,21 @@ function hitBoss(ball, boss) {
   // Check if boss is defeated
   if (newHealth <= 0) {
     console.log("BOSS DEFEATED!");
+    if (this.tennisBalls) {
+      this.tennisBalls.getChildren().forEach((ball) => {
+        // Check if this is a boss ball (red tint)
+        if (ball.tintTopLeft === 0xff0000) {
+          // Safely remove any glow effects first
+          if (ball.glow && ball.glow.active) {
+            ball.glow.destroy();
+            ball.glow = null;
+          }
 
+          // Destroy the ball
+          ball.destroy();
+        }
+      });
+    }
     // Victory sequence
     this.physics.pause();
     const victoryText = this.add
@@ -1711,21 +1725,43 @@ function hitBoss(ball, boss) {
         );
 
         // FIXED: Only destroy after reasonable time (let it bounce around)
-        this.scene.time.delayedCall(5000, () => {
-          if (ball && ball.active) {
-            this.scene.tweens.add({
-              targets: ball,
-              alpha: 0,
-              scale: 0.05,
-              duration: 200,
-              onComplete: () => {
+        const sceneRef = this.scene;
+
+        if (sceneRef && sceneRef.time) {
+          sceneRef.time.delayedCall(5000, () => {
+            // Check if ball AND scene still exist before tweening
+            if (ball && ball.active && sceneRef && sceneRef.tweens) {
+              try {
+                sceneRef.tweens.add({
+                  targets: ball,
+                  alpha: 0,
+                  scale: 0.05,
+                  duration: 200,
+                  onComplete: () => {
+                    if (ball && ball.active) {
+                      ball.destroy();
+
+                      // Also clean up any associated glow effect
+                      if (ball.glow && ball.glow.active) {
+                        ball.glow.destroy();
+                        ball.glow = null;
+                      }
+                    }
+                  },
+                });
+              } catch (e) {
+                // Fallback destruction if tweening fails
+                console.error("Error during ball fadeout:", e);
                 if (ball && ball.active) {
                   ball.destroy();
                 }
-              },
-            });
-          }
-        });
+              }
+            } else if (ball && ball.active) {
+              // Direct destruction if scene no longer valid
+              ball.destroy();
+            }
+          });
+        }
 
         this.lastShotTime = currentTime;
       }
@@ -2065,9 +2101,9 @@ function createLevel2(bgRepeat) {
   // 5. Create skills panel inside game canvas (same as level 1)
   this.skillsPanel = this.add.graphics();
   this.skillsPanel.fillStyle(0x000000, 0.8);
-  this.skillsPanel.fillRect(this.scale.width - 220, 20, 200, 260);
+  this.skillsPanel.fillRect(this.scale.width - 220, 20, 200, 360);
   this.skillsPanel.lineStyle(2, 0xffd700, 1);
-  this.skillsPanel.strokeRect(this.scale.width - 220, 20, 200, 260);
+  this.skillsPanel.strokeRect(this.scale.width - 220, 20, 200, 360);
   this.skillsPanel.setScrollFactor(0);
 
   // Title
@@ -2081,7 +2117,7 @@ function createLevel2(bgRepeat) {
 
   // Skills counter
   this.skillsCounter = this.add
-    .text(this.scale.width - 190, 260, "Skills: 0/12", {
+    .text(this.scale.width - 190, 350, "Skills: 0/12", {
       fontSize: "16px",
       fill: "#FFD700",
       fontWeight: "bold",
@@ -3322,12 +3358,47 @@ this.boss.update = function (time) {
       }
     };
     // Add safe cleanup function for when ball is destroyed
-    ball.on("destroy", () => {
-      if (ball.glow) {
-        ball.glow.destroy();
-        ball.glow = null;
-      }
-    });
+    // Replace with this more robust version:
+    ball.on(
+      "destroy",
+      function () {
+        try {
+          // Store scene reference explicitly
+          const currentScene = this.scene;
+
+          if (ball.glow && ball.glow.active) {
+            // Check if the scene is still valid before using tweens
+            if (
+              currentScene &&
+              currentScene.tweens &&
+              currentScene.tweens.add
+            ) {
+              // Fade out glow instead of immediate destruction
+              currentScene.tweens.add({
+                targets: ball.glow,
+                alpha: 0,
+                duration: 100,
+                onComplete: () => {
+                  if (ball.glow && ball.glow.active) {
+                    ball.glow.destroy();
+                  }
+                  ball.glow = null;
+                },
+              });
+            } else {
+              // Direct destruction if tweens not available
+              if (ball.glow && ball.glow.active) {
+                ball.glow.destroy();
+              }
+              ball.glow = null;
+            }
+          }
+        } catch (e) {
+          console.log("Error cleaning up ball:", e);
+        }
+      },
+      ball
+    );
 
     // Add ball to update list
     if (this.scene.updateList && !this.scene.updateList.includes(ball)) {
@@ -3620,9 +3691,9 @@ function createLevel3(bgRepeat) {
   // 5. Create skills panel inside game canvas (same as level 1)
   this.skillsPanel = this.add.graphics();
   this.skillsPanel.fillStyle(0x000000, 0.8);
-  this.skillsPanel.fillRect(this.scale.width - 220, 20, 200, 260);
+  this.skillsPanel.fillRect(this.scale.width - 220, 20, 200, 360);
   this.skillsPanel.lineStyle(2, 0xffd700, 1);
-  this.skillsPanel.strokeRect(this.scale.width - 220, 20, 200, 260);
+  this.skillsPanel.strokeRect(this.scale.width - 220, 20, 200, 360);
   this.skillsPanel.setScrollFactor(0);
 
   // Title
@@ -3636,7 +3707,7 @@ function createLevel3(bgRepeat) {
 
   // Skills counter
   this.skillsCounter = this.add
-    .text(this.scale.width - 190, 260, "Skills: 0/12", {
+    .text(this.scale.width - 190, 350, "Skills: 0/12", {
       fontSize: "16px",
       fill: "#FFD700",
       fontWeight: "bold",
