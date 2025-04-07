@@ -1,22 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Super Bro Denis</title>
-        <link rel="stylesheet" href="styles.css">
-        <script src="index.js"></script>
-    </head>
-    <body>
-        <div id="video" class="bg">
-            <img src="assets/enemy.png" />
-            <p>This is the description of the first video</p>
-            <a href="#" onclick="startGame(2)">Go to next level</a>
-        </div>
 
-        <!-- Phaser Library -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.70.0/phaser.min.js"></script>
-        
-        <!-- Your game script -->
-        <script src="game.js"></script>
-    </body>
+<head>
+    <meta charset="UTF-8">
+    <title>Super Bro Denis</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        #game-container {
+            width: 100vw;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            display: none;
+        }
+
+        #video {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100vw;
+            height: 100vh;
+            text-align: center;
+        }
+
+        #video img {
+            max-width: 50%;
+            height: auto;
+            margin-bottom: 20px;
+        }
+
+        #video p {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+
+        .next-button {
+            padding: 12px 30px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .next-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="video" class="bg">
+        <img src="assets/enemy.png" />
+        <p>This is the description of the first video</p>
+        <a href="#" class="next-button" onclick="startLevel2(); return false;">Go to next level</a>
+    </div>
+
+    <!-- Game container div -->
+    <div id="game-container"></div>
+
+    <!-- Phaser Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.70.0/phaser.min.js"></script>
+
+    <!-- Your game script -->
+    <script src="game.js"></script>
+
+    <!-- Direct game start script -->
+    <script>
+        function startLevel2() {
+            // Hide the video content
+            document.getElementById('video').style.display = 'none';
+
+            // Show and configure the game container
+            const gameContainer = document.getElementById('game-container');
+            gameContainer.style.display = 'block';
+            gameContainer.style.width = '100vw';
+            gameContainer.style.height = '100vh';
+
+            // Set the level globally
+            selectedLevel = 2;
+
+            // Start the game
+            if (!game) {
+                game = new Phaser.Game(config);
+                gameStarted = true;
+            } else {
+                // If game already exists, restart with new level
+                game.scene.scenes[0].scene.restart();
+            }
+
+            // Add window resize handler
+            window.addEventListener("resize", function () {
+                if (game) {
+                    game.scale.resize(window.innerWidth, window.innerHeight);
+                }
+            });
+
+            console.log("Starting game with level:", selectedLevel);
+        }
+    </script>
+</body>
+
 </html>
