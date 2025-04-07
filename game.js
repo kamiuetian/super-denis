@@ -1258,11 +1258,46 @@ function activateBossArea() {
         // Aim at player with existing code...
         const dx = this.scene.player.x - this.x;
         const dy = this.scene.player.y - this.y;
-        const angle = Math.atan2(dy, dx);
-        const speed = 150;
+        const baseAngle = Math.atan2(dy, dx);
+        const angleVariation = ((Math.random() - 0.5) * Math.PI) / 2;
+        const angle = baseAngle + angleVariation;
+
+        const speed = 250;
 
         ball.setVelocity(Math.cos(angle) * speed, Math.sin(angle) * speed);
+        // ENHANCED: Add visual indicator showing direction
+        const directionLine = this.scene.add.line(
+          0,
+          0,
+          ball.x,
+          ball.y,
+          ball.x + Math.cos(angle) * 50,
+          ball.y + Math.sin(angle) * 50,
+          0xff0000,
+          0.6
+        );
+        directionLine.setLineWidth(2);
+        directionLine.setOrigin(0, 0);
 
+        // Fade out direction indicator
+        this.scene.tweens.add({
+          targets: directionLine,
+          alpha: 0,
+          duration: 300,
+          onComplete: () => directionLine.destroy(),
+        });
+
+        // ENHANCED: Add variation to the ball appearance based on angle
+        // More extreme angles get different visual treatment
+        if (Math.abs(angleVariation) > Math.PI / 6) {
+          // If more than 30 degrees off
+          ball.setTint(0xff8800); // Orange for wide shots
+        } else if (Math.abs(angleVariation) > Math.PI / 12) {
+          // If more than 15 degrees off
+          ball.setTint(0xffcc00); // Yellow for medium-angle shots
+        } else {
+          ball.setTint(0xff0000); // Red for direct shots
+        }
         // ADDED: Set physics properties like player's tennis balls
         ball.setBounce(0.6);
         ball.setCollideWorldBounds(true);
@@ -1976,10 +2011,12 @@ function createSpeechBubble(x, y, text, duration = 3000) {
 // Add this code to create visible enemies:
 function addEnemies() {
   // Create patrolling goompa enemies with proper positioning
-  const enemyPositions = [
-    { x: 350, y: this.scale.height - 80, range: 150 },
-    { x: 1000, y: this.scale.height - 80, range: 200 },
-    { x: 1800, y: this.scale.height - 80, range: 180 },
+ const enemyPositions = [
+    { x: 600, y: this.scale.height - 80, range: 300, speed: 40 },
+    { x: 1200, y: this.scale.height - 80, range: 200, speed: 70 },
+    { x: 1900, y: this.scale.height - 80, range: 280, speed: 55 },
+    { x: 2500, y: this.scale.height - 80, range: 220, speed: 80 },
+    { x: 3100, y: this.scale.height - 80, range: 160, speed: 65 }
   ];
 
   for (const pos of enemyPositions) {
@@ -1991,7 +2028,7 @@ function addEnemies() {
       .setBounce(1)
       .setData("startX", pos.x)
       .setData("range", pos.range)
-      .setVelocityX(-60);
+      .setVelocityX(-pos.speed);
 
     // Make sure they're visible and on top
     enemy.setDepth(20); // Higher depth to be above everything
@@ -2000,7 +2037,27 @@ function addEnemies() {
 
     // Position above ground (important!)
     enemy.y = this.scale.height - 85;
-
+     // Add simple AI to make them patrol back and forth
+    this.time.addEvent({
+      delay: 2000 + Math.random() * 1000, // Random patrol timing
+      callback: () => {
+        if (enemy && enemy.active) {
+          enemy.setVelocityX(-enemy.body.velocity.x); // Reverse direction
+          
+          // Calculate new maximum range positions
+          const leftBound = pos.x - pos.range/2;
+          const rightBound = pos.x + pos.range/2;
+          
+          // Keep enemy within its patrol range
+          if (enemy.x < leftBound) {
+            enemy.setVelocityX(Math.abs(pos.speed));
+          } else if (enemy.x > rightBound) {
+            enemy.setVelocityX(-Math.abs(pos.speed));
+          }
+        }
+      },
+      loop: true
+    });
     console.log(
       "Created enemy at",
       enemy.x,
@@ -4555,34 +4612,40 @@ function hitMysteryBox(player, box) {
   }
 }
 
-// Add this function for Level 3-specific end dialogue
 function showLevel3EndDialogue() {
-  // Create dialogue boxes using player position since boss isn't available yet
+  // Get direct references to both characters' positions
+  const playerX = this.player.x;
+  const playerY = this.player.y;
+  const johannX = this.johann
+    ? this.johann.x
+    : this.bridgeX + this.gapWidth / 2 + 300;
+  const johannY = this.johann ? this.johann.y : this.scale.height - 50;
+
+  // Player's first dialogue - positioned above player's head
   const denisText = createSpeechBubble.call(
     this,
-    this.player.x,
-    this.player.y - 60,
+    playerX,
+    playerY - 60,
     "Level complete... but this isn't the end, is it?",
     4000
   );
 
-  // Show Johann's response after a delay
-  // Position it ahead of the player to represent the doorman
+  // Johann's response - positioned above Johann's head
   this.time.delayedCall(4000, () => {
     const johannText = createSpeechBubble.call(
       this,
-      this.player.x + 100, // Position slightly ahead of player
-      this.player.y - 60,
+      johannX,
+      johannY - 60,
       "No, Denis. This is where the real journey begins.",
       4000
     );
 
-    // Continue dialogue sequence
+    // Continue dialogue sequence with correct positioning
     this.time.delayedCall(4000, () => {
       const denisText2 = createSpeechBubble.call(
         this,
-        this.player.x,
-        this.player.y - 60,
+        playerX,
+        playerY - 60,
         "I have learned a ton and explored different passions — and somewhere along the way, I found out that this program is definitely my path.",
         4000
       );
@@ -4590,8 +4653,8 @@ function showLevel3EndDialogue() {
       this.time.delayedCall(4000, () => {
         const johannText2 = createSpeechBubble.call(
           this,
-          this.player.x + 100,
-          this.player.y - 60,
+          johannX,
+          johannY - 60,
           "Well...you've shown more than skill, you've shown real purpose. And that drive for innovation in banking? That's exactly what we're looking for.",
           4000
         );
@@ -4599,8 +4662,8 @@ function showLevel3EndDialogue() {
         this.time.delayedCall(4000, () => {
           const denisText3 = createSpeechBubble.call(
             this,
-            this.player.x,
-            this.player.y - 60,
+            playerX,
+            playerY - 60,
             "Then... am I in?",
             4000
           );
