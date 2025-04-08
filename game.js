@@ -903,10 +903,10 @@ function createLevel1(bgRepeat) {
     },*/
     // Additional platforms for gameplay
     { x: 692, y: this.scale.height - 270, width: 48, height: 48 },
-    { x: 1100, y: this.scale.height - 300, width: 48, height: 48 },
-    { x: 1148, y: this.scale.height - 300, width: 48, height: 48 },
-    { x: 1196, y: this.scale.height - 300, width: 48, height: 48 },
-    { x: 1244, y: this.scale.height - 300, width: 48, height: 48 },
+    { x: 1300, y: this.scale.height - 300, width: 48, height: 48 },
+    { x: 1348, y: this.scale.height - 300, width: 48, height: 48 },
+    { x: 1396, y: this.scale.height - 300, width: 48, height: 48 },
+    { x: 1444, y: this.scale.height - 300, width: 48, height: 48 },
   ];
 
   // Create brick blocks
@@ -956,7 +956,7 @@ function createLevel1(bgRepeat) {
   this.platforms.add(pipe);
   pipe.refreshBody();
   pipe.setData("isPipe", true);
-  const pipe2X = 1450;
+  const pipe2X = 1950;
   const pipe2 = this.physics.add
     .staticImage(pipe2X, groundTop, "pipe2")
     .setOrigin(0.5, 1); // Set origin to bottom center for proper positioning
@@ -965,7 +965,7 @@ function createLevel1(bgRepeat) {
   pipe2.setScale(3); // Adjust this value as needed to match your sprite size
 
   // Make sure pipe has collision
-  this.platforms.add(pipe);
+  this.platforms.add(pipe2);
   pipe.refreshBody();
   pipe.setData("isPipe", true);
 
