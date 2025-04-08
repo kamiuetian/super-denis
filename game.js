@@ -2250,7 +2250,8 @@ function createLevel2(bgRepeat) {
   // 2. Set up the ground (invisible, just for preventing falling)
   const groundHeight = 40; // Match Level 1's ground height
   const ground = this.platforms.create(
-    (bgRepeat * this.scale.width) / 2,
+    //(bgRepeat * this.scale.width) / 2,
+    1300,
     this.scale.height - groundHeight / 2, // Position at bottom of visible area
     null
   );
@@ -2258,7 +2259,13 @@ function createLevel2(bgRepeat) {
   ground.setVisible(true); // Make it visible like in Level 1
   ground.refreshBody();
   ground.setData("isGround", true); // Tag to identify ground in collision handler
-
+ground.setData("isDeadlyGround", true); // Add new deadly tag
+// Create a visual indicator that the ground is deadly
+const dangerZone = this.add.graphics();
+dangerZone.fillStyle(0xff0000, 0.3); // Semi-transparent red
+dangerZone.fillRect(0, this.scale.height - groundHeight, bgRepeat * this.scale.width, groundHeight);
+dangerZone.lineStyle(2, 0xff0000, 0.8);
+dangerZone.lineBetween(0, this.scale.height - groundHeight, bgRepeat * this.scale.width, this.scale.height - groundHeight);
   // 3. Set background - blue sky
   const skyBackground = this.add.rectangle(
     0,
@@ -2357,18 +2364,18 @@ function createLevel2(bgRepeat) {
 
   // 7. Create cloud platforms with skills
   const cloudPositions = [
-    { x: 200, y: this.scale.height - 100 },
-    { x: 500, y: this.scale.height - 210 },
-    { x: 800, y: this.scale.height - 190 },
-    { x: 1100, y: this.scale.height - 300 },
-    { x: 1400, y: this.scale.height - 250 },
-    { x: 1700, y: this.scale.height - 350 },
-    { x: 2000, y: this.scale.height - 200 },
-    { x: 2300, y: this.scale.height - 300 },
-    { x: 2600, y: this.scale.height - 200 },
-    { x: 2900, y: this.scale.height - 320 },
-    { x: 3200, y: this.scale.height - 250 },
-    { x: 3500, y: this.scale.height - 300 },
+    { x: 100, y: this.scale.height - 100 },
+    { x: 300, y: this.scale.height - 210 },
+    { x: 550, y: this.scale.height - 190 },
+    { x: 800, y: this.scale.height - 300 },
+    { x: 1100, y: this.scale.height - 250 },
+    { x: 1300, y: this.scale.height - 350 },
+    { x: 1500, y: this.scale.height - 200 },
+    { x: 1750, y: this.scale.height - 300 },
+    { x: 1900, y: this.scale.height - 200 },
+    { x: 2050, y: this.scale.height - 320 },
+    { x: 2200, y: this.scale.height - 250 },
+    { x: 2400, y: this.scale.height - 300 },
   ];
 
   // Create clouds and add skills
@@ -2406,7 +2413,8 @@ function createLevel2(bgRepeat) {
   // 8. Add Johann (boss) in the top right corner
   this.boss = this.physics.add
     .sprite(
-      this.scale.width * bgRepeat * 0.85,
+      //this.scale.width * bgRepeat * 0.85,
+      2600,
       this.scale.height * 0.05,
       "enemy" // Using existing enemy sprite for now
     )
@@ -2420,7 +2428,8 @@ function createLevel2(bgRepeat) {
 
   // Put boss on a special cloud
   const bossCloud = this.platforms.create(
-    this.scale.width * bgRepeat * 0.85,
+    //this.scale.width * bgRepeat * 0.85,
+    2600,
     this.scale.height * 0.05,
     "cloud"
   );
