@@ -3793,16 +3793,16 @@ function createLevel3(bgRepeat) {
   const cloudPositions = [
     { x: 250, y: this.scale.height - 100 },
     { x: 500, y: this.scale.height - 210 },
-    { x: 800, y: this.scale.height - 190 },
-    { x: 1100, y: this.scale.height - 300 },
-    { x: 1400, y: this.scale.height - 250 },
-    { x: 1700, y: this.scale.height - 350 },
-    { x: 2000, y: this.scale.height - 200 },
-    { x: 2300, y: this.scale.height - 300 },
-    { x: 2600, y: this.scale.height - 200 },
-    { x: 2900, y: this.scale.height - 320 },
-    { x: 3200, y: this.scale.height - 250 },
-    { x: 3500, y: this.scale.height - 300 },
+    { x: 750, y: this.scale.height - 190 },
+    { x: 1000, y: this.scale.height - 300 },
+    { x: 1250, y: this.scale.height - 250 },
+    { x: 1500, y: this.scale.height - 350 },
+    { x: 1750, y: this.scale.height - 200 },
+    { x: 2000, y: this.scale.height - 300 },
+    { x: 2300, y: this.scale.height - 200 },
+    { x: 2600, y: this.scale.height - 320 },
+    { x: 2850, y: this.scale.height - 250 },
+    { x: 3100, y: this.scale.height - 300 },
   ];
 
   // Create visible skill items on platforms
@@ -3913,7 +3913,7 @@ function createLevel3(bgRepeat) {
   }
   // Set up bridge and manager properties
   this.bridgeCreated = false;
-  this.bridgeX = bgRepeat * this.scale.width - 600; // Position bridge near end of level
+  this.bridgeX = 3500; //bgRepeat * this.scale.width - 600; // Position bridge near end of level
   this.bridgeY = this.scale.height;
   this.gapWidth = 300; // Width of the gap to bridge
 
