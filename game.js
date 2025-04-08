@@ -70,6 +70,7 @@ function preload() {
   this.load.image("blockGround", "block.png");
   this.load.image("block", "assets/overworld/block.png");
   this.load.image("pipe", "assets/overworld/pipe1.png");
+  this.load.image("pipe2", "assets/overworld/pipe2.png");
   this.load.image("emptyBlock", "assets/overworld/emptyBlock.png");
 
   this.load.image("tech1", "assets/level3/ai-assistant.png");
@@ -902,9 +903,10 @@ function createLevel1(bgRepeat) {
     },*/
     // Additional platforms for gameplay
     { x: 692, y: this.scale.height - 270, width: 48, height: 48 },
-    /*{ x: 900, y: this.scale.height - 150, width: 150, height: 30 },
-    { x: 1500, y: this.scale.height - 180, width: 250, height: 30 },
-    { x: 1800, y: this.scale.height - 250, width: 150, height: 30 },*/
+    { x: 1000, y: this.scale.height - 300, width: 48, height: 48 },
+    { x: 1048, y: this.scale.height - 300, width: 48, height: 48 },
+    { x: 1096, y: this.scale.height - 300, width: 48, height: 48 },
+    { x: 1144, y: this.scale.height - 300, width: 48, height: 48 },
   ];
 
   // Create brick blocks
@@ -949,6 +951,18 @@ function createLevel1(bgRepeat) {
 
   // Scale the pipe to appropriate size without distortion
   pipe.setScale(3); // Adjust this value as needed to match your sprite size
+
+  // Make sure pipe has collision
+  this.platforms.add(pipe);
+  pipe.refreshBody();
+  pipe.setData("isPipe", true);
+  const pipe2X = 1250;
+  const pipe2 = this.physics.add
+    .staticImage(pipe2X, groundTop, "pipe2")
+    .setOrigin(0.5, 1); // Set origin to bottom center for proper positioning
+
+  // Scale the pipe to appropriate size without distortion
+  pipe2.setScale(3); // Adjust this value as needed to match your sprite size
 
   // Make sure pipe has collision
   this.platforms.add(pipe);
