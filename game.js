@@ -911,10 +911,13 @@ function createLevel1(bgRepeat) {
     { x: 1698, y: this.scale.height - 500, width: 48, height: 48 },
   { x: 2150, y: this.scale.height - 400, width: 48, height: 48 },
     { x: 2198, y: this.scale.height - 400, width: 48, height: 48 },
-  { x: 2500, y: this.scale.height - 500, width: 48, height: 48 },
-    { x: 2596, y: this.scale.height - 500, width: 48, height: 48 },
-    { x: 2644, y: this.scale.height - 500, width: 48, height: 48 },
-  { x: 2500, y: this.scale.height - 300, width: 48, height: 48 },
+  { x: 2500, y: this.scale.height - 800, width: 48, height: 48 },
+  { x: 2548, y: this.scale.height - 800, width: 48, height: 48 },
+  { x: 2596, y: this.scale.height - 800, width: 48, height: 48 },
+    { x: 2644, y: this.scale.height - 800, width: 48, height: 48 },
+  { x: 2692, y: this.scale.height - 800, width: 48, height: 48 },
+    { x: 2788, y: this.scale.height - 800, width: 48, height: 48 },
+    { x: 2500, y: this.scale.height - 300, width: 48, height: 48 },
     { x: 2548, y: this.scale.height - 300, width: 48, height: 48 },
     { x: 2596, y: this.scale.height - 300, width: 48, height: 48 },
     { x: 2644, y: this.scale.height - 300, width: 48, height: 48 },
@@ -994,7 +997,7 @@ function createLevel1(bgRepeat) {
     { x: 596, y: this.scale.height - 460, index: 3 },
 
     // Two others placed elsewhere
-    { x: 2548, y: this.scale.height - 500, index: 4 },
+    { x: 2740, y: this.scale.height - 800, index: 4 },
     { x: 2200, y: this.scale.height - 280, index: 5 },
   ];
 
