@@ -4771,7 +4771,7 @@ function playerHitCloud(player, cloud) {
   const symbol = this.add.text(
     cloud.x,
     cloud.y,
-    level2Skills[skillIndex].icon,
+    `${level2Skills[skillIndex].icon} ${level2Skills[skillIndex].name}`,
     { fontSize: "32px" }
   );
 
