@@ -67,7 +67,8 @@ function preload() {
   if (!gameStarted) return;
   // Load Level 3 skill images
   this.load.image("customBlock", "assets/overworld/customBlock.png");
-
+  this.load.image("blockGround", "block.png");
+  this.load.image("block", "assets/overworld/block.png");
   this.load.image("tech1", "assets/level3/ai-assistant.png");
   this.load.image("tech2", "assets/level3/analytics.png");
   this.load.image("tech3", "assets/level3/atm-card.png");
@@ -843,14 +844,29 @@ function createLevel1(bgRepeat) {
 
   // 2. Set up the ground
   const groundHeight = 40;
-  const ground = this.platforms.create(
-    (bgRepeat * this.scale.width) / 2,
+  const blockWidth = groundHeight; // Make blocks square based on ground height
+  const worldWidth = 5000;
+  const numBlocks = Math.ceil(worldWidth / blockWidth) + 1; // Add one extra block
+
+  for (let i = 0; i < numBlocks; i++) {
+    const block = this.platforms.create(
+      i * (blockWidth - 7), // Subtract 1px to create overlap
+      this.scale.height - groundHeight / 2,
+      "block"
+    );
+
+    block.setDisplaySize(blockWidth, groundHeight); // Square blocks
+    block.refreshBody();
+    block.setData("isGround", true);
+  }
+  /*const ground = this.platforms.create(
+    2500,
     this.scale.height - groundHeight,
     null
   );
   ground.setDisplaySize(bgRepeat * this.scale.width, groundHeight);
   ground.setVisible(true);
-  ground.refreshBody();
+  ground.refreshBody();*/
 
   // 3. Create the main platform blocks
   const brickBlocks = [
