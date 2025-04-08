@@ -884,8 +884,8 @@ function createLevel1(bgRepeat) {
   // 3. Create the main platform blocks
   const brickBlocks = [
     // First set - two brick blocks with mystery boxes between them
-    { x: 500, y: this.scale.height - 270, width: 48, height: 48 },
-    { x: 596, y: this.scale.height - 270, width: 48, height: 48 },
+    { x: 500, y: this.scale.height - 260, width: 48, height: 48 },
+    { x: 596, y: this.scale.height - 260, width: 48, height: 48 },
 
     // Second set - two brick blocks with mystery boxes between them
     { x: 700, y: this.scale.height - 200, width: 48, height: 48 },
@@ -945,11 +945,11 @@ function createLevel1(bgRepeat) {
   // 4. Create mystery boxes according to specification
   const mysteryBoxPositions = [
     // Two mystery boxes between brick blocks (positioned between the two sets)
-    { x: 548, y: this.scale.height - 270, index: 0 }, // Between first set of bricks
+    { x: 548, y: this.scale.height - 260, index: 0 }, // Between first set of bricks
     { x: 748, y: this.scale.height - 300, index: 1 }, // Between second set of bricks
 
     // One alone
-    { x: 644, y: this.scale.height - 270, index: 2 },
+    { x: 644, y: this.scale.height - 260, index: 2 },
 
     // One on top of pipe block
     { x: 596, y: this.scale.height - 400, index: 3 },
