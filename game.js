@@ -885,7 +885,7 @@ function createLevel1(bgRepeat) {
   const brickBlocks = [
     // First set - two brick blocks with mystery boxes between them
     { x: 500, y: this.scale.height - 260, width: 48, height: 48 },
-    { x: 596, y: this.scale.height - 260, width: 48, height: 48 },
+    /*{ x: 596, y: this.scale.height - 260, width: 48, height: 48 },*/
 
     // Second set - two brick blocks with mystery boxes between them
     { x: 700, y: this.scale.height - 200, width: 48, height: 48 },
@@ -905,7 +905,6 @@ function createLevel1(bgRepeat) {
     /*{ x: 900, y: this.scale.height - 150, width: 150, height: 30 },
     { x: 1500, y: this.scale.height - 180, width: 250, height: 30 },
     { x: 1800, y: this.scale.height - 250, width: 150, height: 30 },*/
-  
   ];
 
   // Create brick blocks
@@ -947,7 +946,7 @@ function createLevel1(bgRepeat) {
   const mysteryBoxPositions = [
     // Two mystery boxes between brick blocks (positioned between the two sets)
     { x: 548, y: this.scale.height - 260, index: 0 }, // Between first set of bricks
-    { x: 748, y: this.scale.height - 300, index: 1 }, // Between second set of bricks
+    /*{ x: 748, y: this.scale.height - 300, index: 1 }, */ // Between second set of bricks
 
     // One alone
     { x: 644, y: this.scale.height - 260, index: 2 },
