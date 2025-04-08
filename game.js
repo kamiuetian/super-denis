@@ -884,8 +884,8 @@ function createLevel1(bgRepeat) {
   // 3. Create the main platform blocks
   const brickBlocks = [
     // First set - two brick blocks with mystery boxes between them
-    { x: 300, y: this.scale.height - 300, width: 48, height: 48 },
-    { x: 396, y: this.scale.height - 300, width: 48, height: 48 },
+    { x: 500, y: this.scale.height - 270, width: 48, height: 48 },
+    { x: 596, y: this.scale.height - 270, width: 48, height: 48 },
 
     // Second set - two brick blocks with mystery boxes between them
     { x: 700, y: this.scale.height - 200, width: 48, height: 48 },
@@ -899,13 +899,12 @@ function createLevel1(bgRepeat) {
       height: 100,
       type: "pipe",
     },
-
+*/
     // Additional platforms for gameplay
-    { x: 500, y: this.scale.height - 120, width: 200, height: 30 },
-    { x: 900, y: this.scale.height - 150, width: 150, height: 30 },
+    { x: 692, y: this.scale.height - 270, width: 48, height: 48 },
+    /*{ x: 900, y: this.scale.height - 150, width: 150, height: 30 },
     { x: 1500, y: this.scale.height - 180, width: 250, height: 30 },
-    { x: 1800, y: this.scale.height - 250, width: 150, height: 30 },
-  */
+    { x: 1800, y: this.scale.height - 250, width: 150, height: 30 },*/
   ];
 
   // Create brick blocks
@@ -916,7 +915,7 @@ function createLevel1(bgRepeat) {
 
     // First two sets are from x=300 to x=396 and x=700 to x=796
     if (
-      (block.x >= 300 && block.x <= 396) ||
+      (block.x >= 500 && block.x <= 596) ||
       (block.x >= 700 && block.x <= 796)
     ) {
       textureKey = "emptyBlock"; // Use emptyBlock for first two sets
@@ -926,7 +925,7 @@ function createLevel1(bgRepeat) {
     }
 
     // Create the platform with appropriate texture
-    const platform = this.platforms.create(block.x, block.y, textureKey, 0);
+    const platform = this.platforms.create(block.x, block.y, "emptyBlock", 0);
 
     // Apply either scale or display size based on block type
     if (useScale) {
@@ -946,14 +945,14 @@ function createLevel1(bgRepeat) {
   // 4. Create mystery boxes according to specification
   const mysteryBoxPositions = [
     // Two mystery boxes between brick blocks (positioned between the two sets)
-    { x: 348, y: this.scale.height - 300, index: 0 }, // Between first set of bricks
+    { x: 548, y: this.scale.height - 270, index: 0 }, // Between first set of bricks
     { x: 748, y: this.scale.height - 300, index: 1 }, // Between second set of bricks
 
     // One alone
-    { x: 750, y: this.scale.height - 240, index: 2 },
+    { x: 644, y: this.scale.height - 270, index: 2 },
 
     // One on top of pipe block
-    { x: 1600, y: this.scale.height - 250, index: 3 },
+    { x: 596, y: this.scale.height - 400, index: 3 },
 
     // Two others placed elsewhere
     { x: 1000, y: this.scale.height - 250, index: 4 },
