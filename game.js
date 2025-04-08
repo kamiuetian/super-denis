@@ -861,6 +861,17 @@ function createLevel1(bgRepeat) {
     block.refreshBody();
     block.setData("isGround", true);
   }
+  for (let i = 0; i < numBlocks; i++) {
+    const block = this.platforms.create(
+      i * (blockWidth - 7), // Same overlap as first layer
+      this.scale.height - groundHeight / 2 - (groundHeight - 7), // Position below first layer
+      "block"
+    );
+
+    block.setDisplaySize(blockWidth, groundHeight); // Square blocks
+    block.refreshBody();
+    block.setData("isGround", true);
+  }
   /*const ground = this.platforms.create(
     2500,
     this.scale.height - groundHeight,
