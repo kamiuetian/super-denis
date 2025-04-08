@@ -397,6 +397,39 @@ function update(time, delta) {
       }
     });
   }
+
+  // Level 3 dialogue trigger - only once after landing
+  if (selectedLevel === 3 && this.waitingForLanding && !this.dialogueShown) {
+    if (this.player && this.player.body && this.player.body.touching.down) {
+      this.waitingForLanding = false;
+
+      // Small delay to ensure player is fully landed
+      this.time.delayedCall(300, () => {
+        // Freeze player
+        this.dialogueActive = true;
+        this.playerVelocityBeforeDialogue = {
+          x: this.player.body.velocity.x,
+          y: this.player.body.velocity.y,
+        };
+        this.player.setVelocity(0, 0);
+        this.player.anims.play("stand");
+
+        // Show dialogue
+        showLevel3StartDialogue.call(this);
+        this.dialogueShown = true;
+      });
+    }
+  }
+
+  // Skip movement processing if dialogue is active
+  if (this.dialogueActive) {
+    // Force player to stay still
+    if (this.player && this.player.body) {
+      this.player.setVelocityX(0);
+      this.player.anims.play("stand");
+    }
+    return; // Skip rest of update for movement
+  }
 }
 
 // Function to shoot tennis ball
@@ -3958,7 +3991,6 @@ function createLevel3(bgRepeat) {
   this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
 
   // 10. Add pre-level dialogue
-  showLevel3StartDialogue.call(this);
 
   // CRITICAL FIX: Make sure cursors are properly initialized for this level
   if (!this.cursors) {
@@ -4069,6 +4101,10 @@ function createLevel3(bgRepeat) {
     null,
     this
   );
+
+  // Add flags to control dialogue flow
+  this.dialogueShown = false;
+  this.waitingForLanding = true;
 }
 
 // Function to create bridge when all skills are collected
@@ -4216,6 +4252,11 @@ function showLevel3StartDialogue() {
       "IDDP feels like the place where I can actually explore both and grow through each of them. Let's go!",
       5000
     );
+
+    // Release player after dialogue completes
+    this.time.delayedCall(5000, () => {
+      this.dialogueActive = false;
+    });
   });
 }
 
