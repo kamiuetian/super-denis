@@ -952,7 +952,7 @@ function createLevel1(bgRepeat) {
     { x: 644, y: this.scale.height - 260, index: 2 },
 
     // One on top of pipe block
-    { x: 596, y: this.scale.height - 400, index: 3 },
+    { x: 596, y: this.scale.height - 430, index: 3 },
 
     // Two others placed elsewhere
     { x: 1000, y: this.scale.height - 250, index: 4 },
