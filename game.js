@@ -1970,6 +1970,11 @@ function hitBoss(ball, boss) {
 // Handle player hit by boss ball with immunity check
 function hitByBossBall(player, ball) {
   // FIX: Check if player is immune
+  if (this.levelCompleting) {
+    // Just destroy the ball without triggering death
+    ball.destroy();
+    return;
+  }
   if (this.playerImmune) {
     ball.destroy();
     return;
@@ -2259,13 +2264,23 @@ function createLevel2(bgRepeat) {
   ground.setVisible(true); // Make it visible like in Level 1
   ground.refreshBody();
   ground.setData("isGround", true); // Tag to identify ground in collision handler
-ground.setData("isDeadlyGround", true); // Add new deadly tag
-// Create a visual indicator that the ground is deadly
-const dangerZone = this.add.graphics();
-dangerZone.fillStyle(0xff0000, 0.3); // Semi-transparent red
-dangerZone.fillRect(0, this.scale.height - groundHeight, bgRepeat * this.scale.width, groundHeight);
-dangerZone.lineStyle(2, 0xff0000, 0.8);
-dangerZone.lineBetween(0, this.scale.height - groundHeight, bgRepeat * this.scale.width, this.scale.height - groundHeight);
+  ground.setData("isDeadlyGround", true); // Add new deadly tag
+  // Create a visual indicator that the ground is deadly
+  const dangerZone = this.add.graphics();
+  dangerZone.fillStyle(0xff0000, 0.3); // Semi-transparent red
+  dangerZone.fillRect(
+    0,
+    this.scale.height - groundHeight,
+    bgRepeat * this.scale.width,
+    groundHeight
+  );
+  dangerZone.lineStyle(2, 0xff0000, 0.8);
+  dangerZone.lineBetween(
+    0,
+    this.scale.height - groundHeight,
+    bgRepeat * this.scale.width,
+    this.scale.height - groundHeight
+  );
   // 3. Set background - blue sky
   const skyBackground = this.add.rectangle(
     0,
@@ -4732,6 +4747,11 @@ function collectSkill(player, skill) {
 
 // In the playerHitCloud function (or whatever handles cloud collision)
 function playerHitCloud(player, cloud) {
+  if (cloud.getData("isDeadlyGround")) {
+    // Call the death function if player hits deadly ground
+    cloudFallDeath.call(this, player);
+    return; // Exit function immediately
+  }
   // Skip if cloud already activated
   if (cloud.getData("activated")) {
     return;
@@ -4805,7 +4825,11 @@ function playerHitCloud(player, cloud) {
 
   // 6. Check if all skills collected
   if (this.skillCount >= level2Skills.length) {
+    this.levelCompleting = true;
+
     this.time.delayedCall(1000, () => {
+      this.physics.pause();
+
       const completionText = this.add
         .text(
           this.scale.width / 2,
@@ -4827,4 +4851,81 @@ function playerHitCloud(player, cloud) {
       });
     });
   }
+}
+// Function to handle death from falling off clouds in Level 2
+function cloudFallDeath(player, cloud) {
+  // Only run once
+  if (this.playerDying) return;
+  this.playerDying = true;
+
+  // Stop player movement
+  this.physics.pause();
+  player.setVelocity(0, 0);
+  player.setTint(0xff0000);
+
+  // Create fall effect
+  const fallTrail = this.add.particles(player.x, player.y, "cloud", {
+    speed: { min: 50, max: 100 },
+    scale: { start: 0.1, end: 0 },
+    lifespan: 500,
+    quantity: 15,
+    blendMode: "ADD",
+    alpha: { start: 0.6, end: 0 },
+    emitting: false,
+  });
+
+  fallTrail.explode(15);
+
+  // Create full screen overlay
+  const overlay = this.add
+    .rectangle(0, 0, this.scale.width, this.scale.height, 0x000000, 0.8)
+    .setOrigin(0, 0)
+    .setScrollFactor(0)
+    .setDepth(999);
+
+  // Show custom message
+  const gameOverText = this.add
+    .text(
+      this.scale.width / 2,
+      this.scale.height / 2 - 100,
+      "GAME OVER\n\nWhen reaching for the clouds,\nyou need to stay focused!",
+      {
+        fontSize: "18px",
+        fill: "#ff0000",
+        align: "center",
+        padding: 10,
+      }
+    )
+    .setScrollFactor(0)
+    .setAlign("center")
+    .setOrigin(0.5, 0)
+    .setDepth(1000);
+
+  // Add restart button
+  const restartButton = this.add
+    .text(this.scale.width / 2, this.scale.height / 2 + 80, "[ Try Again ]", {
+      fontSize: "20px",
+      fill: "#ffffff",
+      backgroundColor: "#880000",
+      padding: { x: 15, y: 10 },
+    })
+    .setScrollFactor(0)
+    .setAlign("center")
+    .setOrigin(0.5, 0.5)
+    .setDepth(1000)
+    .setInteractive({ useHandCursor: true });
+
+  // Button hover effects
+  restartButton.on("pointerover", () => {
+    restartButton.setStyle({ fill: "#ffff00" });
+  });
+
+  restartButton.on("pointerout", () => {
+    restartButton.setStyle({ fill: "#ffffff" });
+  });
+
+  // Restart on click
+  restartButton.on("pointerdown", () => {
+    this.scene.restart();
+  });
 }
