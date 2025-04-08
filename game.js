@@ -4346,10 +4346,8 @@ function hitMysteryBox(player, box) {
   box.setData("hit", true);
 
   // ADDED: Set dialogue active flag to freeze player in the update function
-  this.dialogueActive = true;
 
   // ADDED: Pause physics to prevent enemy/ball movement
-  this.physics.pause();
 
   // Store player velocity to restore it later if needed
   this.playerVelocityBeforeDialogue = {
@@ -4435,6 +4433,9 @@ function hitMysteryBox(player, box) {
       if (player.body.touching.down) {
         // Player has landed, show speech bubble
         landingCheck.remove();
+        this.dialogueActive = true;
+        player.setVelocity(0, 0);
+        player.anims.play("stand");
 
         // Show speech bubble with the skill message
         createSpeechBubble.call(
@@ -4444,7 +4445,9 @@ function hitMysteryBox(player, box) {
           skill.message,
           3000
         );
-
+        this.time.delayedCall(3000, () => {
+          this.dialogueActive = false;
+        });
         // Check if all skills collected
         if (this.skillCount >= 6) {
           // Delay bridge animation slightly
