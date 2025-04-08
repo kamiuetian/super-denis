@@ -878,11 +878,11 @@ function createLevel1(bgRepeat) {
   }
   const platformPositions = [
     { x: 300, y: this.scale.height - 150, width: 200, height: 30 }, // Longer
-    { x: 800, y: this.scale.height - 220, width: 100, height: 30 }, // Shorter
-    { x: 1500, y: this.scale.height - 40, width: 180, height: 30 }, // Longer
-    { x: 2310, y: this.scale.height - 160, width: 90, height: 30 }, // Shorter
-    { x: 3000, y: this.scale.height - 270, width: 220, height: 30 }, // Longer
-    { x: 4000, y: this.scale.height - 270, width: 110, height: 30 }, // Shorter
+    { x: 500, y: this.scale.height - 220, width: 100, height: 30 }, // Shorter
+    { x: 800, y: this.scale.height - 40, width: 180, height: 30 }, // Longer
+    { x: 1210, y: this.scale.height - 160, width: 90, height: 30 }, // Shorter
+    { x: 1600, y: this.scale.height - 270, width: 220, height: 30 }, // Longer
+    { x: 1900, y: this.scale.height - 270, width: 110, height: 30 }, // Shorter
   ];
 
   // Rename coins group to mysteryBoxes
@@ -1943,6 +1943,7 @@ function showBossDialogue(text) {
 // Helper function to create speech bubbles at specific positions
 function createSpeechBubble(x, y, text, duration = 3000) {
   // Create speech bubble container
+  this.physics.pause(); // Pause physics during bubble creation
   const bubbleContainer = this.add.container(0, 0);
   bubbleContainer.setDepth(1000); // Ensure it's on top
 
@@ -1999,6 +2000,7 @@ function createSpeechBubble(x, y, text, duration = 3000) {
       duration: 300,
       onComplete: () => {
         bubbleContainer.destroy();
+        this;
       },
     });
   });
@@ -3598,11 +3600,11 @@ function hitMysteryBox(player, box) {
       delay: 3000,
       duration: 1000,
     });
-
+    activateBossArea.call(this);
     // Activate boss area with short delay
-    this.time.delayedCall(2000, () => {
-      activateBossArea.call(this);
-    });
+    /*this.time.delayedCall(2000, () => {
+     
+    });*/
   }
 
   // Particle effect
@@ -3860,7 +3862,7 @@ function createLevel3(bgRepeat) {
     .text(
       this.scale.width / 2,
       80,
-      "Jump on clouds to discover my professional skills!",
+      "Collect the Icons to discover my professional skills!",
       {
         fontSize: "24px",
         fill: "#ffffff",
@@ -3913,7 +3915,7 @@ function createLevel3(bgRepeat) {
 
     // Create visible skill item using specific asset
     const assetKey = `${skillType}${itemIndex + 1}`; // tech1, tech2, finance1, etc.
-    const skill = this.physics.add.staticSprite(pos.x, pos.y - 100, assetKey);
+    const skill = this.physics.add.staticSprite(pos.x, pos.y - 60, assetKey);
     skill.setDepth(15);
     // If asset doesn't exist, use fallback
     if (!this.textures.exists(assetKey)) {
@@ -3921,7 +3923,7 @@ function createLevel3(bgRepeat) {
       skill.setTint(isFinance ? 0x00ff00 : 0x00ffff);
     }
 
-    skill.setScale(1);
+    skill.setScale(0.5);
     skill.setData("index", i);
     skill.setData("type", skillType);
     skill.setData("collected", false);
@@ -4514,9 +4516,9 @@ function hitMysteryBox(player, box) {
     });
 
     // Activate boss area with short delay
-    this.time.delayedCall(2000, () => {
-      activateBossArea.call(this);
-    });
+    //this.time.delayedCall(2000, () => {
+    activateBossArea.call(this);
+    //});
   }
 
   // Particle effect
