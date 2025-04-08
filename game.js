@@ -893,13 +893,13 @@ function createLevel1(bgRepeat) {
     { x: 796, y: this.scale.height - 200, width: 48, height: 48 },
 */
     // Pipe block
-    {
+    /* {
       x: 900,
-      y: this.scale.height - 100,
+      y: this.scale.height - 160,
       width: 80,
-      height: 100,
+      height: 200,
       type: "pipe",
-    },
+    },*/
     // Additional platforms for gameplay
     { x: 692, y: this.scale.height - 260, width: 48, height: 48 },
     /*{ x: 900, y: this.scale.height - 150, width: 150, height: 30 },
@@ -941,6 +941,19 @@ function createLevel1(bgRepeat) {
       platform.setTint(0x00ff00);
     }
   }
+  const pipeX = 900;
+  const groundTop = this.scale.height - groundHeight * 2 + 7; // Position at top of ground layer
+  const pipe = this.physics.add
+    .staticImage(pipeX, groundTop, "pipe")
+    .setOrigin(0.5, 1); // Set origin to bottom center for proper positioning
+
+  // Scale the pipe to appropriate size without distortion
+  pipe.setScale(3); // Adjust this value as needed to match your sprite size
+
+  // Make sure pipe has collision
+  this.platforms.add(pipe);
+  pipe.refreshBody();
+  pipe.setData("isPipe", true);
 
   // 4. Create mystery boxes according to specification
   const mysteryBoxPositions = [
