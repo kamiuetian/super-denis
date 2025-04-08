@@ -4428,8 +4428,57 @@ function hitMysteryBox(player, box) {
   this.smallCounter.setText("Skills: " + this.coinCount + "/6");
 
   // Show speech bubble with skill message
-  const speechBubble = showSpeechBubble.call(this, player, skill.message, 3000);
+  //const speechBubble = showSpeechBubble.call(this, player, skill.message, 3000);
+  const landingCheck = this.time.addEvent({
+    delay: 100, // Check every 100ms
+    callback: () => {
+      if (player.body.touching.down) {
+        // Player has landed, show speech bubble
+        landingCheck.remove();
 
+        // Show speech bubble with the skill message
+        createSpeechBubble.call(
+          this,
+          player.x,
+          player.y - 60,
+          skill.message,
+          3000
+        );
+
+        // Check if all skills collected
+        if (this.skillCount >= 6) {
+          // Delay bridge animation slightly
+          this.time.delayedCall(1000, () => {
+            // Show completion message if all collected
+            const completionText = this.add
+              .text(
+                this.scale.width / 2,
+                this.scale.height / 2 - 100,
+                "All skills collected! Head to the flagpole!",
+                {
+                  fontSize: "24px",
+                  fill: "#ffffff",
+                  stroke: "#000000",
+                  strokeThickness: 4,
+                }
+              )
+              .setOrigin(0.5)
+              .setScrollFactor(0);
+
+            // Remove after a few seconds
+            this.time.delayedCall(3000, () => {
+              completionText.destroy();
+            });
+          });
+        }
+      }
+    },
+    callbackScope: this,
+    loop: true,
+  });
+  this.time.delayedCall(5000, () => {
+    landingCheck.remove();
+  });
   // ADDED: Resume physics and player control after dialogue finishes
   this.time.delayedCall(3000, () => {
     // Only resume if not entering boss battle (which handles physics itself)
