@@ -69,6 +69,8 @@ function preload() {
   this.load.image("customBlock", "assets/overworld/customBlock.png");
   this.load.image("blockGround", "block.png");
   this.load.image("block", "assets/overworld/block.png");
+  this.load.image("emptyBlock", "assets/overworld/emptyBlock.png");
+
   this.load.image("tech1", "assets/level3/ai-assistant.png");
   this.load.image("tech2", "assets/level3/analytics.png");
   this.load.image("tech3", "assets/level3/atm-card.png");
@@ -896,13 +898,30 @@ function createLevel1(bgRepeat) {
 
   // Create brick blocks
   for (const block of brickBlocks) {
-    const platform = this.platforms.create(
-      block.x,
-      block.y,
-      block.type === "pipe" ? "customBlock" : "terrain",
-      0
-    );
-    platform.setDisplaySize(block.width, block.height);
+    // Determine which texture to use
+    let textureKey = "terrain";
+    let useScale = false;
+
+    // First two sets are from x=300 to x=396 and x=700 to x=796
+    if (
+      (block.x >= 300 && block.x <= 396) ||
+      (block.x >= 700 && block.x <= 796)
+    ) {
+      textureKey = "emptyBlock"; // Use emptyBlock for first two sets
+      useScale = true; // Use scale instead of setDisplaySize
+    } else if (block.type === "pipe") {
+      textureKey = "customBlock"; // Keep pipe texture
+    }
+
+    // Create the platform with appropriate texture
+    const platform = this.platforms.create(block.x, block.y, textureKey, 0);
+
+    // Apply either scale or display size based on block type
+    if (useScale) {
+      platform.setScale(3); // Set scale to 3 for emptyBlock
+    } else {
+      platform.setDisplaySize(block.width, block.height);
+    }
 
     platform.refreshBody();
 
