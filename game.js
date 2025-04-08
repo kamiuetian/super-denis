@@ -997,7 +997,7 @@ function createLevel1(bgRepeat) {
 
   for (let i = 0; i < 5; i++) {
     // Each step moves up and right by 100 units
-    const stepX = 2400 + i * stepWidth;
+    const stepX = 3500 + i * stepWidth;
     const stepY = baseY - i * stepWidth;
 
     const step = this.platforms.create(stepX, stepY, "terrain");
