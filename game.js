@@ -346,7 +346,14 @@ function update(time, delta) {
       }
     }
   }
-
+  if (this.dialogueActive) {
+    // Force player to stay still during dialogue
+    if (this.player && this.player.body) {
+      this.player.setVelocityX(0);
+      this.player.anims.play("stand");
+    }
+    return;
+  }
   // Handle movement
   if (this.player && this.player.body && this.player.active) {
     if (this.cursors.left.isDown) {
@@ -431,7 +438,82 @@ function update(time, delta) {
     return; // Skip rest of update for movement
   }
 }
+function cloudFallDeath(player) {
+  // Only run once
+  if (this.playerDying) return;
+  this.playerDying = true;
 
+  // Stop player movement
+  this.physics.pause();
+  player.setVelocity(0, 0);
+  player.setTint(0xff0000);
+
+  // Create fall effect
+  const fallTrail = this.add.particles(player.x, player.y, "cloud", {
+    speed: { min: 50, max: 100 },
+    scale: { start: 0.1, end: 0 },
+    lifespan: 500,
+    quantity: 15,
+    blendMode: "ADD",
+    alpha: { start: 0.6, end: 0 },
+    emitting: false,
+  });
+
+  fallTrail.explode(15);
+
+  // Create full screen overlay
+  const overlay = this.add
+    .rectangle(0, 0, this.scale.width, this.scale.height, 0x000000, 0.8)
+    .setOrigin(0, 0)
+    .setScrollFactor(0)
+    .setDepth(999);
+
+  // Show custom message
+  const gameOverText = this.add
+    .text(
+      this.scale.width / 2,
+      this.scale.height / 2 - 100,
+      "GAME OVER\n\nWhen aiming for the clouds, don't look down!",
+      {
+        fontSize: "18px",
+        fill: "#ff0000",
+        align: "center",
+        padding: 10,
+      }
+    )
+    .setScrollFactor(0)
+    .setAlign("center")
+    .setOrigin(0.5, 0)
+    .setDepth(1000);
+
+  // Add restart button
+  const restartButton = this.add
+    .text(this.scale.width / 2, this.scale.height / 2 + 80, "[ Try Again ]", {
+      fontSize: "20px",
+      fill: "#ffffff",
+      backgroundColor: "#880000",
+      padding: { x: 15, y: 10 },
+    })
+    .setScrollFactor(0)
+    .setAlign("center")
+    .setOrigin(0.5, 0.5)
+    .setDepth(1000)
+    .setInteractive({ useHandCursor: true });
+
+  // Button hover effects
+  restartButton.on("pointerover", () => {
+    restartButton.setStyle({ fill: "#ffff00" });
+  });
+
+  restartButton.on("pointerout", () => {
+    restartButton.setStyle({ fill: "#ffffff" });
+  });
+
+  // Restart on click
+  restartButton.on("pointerdown", () => {
+    this.scene.restart();
+  });
+}
 // Function to shoot tennis ball
 function shootTennisBall() {
   console.log("--- ATTEMPTING TO SHOOT TENNIS BALL ---");
@@ -1499,6 +1581,7 @@ function activateBossArea() {
             "Challenge accepted!",
             1000
           );
+          this.physics.resume();
 
           // Turn off immunity 1 second after dialogue completes
           this.time.delayedCall(4000, () => {
@@ -3501,238 +3584,6 @@ this.boss.update = function (time) {
   }
 };
 
-// Add this function to replace collectCoin
-function hitMysteryBox(player, box) {
-  // Only trigger when hitting from below and not already hit
-  if (!player.body.touching.up || box.getData("hit")) {
-    return;
-  }
-
-  // Mark box as hit
-  box.setData("hit", true);
-
-  // Store box position for effects
-  const boxX = box.x;
-  const boxY = box.y;
-
-  // Create "bump" effect
-  this.tweens.add({
-    targets: box,
-    y: box.y - 10,
-    duration: 100,
-    yoyo: true,
-    onComplete: () => {
-      // Remove box completely from gameplay
-      box.destroy();
-    },
-  });
-
-  // Get skill index from the box
-  const skillIndex = box.getData("skillIndex");
-
-  // Find and remove any glow effects
-  const glow = box.getData("glow");
-  if (glow) {
-    this.tweens.add({
-      targets: glow,
-      alpha: 0,
-      scale: 0,
-      duration: 300,
-      onComplete: function () {
-        glow.destroy();
-      },
-    });
-  }
-
-  // Get the current skill
-  const skill = skills[skillIndex];
-
-  // Check if this is the guitar skill (skill index 5 is typically the last one with tennis racket)
-  const isGuitarSkill =
-    skill.name.toLowerCase().includes("racket") || skillIndex === 5;
-
-  // Show skill icon popping out of the box
-  const skillIcon = this.add
-    .text(boxX, boxY - 40, skill.icon + " " + skill.name, { fontSize: "32px" })
-    .setOrigin(0.5);
-
-  // Animate skill icon bouncing up
-  this.tweens.add({
-    targets: skillIcon,
-    y: skillIcon.y - 60,
-    duration: 800,
-    ease: "Bounce",
-    onComplete: () => {
-      // Fade out and destroy after bounce animation
-      this.tweens.add({
-        targets: skillIcon,
-        alpha: { from: 1, to: 0 },
-        duration: 200,
-        onComplete: () => skillIcon.destroy(),
-      });
-    },
-  });
-
-  // Show skill name
-  const skillName = this.add
-    .text(boxX, boxY - 20, skill.name, {
-      fontSize: "16px",
-      fontStyle: "bold",
-      fill: "#fff",
-      stroke: "#000",
-      strokeThickness: 3,
-    })
-    .setOrigin(0.5);
-
-  // Fade out skill name faster (1 second total)
-  this.tweens.add({
-    targets: skillName,
-    alpha: { from: 1, to: 0 },
-    y: skillName.y - 20,
-    duration: 1000, // Changed from 1500
-    delay: 0, // Changed from 1000
-    onComplete: () => skillName.destroy(),
-  });
-
-  // Update counters
-  this.coinCount = (this.coinCount || 0) + 1;
-  this.skillsCounter.setText("Skills: " + this.coinCount + "/6");
-  this.smallCounter.setText("Skills: " + this.coinCount + "/6");
-
-  // Show speech bubble with skill message
-  showSpeechBubble.call(this, player, skill.message, 3000);
-
-  // Activate boss area immediately if it's the guitar skill
-  if (isGuitarSkill) {
-    console.log("Guitar skill activated! Entering boss area...");
-
-    // Enable tennis ball shooting ability
-    this.hasTennisRacket = true;
-
-    // Show message about guitar challenge
-    const challengeMessage = this.add
-      .text(
-        this.scale.width / 2,
-        100,
-        "You found a guitar! Johann challenges you to a duel!",
-        {
-          fontSize: "18px",
-          fill: "#ffffff",
-          stroke: "#000000",
-          strokeThickness: 3,
-          align: "center",
-        }
-      )
-      .setOrigin(0.5, 0.5)
-      .setScrollFactor(0);
-
-    // Make message fade out
-    this.tweens.add({
-      targets: challengeMessage,
-      alpha: { from: 1, to: 0 },
-      delay: 3000,
-      duration: 1000,
-    });
-    activateBossArea.call(this);
-    // Activate boss area with short delay
-    /*this.time.delayedCall(2000, () => {
-     
-    });*/
-  }
-
-  // Particle effect
-  const particles = this.add.particles(boxX, boxY - 10, "coin", {
-    speed: { min: 50, max: 150 },
-    scale: { start: 0.05, end: 0.01 },
-    lifespan: 800,
-    quantity: 10,
-    blendMode: "ADD",
-    emitting: false,
-  });
-
-  // Emit particles once
-  particles.explode(10);
-
-  // Destroy the particles after animation completes
-  this.time.delayedCall(800, () => {
-    particles.destroy();
-  });
-
-  // Update skills panel
-  if (this.coinCount > 0 && this.coinCount <= skills.length) {
-    const skillText = this.skillTexts[this.coinCount - 1];
-
-    // Update the text and animate appearance
-    skillText.setText("• " + skill.icon + " " + skill.name);
-
-    // Fade in animation
-    this.tweens.add({
-      targets: skillText,
-      alpha: { from: 0, to: 1 },
-      duration: 300,
-      ease: "Power2",
-    });
-
-    // Scale animation
-    this.tweens.add({
-      targets: skillText,
-      scaleX: { from: 0.5, to: 1 },
-      scaleY: { from: 0.5, to: 1 },
-      duration: 300,
-      ease: "Back.easeOut",
-    });
-  }
-
-  // Handle tennis racket (last skill)
-  if (this.coinCount == 6) {
-    // Enable tennis ball shooting ability
-    this.hasTennisRacket = true;
-
-    // Show a message about shooting tennis balls
-    const shootText = this.add
-      .text(this.scale.width / 2, 80, "Press SPACE to shoot tennis balls!", {
-        fontSize: "18px",
-        fill: "#ffffff",
-        stroke: "#000000",
-        strokeThickness: 3,
-      })
-      .setOrigin(0.5, 0.5)
-      .setScrollFactor(0);
-
-    // Fade out after delay
-    this.tweens.add({
-      targets: shootText,
-      alpha: { from: 1, to: 0 },
-      delay: 5000,
-      duration: 1000,
-    });
-
-    // Also show boss battle instruction
-    const bossText = this.add
-      .text(
-        this.scale.width / 2,
-        120,
-        "Find Johann to the right and defeat him!",
-        {
-          fontSize: "18px",
-          fill: "#ffffff",
-          stroke: "#000000",
-          strokeThickness: 3,
-        }
-      )
-      .setOrigin(0.5, 0.5)
-      .setScrollFactor(0);
-
-    // Fade out after delay
-    this.tweens.add({
-      targets: bossText,
-      alpha: { from: 1, to: 0 },
-      delay: 5000,
-      duration: 1000,
-    });
-  }
-}
-
 /**Level 3 */
 
 // Create Level 3 function by duplicating Level 2 function
@@ -4423,7 +4274,6 @@ this.boss.update = function (time) {
   }
 };
 
-// Add this function to replace collectCoin
 function hitMysteryBox(player, box) {
   // Only trigger when hitting from below and not already hit
   if (!player.body.touching.up || box.getData("hit")) {
@@ -4432,6 +4282,22 @@ function hitMysteryBox(player, box) {
 
   // Mark box as hit
   box.setData("hit", true);
+
+  // ADDED: Set dialogue active flag to freeze player in the update function
+  this.dialogueActive = true;
+
+  // ADDED: Pause physics to prevent enemy/ball movement
+  this.physics.pause();
+
+  // Store player velocity to restore it later if needed
+  this.playerVelocityBeforeDialogue = {
+    x: player.body.velocity.x,
+    y: player.body.velocity.y,
+  };
+
+  // Force player to stop and display standing animation
+  player.setVelocity(0, 0);
+  player.anims.play("stand");
 
   // Store box position for effects
   const boxX = box.x;
@@ -4469,9 +4335,8 @@ function hitMysteryBox(player, box) {
   // Get the current skill
   const skill = skills[skillIndex];
 
-  // Check if this is the guitar skill (skill index 5 is typically the last one with tennis racket)
-  const isGuitarSkill =
-    skill.name.toLowerCase().includes("racket") || skillIndex === 5;
+  // Check if this is the tennis racket skill (skill index 5 is typically the last one with tennis racket)
+  const isGuitarSkill = skill.name.toLowerCase().includes("racket");
 
   // Show skill icon popping out of the box
   const skillIcon = this.add
@@ -4495,48 +4360,36 @@ function hitMysteryBox(player, box) {
     },
   });
 
-  // Show skill name
-  const skillName = this.add
-    .text(boxX, boxY - 20, skill.name, {
-      fontSize: "16px",
-      fontStyle: "bold",
-      fill: "#fff",
-      stroke: "#000",
-      strokeThickness: 3,
-    })
-    .setOrigin(0.5);
-
-  // Fade out skill name faster (1 second total)
-  this.tweens.add({
-    targets: skillName,
-    alpha: { from: 1, to: 0 },
-    y: skillName.y - 20,
-    duration: 1000, // Changed from 1500
-    delay: 0, // Changed from 1000
-    onComplete: () => skillName.destroy(),
-  });
-
   // Update counters
   this.coinCount = (this.coinCount || 0) + 1;
   this.skillsCounter.setText("Skills: " + this.coinCount + "/6");
   this.smallCounter.setText("Skills: " + this.coinCount + "/6");
 
   // Show speech bubble with skill message
-  showSpeechBubble.call(this, player, skill.message, 3000);
+  const speechBubble = showSpeechBubble.call(this, player, skill.message, 3000);
 
-  // Activate boss area immediately if it's the guitar skill
+  // ADDED: Resume physics and player control after dialogue finishes
+  this.time.delayedCall(3000, () => {
+    // Only resume if not entering boss battle (which handles physics itself)
+    if (!isGuitarSkill) {
+      this.physics.resume();
+      this.dialogueActive = false;
+    }
+  });
+
+  // Activate boss area immediately if it's the tennis racket skill
   if (isGuitarSkill) {
-    console.log("Guitar skill activated! Entering boss area...");
+    console.log("Tennis racket skill activated! Entering boss area...");
 
     // Enable tennis ball shooting ability
     this.hasTennisRacket = true;
 
-    // Show message about guitar challenge
+    // Show message about tennis challenge
     const challengeMessage = this.add
       .text(
         this.scale.width / 2,
         100,
-        "You found a guitar! Johann challenges you to a duel!",
+        "You found a tennis racket! Johann challenges you to a duel!",
         {
           fontSize: "18px",
           fill: "#ffffff",
@@ -4556,10 +4409,11 @@ function hitMysteryBox(player, box) {
       duration: 1000,
     });
 
-    // Activate boss area with short delay
-    //this.time.delayedCall(2000, () => {
-    activateBossArea.call(this);
-    //});
+    // NOTE: We don't resume physics here since activateBossArea handles physics
+    // Activate boss area with short delay to allow reading the dialogue
+    this.time.delayedCall(3000, () => {
+      activateBossArea.call(this);
+    });
   }
 
   // Particle effect
@@ -4605,11 +4459,8 @@ function hitMysteryBox(player, box) {
     });
   }
 
-  // Handle tennis racket (last skill)
-  if (this.coinCount == 6) {
-    // Enable tennis ball shooting ability
-    this.hasTennisRacket = true;
-
+  // Handle additional tennis racket information if it's the last skill
+  if (this.coinCount == 6 && !isGuitarSkill) {
     // Show a message about shooting tennis balls
     const shootText = this.add
       .text(this.scale.width / 2, 80, "Press SPACE to shoot tennis balls!", {
@@ -4624,30 +4475,6 @@ function hitMysteryBox(player, box) {
     // Fade out after delay
     this.tweens.add({
       targets: shootText,
-      alpha: { from: 1, to: 0 },
-      delay: 5000,
-      duration: 1000,
-    });
-
-    // Also show boss battle instruction
-    const bossText = this.add
-      .text(
-        this.scale.width / 2,
-        120,
-        "Find Johann to the right and defeat him!",
-        {
-          fontSize: "18px",
-          fill: "#ffffff",
-          stroke: "#000000",
-          strokeThickness: 3,
-        }
-      )
-      .setOrigin(0.5, 0.5)
-      .setScrollFactor(0);
-
-    // Fade out after delay
-    this.tweens.add({
-      targets: bossText,
       alpha: { from: 1, to: 0 },
       delay: 5000,
       duration: 1000,
