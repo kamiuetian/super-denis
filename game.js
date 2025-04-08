@@ -187,7 +187,7 @@ function setupBackground() {
   const bgRepeat = 3; // Explicitly set to 3 for consistency
   const screenHeight = this.scale.height;
   const screenWidth = this.scale.width;
-  const worldWidth = screenWidth * bgRepeat;
+  const worldWidth = 5000;
 
   // Create plain white background rectangle that covers the entire world
   const whiteBackground = this.add.rectangle(
@@ -1098,12 +1098,7 @@ function createLevel1(bgRepeat) {
   );
 
   // Set up camera to follow the player
-  this.cameras.main.setBounds(
-    0,
-    0,
-    bgRepeat * this.scale.width,
-    this.scale.height
-  );
+  this.cameras.main.setBounds(0, 0, 5000, this.scale.height);
   this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
 }
 // Add this function near the other game functions
@@ -2256,7 +2251,7 @@ function createLevel2(bgRepeat) {
   const groundHeight = 40; // Match Level 1's ground height
   const ground = this.platforms.create(
     //(bgRepeat * this.scale.width) / 2,
-    1300,
+    2500,
     this.scale.height - groundHeight / 2, // Position at bottom of visible area
     null
   );
@@ -2278,14 +2273,14 @@ function createLevel2(bgRepeat) {
   dangerZone.lineBetween(
     0,
     this.scale.height - groundHeight,
-    bgRepeat * this.scale.width,
+    5000,
     this.scale.height - groundHeight
   );
   // 3. Set background - blue sky
   const skyBackground = this.add.rectangle(
     0,
     0,
-    bgRepeat * this.scale.width,
+    5000,
     this.scale.height,
     0x87ceeb // Sky blue color
   );
@@ -2461,12 +2456,7 @@ function createLevel2(bgRepeat) {
   );
 
   // Set up camera to follow player
-  this.cameras.main.setBounds(
-    0,
-    0,
-    bgRepeat * this.scale.width,
-    this.scale.height
-  );
+  this.cameras.main.setBounds(0, 0, 5000, this.scale.height);
   this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
 }
 
@@ -3618,19 +3608,14 @@ function createLevel3(bgRepeat) {
   this.platforms = this.physics.add.staticGroup();
   this.skillItems = this.physics.add.staticGroup();
   this.tennisBalls = this.physics.add.group();
-  this.physics.world.setBounds(
-    0,
-    0,
-    bgRepeat * this.scale.width,
-    this.scale.height
-  );
+  this.physics.world.setBounds(0, 0, 5000, this.scale.height);
 
   // 2. Set up the ground (invisible, just for preventing falling)
   const groundHeight = 40; // Match Level 1's ground height
   const groundTop = this.scale.height - groundHeight;
 
   const ground = this.platforms.create(
-    (bgRepeat * this.scale.width) / 2,
+    2500,
     this.scale.height - groundHeight / 2, // Position at bottom of visible area
     null
   );
@@ -3643,7 +3628,7 @@ function createLevel3(bgRepeat) {
   const skyBackground = this.add.rectangle(
     0,
     0,
-    bgRepeat * this.scale.width,
+    5000,
     this.scale.height,
     0x87ceeb // Sky blue color
   );
@@ -3855,12 +3840,7 @@ function createLevel3(bgRepeat) {
   this.physics.add.collider(this.player, this.platforms, hitCloud, null, this);
 
   // Set up camera to follow player
-  this.cameras.main.setBounds(
-    0,
-    0,
-    bgRepeat * this.scale.width,
-    this.scale.height
-  );
+  this.cameras.main.setBounds(0, 0, 5000, this.scale.height);
   this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
 
   // 10. Add pre-level dialogue
@@ -3878,12 +3858,7 @@ function createLevel3(bgRepeat) {
   this.player.setVelocity(0, 0);
   this.player.clearTint();
   this.player.setAlpha(1);
-  this.cameras.main.setBounds(
-    0,
-    0,
-    bgRepeat * this.scale.width,
-    this.scale.height
-  );
+  this.cameras.main.setBounds(0, 0, 5000, this.scale.height);
   this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
   this.add
     .line(
