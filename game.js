@@ -219,6 +219,12 @@ function setupPlayer() {
   this.player.setVisible(true);
   this.player.setBounce(0.2);
   this.player.setCollideWorldBounds(true);
+  const bodyWidth = Math.floor(this.player.width * 0.6);
+  const bodyOffset = Math.floor((this.player.width - bodyWidth) / 2);
+
+  // Set the physics body size and offset
+  this.player.body.setSize(bodyWidth, this.player.height);
+  this.player.body.setOffset(bodyOffset, 0);
 
   // Create animations
   this.anims.create({
@@ -824,10 +830,11 @@ function explodeTennisBall(ball) {
 }
 
 // Fix the createLevel1 function to ensure coins are visible
+// Updated createLevel1 function with new block layout
 function createLevel1(bgRepeat) {
-  // 1. First create the groups
+  // 1. Create groups
   this.platforms = this.physics.add.staticGroup();
-  this.coins = this.physics.add.staticGroup();
+  this.mysteryBoxes = this.physics.add.staticGroup();
   this.enemies = this.physics.add.group({
     collideWorldBounds: true,
     bounceX: 1,
@@ -836,7 +843,7 @@ function createLevel1(bgRepeat) {
 
   // 2. Set up the ground
   const groundHeight = 40;
-  ground = this.platforms.create(
+  const ground = this.platforms.create(
     (bgRepeat * this.scale.width) / 2,
     this.scale.height - groundHeight,
     null
@@ -845,30 +852,163 @@ function createLevel1(bgRepeat) {
   ground.setVisible(true);
   ground.refreshBody();
 
-  // REMOVED: Big green platform at 1500, 565
-  // this.platforms
-  //   .create(1500, 565, "terrain", 2)
-  //   .setDisplaySize(600, 50)
-  //   .refreshBody();
+  // 3. Create the main platform blocks
+  const brickBlocks = [
+    // First set - two brick blocks with mystery boxes between them
+    { x: 300, y: this.scale.height - 300, width: 48, height: 48 },
+    { x: 396, y: this.scale.height - 300, width: 48, height: 48 },
 
-  // 3. Create a darkening overlay for better visibility
-  const darkOverlay = this.add.rectangle(
-    0,
-    0,
-    this.scale.width * bgRepeat,
-    this.scale.height,
-    0x000000,
-    0.3 // 30% opacity black overlay
+    // Second set - two brick blocks with mystery boxes between them
+    { x: 700, y: this.scale.height - 200, width: 48, height: 48 },
+    { x: 796, y: this.scale.height - 200, width: 48, height: 48 },
+
+    // Pipe block
+    {
+      x: 1600,
+      y: this.scale.height - 100,
+      width: 80,
+      height: 100,
+      type: "pipe",
+    },
+
+    // Additional platforms for gameplay
+    { x: 500, y: this.scale.height - 120, width: 200, height: 30 },
+    { x: 900, y: this.scale.height - 150, width: 150, height: 30 },
+    { x: 1500, y: this.scale.height - 180, width: 250, height: 30 },
+    { x: 1800, y: this.scale.height - 250, width: 150, height: 30 },
+  ];
+
+  // Create brick blocks
+  for (const block of brickBlocks) {
+    const platform = this.platforms.create(
+      block.x,
+      block.y,
+      block.type === "pipe" ? "customBlock" : "terrain",
+      0
+    );
+    platform.setDisplaySize(block.width, block.height);
+
+    platform.refreshBody();
+
+    // Add green tint for pipe blocks
+    if (block.type === "pipe") {
+      platform.setTint(0x00ff00);
+    }
+  }
+
+  // 4. Create mystery boxes according to specification
+  const mysteryBoxPositions = [
+    // Two mystery boxes between brick blocks (positioned between the two sets)
+    { x: 348, y: this.scale.height - 300, index: 0 }, // Between first set of bricks
+    { x: 748, y: this.scale.height - 300, index: 1 }, // Between second set of bricks
+
+    // One alone
+    { x: 750, y: this.scale.height - 240, index: 2 },
+
+    // One on top of pipe block
+    { x: 1600, y: this.scale.height - 250, index: 3 },
+
+    // Two others placed elsewhere
+    { x: 1000, y: this.scale.height - 250, index: 4 },
+    { x: 2200, y: this.scale.height - 280, index: 5 },
+  ];
+
+  // Create mystery boxes
+  for (const box of mysteryBoxPositions) {
+    const mysteryBox = this.mysteryBoxes
+      .create(box.x, box.y, "mysteryBlock")
+      .setOrigin(0.5, 0.5)
+      .setScale(3)
+      .setData("skillIndex", box.index)
+      .setData("hit", false)
+      .refreshBody();
+
+    // Add glow effect
+    const glow = this.add
+      .sprite(mysteryBox.x, mysteryBox.y, "mysteryBlock")
+      .setScale(1.7)
+      .setAlpha(0.3)
+      .setTint(0xffff44);
+
+    // Store reference to glow
+    mysteryBox.setData("glow", glow);
+
+    // Bounce animation for mystery box
+    this.tweens.add({
+      targets: mysteryBox,
+      y: mysteryBox.y - 5,
+      duration: 1200,
+      yoyo: true,
+      repeat: -1,
+      ease: "Sine.easeInOut",
+    });
+
+    // Glow animation
+    this.tweens.add({
+      targets: glow,
+      scale: { from: 1.7, to: 1.9 },
+      alpha: { from: 0.3, to: 0.1 },
+      yoyo: true,
+      repeat: -1,
+      duration: 1000,
+      ease: "Sine.easeInOut",
+    });
+  }
+  /**create staircase */
+  const stepWidth = 100;
+  const stepHeight = 30;
+  const baseY = this.scale.height - 100; // Position from bottom of screen
+
+  for (let i = 0; i < 5; i++) {
+    // Each step moves up and right by 100 units
+    const stepX = 2400 + i * stepWidth;
+    const stepY = baseY - i * stepWidth;
+
+    const step = this.platforms.create(stepX, stepY, "terrain");
+    step.setDisplaySize(stepWidth, stepHeight);
+    step.setData("isStep", true);
+    step.setData("stepNumber", i);
+    step.refreshBody();
+  }
+  // Add this code immediately after creating the staircase in createLevel1 function
+  // Create a trigger zone right after the last staircase step
+  const lastStepX = 2400 + 4 * 100; // Position of the 5th step (index 4)
+  const triggerX = lastStepX + 150; // Position trigger 150px after the last step
+  const triggerY = baseY - 4 * 100; // Match height of the top step
+  const triggerZone = this.add.zone(triggerX, triggerY, 500, 500);
+  this.physics.world.enable(triggerZone);
+  triggerZone.body.setAllowGravity(false);
+  triggerZone.body.immovable = true;
+
+  // Make the zone visible during development (can be removed in final version)
+  const zoneVisual = this.add.rectangle(
+    triggerX,
+    triggerY,
+    50,
+    100,
+    0x00ff00,
+    0.3
   );
-  darkOverlay.setOrigin(0, 0);
-  darkOverlay.setDepth(-1); // Make sure it's behind everything
+  zoneVisual.setDepth(100);
 
-  // 4. Initialize coin counter
-  this.coinCount = 0;
-
-  // 5. Create skills panel inside game canvas
+  // Add overlap detection
+  this.physics.add.overlap(
+    this.player,
+    triggerZone,
+    () => {
+      // Only trigger once
+      if (!this.bossTriggered) {
+        this.bossTriggered = true;
+        console.log("Player crossed staircase - activating boss area!");
+        activateBossArea.call(this);
+      }
+    },
+    null,
+    this
+  );
+  // 5. Continue with existing code for UI, counters, etc.
   this.skillsPanel = this.add.graphics();
-  this.skillsPanel.fillStyle(0x000000, 0.8); // More opaque for better readability
+  this.skillsPanel.fillStyle(0x000000, 0.8);
   this.skillsPanel.fillRect(this.scale.width - 220, 20, 200, 260);
   this.skillsPanel.lineStyle(2, 0xffd700, 1);
   this.skillsPanel.strokeRect(this.scale.width - 220, 20, 200, 260);
@@ -895,12 +1035,11 @@ function createLevel1(bgRepeat) {
   // Create skill text objects
   this.skillTexts = [];
   for (let i = 0; i < skills.length; i++) {
-    // Properly format using the icon and name from the skill object
     const skillText = this.add
       .text(
         this.scale.width - 195,
         60 + i * 28,
-        skills[i].icon + " " + skills[i].name, // Removed bullet point for cleaner look
+        skills[i].icon + " " + skills[i].name,
         {
           fontSize: "14px",
           fill: "#FFFFFF",
@@ -909,12 +1048,12 @@ function createLevel1(bgRepeat) {
       )
       .setScrollFactor(0);
 
-    // Initially hide skill text by setting alpha to 0
+    // Initially hide skill text
     skillText.setAlpha(0);
     this.skillTexts.push(skillText);
   }
 
-  // Small skills counter in bottom left (traditional location)
+  // Small skills counter in bottom left
   this.smallCounter = this.add
     .text(20, 20, "Skills: 0/6", {
       fontSize: "20px",
@@ -922,169 +1061,10 @@ function createLevel1(bgRepeat) {
     })
     .setScrollFactor(0);
 
-  // 6. Add an instruction text for better guidance
-  const instructionText = this.add
-    .text(
-      this.scale.width / 2,
-      80,
-      "Collect all skills to complete the level!",
-      {
-        fontSize: "24px",
-        fill: "#ffffff",
-        stroke: "#000000",
-        strokeThickness: 4,
-        fontStyle: "bold",
-      }
-    )
-    .setOrigin(0.5, 0.5)
-    .setScrollFactor(0);
-
-  // Make the instruction text fade out after a few seconds
-  this.tweens.add({
-    targets: instructionText,
-    alpha: { from: 1, to: 0 },
-    delay: 3000,
-    duration: 1000,
-    ease: "Power2",
-  });
-
-  // 7. MODIFIED: Create ONLY green platforms with mystery boxes below
-  const worldWidth = bgRepeat * this.scale.width;
-  // Add this after your existing platform creation loop in createLevel1 function,
-  // around line 826 (after the existing platform creation code)
-
-  // Create additional set of block-based platforms
-  // First make sure the block images are loaded in preload function
-  // Make sure to add this to the preload function:
-  this.load.image("block", "assets/overworld/block.png");
-  this.load.image("emptyBlock", "assets/overworld/emptyBlock.png");
-
-  // Define positions for 15 new block-based platforms
-  const blockPlatforms = [
-    { x: 1950, y: this.scale.height - 160, width: 20, type: "block" },
-    { x: 2850, y: this.scale.height - 270, width: 30, type: "emptyBlock" },
-    { x: 3700, y: this.scale.height - 350, width: 10, type: "block" },
-    { x: 3700, y: this.scale.height - 320, width: 10, type: "emptyBlock" },
-  ];
-
-  // Create the block-based platforms
-  for (let i = 0; i < blockPlatforms.length; i++) {
-    const pos = blockPlatforms[i];
-    const blockSize = 32; // Standard size for a block - adjust based on your actual image size
-
-    // Calculate total width based on number of blocks
-    const totalWidth = pos.width * blockSize;
-
-    // Create platform using the specified block type
-    const platform = this.platforms.create(pos.x, pos.y, pos.type);
-    platform.displayWidth = totalWidth;
-    platform.displayHeight = blockSize;
-    platform.refreshBody();
-
-    // Add a subtle bounce effect to make the platform noticeable
-    this.tweens.add({
-      targets: platform,
-      y: platform.y - 2,
-      duration: 1500,
-      yoyo: true,
-      repeat: -1,
-      ease: "Sine.easeInOut",
-    });
-  }
-  const platformPositions = [
-    { x: 300, y: this.scale.height - 150, width: 200, height: 30 }, // Longer
-    { x: 500, y: this.scale.height - 220, width: 100, height: 30 }, // Shorter
-    { x: 800, y: this.scale.height - 40, width: 180, height: 30 }, // Longer
-    { x: 1210, y: this.scale.height - 160, width: 90, height: 30 }, // Shorter
-    { x: 1600, y: this.scale.height - 270, width: 220, height: 30 }, // Longer
-    { x: 1900, y: this.scale.height - 270, width: 110, height: 30 }, // Shorter
-  ];
-
-  // Rename coins group to mysteryBoxes
-  this.mysteryBoxes = this.physics.add.staticGroup();
-
-  // Create brick platforms with mystery boxes below
-  for (let i = 0; i < platformPositions.length; i++) {
-    const pos = platformPositions[i];
-
-    // Create brick platform with custom size
-    // Use terrain spritesheet frame 0 which typically has brick texture
-    const platform = this.platforms.create(pos.x, pos.y, "terrain", 0);
-    platform.displayWidth = pos.width;
-    platform.displayHeight = pos.height;
-    platform.refreshBody();
-    // Add mystery box below the platform
-    // Position mystery box below the platform where it can be hit
-    const mysteryBox = this.mysteryBoxes
-      .create(
-        pos.x, // Centered horizontally
-        pos.y + pos.height - 120, // Below platform
-        "mysteryBlock"
-      )
-      .setOrigin(0.5, 0.5)
-      .setScale(1.5) // Proper size for mystery box
-      .setData("skillIndex", i) // Store which skill is in this box
-      .setData("hit", false) // Track if box has been hit already
-      .refreshBody();
-
-    // Add a pulsating glow effect around mysteryBoxes
-    const glow = this.add
-      .sprite(mysteryBox.x, mysteryBox.y, "mysteryBlock")
-      .setScale(1.7)
-      .setAlpha(0.3)
-      .setTint(0xffff44);
-
-    // Store reference to glow for later removal
-    mysteryBox.setData("glow", glow);
-
-    // Bounce animation for mystery box
-    this.tweens.add({
-      targets: mysteryBox,
-      y: mysteryBox.y - 5,
-      duration: 1200,
-      yoyo: true,
-      repeat: -1,
-      ease: "Sine.easeInOut",
-    });
-
-    // Glow animation
-    this.tweens.add({
-      targets: glow,
-      scale: { from: 1.7, to: 1.9 },
-      alpha: { from: 0.3, to: 0.1 },
-      yoyo: true,
-      repeat: -1,
-      duration: 1000,
-      ease: "Sine.easeInOut",
-    });
-  }
-
-  // Add a hint about jumping
-  const jumpTip = this.add.text(
-    150,
-    this.scale.height - 70,
-    "Use UP ARROW to jump between platforms!",
-    {
-      fontSize: "16px",
-      fill: "#ffffff",
-      stroke: "#000000",
-      strokeThickness: 3,
-    }
-  );
-  jumpTip.setScrollFactor(1); // Move with camera
-
-  // Make it fade out after 8 seconds
-  this.tweens.add({
-    targets: jumpTip,
-    alpha: { from: 1, to: 0 },
-    delay: 8000,
-    duration: 1000,
-  });
-
-  // Add enemies to the level - ADD THIS LINE
+  // 6. Add enemies
   addEnemies.call(this);
 
-  // 9. Add physics colliders and overlaps
+  // 7. Add collisions
   this.physics.add.collider(this.player, this.platforms);
   this.physics.add.collider(this.enemies, this.platforms);
   this.physics.add.collider(this.enemies, this.enemies);
@@ -1097,9 +1077,35 @@ function createLevel1(bgRepeat) {
     this
   );
 
-  // Set up camera to follow the player
+  // Set up camera to follow player
   this.cameras.main.setBounds(0, 0, 5000, this.scale.height);
   this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
+
+  // Add instructions
+  const instructionText = this.add
+    .text(
+      this.scale.width / 2,
+      80,
+      "Hit mystery boxes from below to discover skills!",
+      {
+        fontSize: "24px",
+        fill: "#ffffff",
+        stroke: "#000000",
+        strokeThickness: 4,
+        fontStyle: "bold",
+      }
+    )
+    .setOrigin(0.5, 0.5)
+    .setScrollFactor(0);
+
+  // Fade out instructions
+  this.tweens.add({
+    targets: instructionText,
+    alpha: { from: 1, to: 0 },
+    delay: 3000,
+    duration: 1000,
+    ease: "Power2",
+  });
 }
 // Add this function near the other game functions
 function activateBossArea() {
