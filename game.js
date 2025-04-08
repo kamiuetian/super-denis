@@ -71,6 +71,7 @@ function preload() {
   this.load.image("block", "assets/overworld/block.png");
   this.load.image("pipe", "assets/overworld/pipe1.png");
   this.load.image("pipe2", "assets/overworld/pipe2.png");
+  this.load.image("flag", "assets/overworld/flag-master.png");
   this.load.image("emptyBlock", "assets/overworld/emptyBlock.png");
 
   this.load.image("tech1", "assets/level3/ai-assistant.png");
@@ -984,7 +985,21 @@ function createLevel1(bgRepeat) {
   this.platforms.add(pipe2);
   pipe2.refreshBody();
   pipe2.setData("isPipe", true);
+  this.platforms.add(pipe);
+  pipe.refreshBody();
+  pipe.setData("isPipe", true);
+  const flagx = 2400;
+  const flag = this.physics.add
+    .staticImage(flagx, groundTop, "flag")
+    .setOrigin(0.5, 1); // Set origin to bottom center for proper positioning
 
+  // Scale the pipe to appropriate size without distortion
+  flag.setScale(3); // Adjust this value as needed to match your sprite size
+
+  // Make sure pipe has collision
+  this.platforms.add(flag);
+  flag.refreshBody();
+  flag.setData("isPipe", true);
   // 4. Create mystery boxes according to specification
   const mysteryBoxPositions = [
     // Two mystery boxes between brick blocks (positioned between the two sets)
