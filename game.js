@@ -885,12 +885,12 @@ function createLevel1(bgRepeat) {
   const brickBlocks = [
     // First set - two brick blocks with mystery boxes between them
     { x: 500, y: this.scale.height - 260, width: 48, height: 48 },
-    /*{ x: 596, y: this.scale.height - 260, width: 48, height: 48 },*/
+    { x: 596, y: this.scale.height - 260, width: 48, height: 48 },
 
     // Second set - two brick blocks with mystery boxes between them
-    { x: 700, y: this.scale.height - 200, width: 48, height: 48 },
+    /* { x: 700, y: this.scale.height - 200, width: 48, height: 48 },
     { x: 796, y: this.scale.height - 200, width: 48, height: 48 },
-
+*/
     // Pipe block
     /*{
       x: 1600,
