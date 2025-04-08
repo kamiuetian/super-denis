@@ -966,8 +966,8 @@ function createLevel1(bgRepeat) {
 
   // Make sure pipe has collision
   this.platforms.add(pipe2);
-  pipe.refreshBody();
-  pipe.setData("isPipe", true);
+  pipe2.refreshBody();
+  pipe2.setData("isPipe", true);
 
   // 4. Create mystery boxes according to specification
   const mysteryBoxPositions = [
