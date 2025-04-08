@@ -907,20 +907,22 @@ function createLevel1(bgRepeat) {
     { x: 1348, y: this.scale.height - 300, width: 48, height: 48 },
     { x: 1396, y: this.scale.height - 300, width: 48, height: 48 },
     { x: 1444, y: this.scale.height - 300, width: 48, height: 48 },
-    { x: 1650, y: this.scale.height - 500, width: 48, height: 48 },
+  { x: 1650, y: this.scale.height - 500, width: 48, height: 48 },
     { x: 1698, y: this.scale.height - 500, width: 48, height: 48 },
-    { x: 2150, y: this.scale.height - 400, width: 48, height: 48 },
+  { x: 2150, y: this.scale.height - 400, width: 48, height: 48 },
     { x: 2198, y: this.scale.height - 400, width: 48, height: 48 },
-    { x: 2500, y: this.scale.height - 600, width: 48, height: 48 },
-    { x: 2548, y: this.scale.height - 600, width: 48, height: 48 },
-    { x: 2596, y: this.scale.height - 600, width: 48, height: 48 },
-    { x: 2644, y: this.scale.height - 600, width: 48, height: 48 },
-    { x: 2692, y: this.scale.height - 600, width: 48, height: 48 },
-    { x: 2788, y: this.scale.height - 600, width: 48, height: 48 },
-    { x: 2500, y: this.scale.height - 300, width: 48, height: 48 },
-    { x: 2548, y: this.scale.height - 300, width: 48, height: 48 },
-    { x: 2596, y: this.scale.height - 300, width: 48, height: 48 },
-    { x: 2644, y: this.scale.height - 300, width: 48, height: 48 },
+  { x: 2404, y: this.scale.height - 700, width: 48, height: 48 },
+  
+    { x: 2452, y: this.scale.height - 700, width: 48, height: 48 },
+  { x: 2500, y: this.scale.height - 700, width: 48, height: 48 },
+  { x: 2548, y: this.scale.height - 700, width: 48, height: 48 },
+  { x: 2596, y: this.scale.height - 700, width: 48, height: 48 },
+    { x: 2692, y: this.scale.height - 700, width: 48, height: 48 },
+    { x: 2500, y: this.scale.height - 400, width: 48, height: 48 },
+    { x: 2548, y: this.scale.height - 400, width: 48, height: 48 },
+    { x: 2596, y: this.scale.height - 400, width: 48, height: 48 },
+    { x: 2644, y: this.scale.height - 400, width: 48, height: 48 },
+  
   ];
 
   // Create brick blocks
@@ -987,7 +989,7 @@ function createLevel1(bgRepeat) {
   const mysteryBoxPositions = [
     // Two mystery boxes between brick blocks (positioned between the two sets)
     { x: 548, y: this.scale.height - 270, index: 0 }, // Between first set of bricks
-    { x: 1370, y: this.scale.height - 470, index: 1 }, // Between second set of bricks
+    { x: 1370, y: this.scale.height - 470, index: 1 },  // Between second set of bricks
 
     // One alone
     { x: 644, y: this.scale.height - 270, index: 2 },
@@ -996,7 +998,7 @@ function createLevel1(bgRepeat) {
     { x: 596, y: this.scale.height - 460, index: 3 },
 
     // Two others placed elsewhere
-    { x: 2740, y: this.scale.height - 600, index: 4 },
+    { x: 2644, y: this.scale.height - 600, index: 4 },
     { x: 2200, y: this.scale.height - 280, index: 5 },
   ];
 
