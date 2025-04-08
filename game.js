@@ -2445,8 +2445,6 @@ function createLevel2(bgRepeat) {
   );
   this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
 
-  // 10. Add pre-level dialogue
-  showLevelStartDialogue.call(this);
 }
 
 // Function to handle cloud collision
