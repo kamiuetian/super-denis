@@ -901,10 +901,11 @@ function createLevel1(bgRepeat) {
     },
 */
     // Additional platforms for gameplay
-    { x: 692, y: this.scale.height - 270, width: 48, height: 48 },
+    { x: 692, y: this.scale.height - 260, width: 48, height: 48 },
     /*{ x: 900, y: this.scale.height - 150, width: 150, height: 30 },
     { x: 1500, y: this.scale.height - 180, width: 250, height: 30 },
     { x: 1800, y: this.scale.height - 250, width: 150, height: 30 },*/
+  
   ];
 
   // Create brick blocks
