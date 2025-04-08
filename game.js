@@ -998,7 +998,7 @@ function createLevel1(bgRepeat) {
     { x: 596, y: this.scale.height - 460, index: 3 },
 
     // Two others placed elsewhere
-    { x: 2644, y: this.scale.height - 600, index: 4 },
+    { x: 2644, y: this.scale.height - 700, index: 4 },
     { x: 2200, y: this.scale.height - 280, index: 5 },
   ];
 
