@@ -2444,11 +2444,11 @@ function createLevel2(bgRepeat) {
     this.scale.height
   );
   this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
-
 }
 
 // Function to handle cloud collision
 function hitCloud(player, cloud) {
+  alert();
   // Only trigger when landing on top of cloud and not already touched
   if (!player.body.touching.down || cloud.getData("touched")) {
     return;
