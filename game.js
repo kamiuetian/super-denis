@@ -69,6 +69,7 @@ function preload() {
   this.load.image("customBlock", "assets/overworld/customBlock.png");
   this.load.image("blockGround", "block.png");
   this.load.image("block", "assets/overworld/block.png");
+  this.load.image("pipe", "assets/overworld/pipe1.png");
   this.load.image("emptyBlock", "assets/overworld/emptyBlock.png");
 
   this.load.image("tech1", "assets/level3/ai-assistant.png");
@@ -892,14 +893,13 @@ function createLevel1(bgRepeat) {
     { x: 796, y: this.scale.height - 200, width: 48, height: 48 },
 */
     // Pipe block
-    /*{
-      x: 1600,
+    {
+      x: 900,
       y: this.scale.height - 100,
       width: 80,
       height: 100,
       type: "pipe",
     },
-*/
     // Additional platforms for gameplay
     { x: 692, y: this.scale.height - 260, width: 48, height: 48 },
     /*{ x: 900, y: this.scale.height - 150, width: 150, height: 30 },
@@ -921,7 +921,7 @@ function createLevel1(bgRepeat) {
       textureKey = "emptyBlock"; // Use emptyBlock for first two sets
       useScale = true; // Use scale instead of setDisplaySize
     } else if (block.type === "pipe") {
-      textureKey = "customBlock"; // Keep pipe texture
+      textureKey = "pipe"; // Keep pipe texture
     }
 
     // Create the platform with appropriate texture
