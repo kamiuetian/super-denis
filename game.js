@@ -907,6 +907,10 @@ function createLevel1(bgRepeat) {
     { x: 1348, y: this.scale.height - 300, width: 48, height: 48 },
     { x: 1396, y: this.scale.height - 300, width: 48, height: 48 },
     { x: 1444, y: this.scale.height - 300, width: 48, height: 48 },
+    { x: 1650, y: this.scale.height - 500, width: 48, height: 48 },
+    { x: 1650, y: this.scale.height - 500, width: 48, height: 48 },
+    { x: 2150, y: this.scale.height - 400, width: 48, height: 48 },
+    { x: 2150, y: this.scale.height - 400, width: 48, height: 48 },
   ];
 
   // Create brick blocks
