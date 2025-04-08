@@ -980,7 +980,7 @@ function createLevel1(bgRepeat) {
     /*{ x: 748, y: this.scale.height - 300, index: 1 }, */ // Between second set of bricks
 
     // One alone
-    { x: 644, y: this.scale.height - 270, index: 2 },
+    { x: 1320, y: this.scale.height - 470, index: 2 },
 
     // One on top of pipe block
     { x: 596, y: this.scale.height - 460, index: 3 },
