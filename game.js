@@ -977,10 +977,10 @@ function createLevel1(bgRepeat) {
   const mysteryBoxPositions = [
     // Two mystery boxes between brick blocks (positioned between the two sets)
     { x: 548, y: this.scale.height - 270, index: 0 }, // Between first set of bricks
-    /*{ x: 748, y: this.scale.height - 300, index: 1 }, */ // Between second set of bricks
+    { x: 1320, y: this.scale.height - 470, index: 1 }, // Between second set of bricks
 
     // One alone
-    { x: 1320, y: this.scale.height - 470, index: 2 },
+    { x: 644, y: this.scale.height - 270, index: 2 },
 
     // One on top of pipe block
     { x: 596, y: this.scale.height - 460, index: 3 },
