@@ -366,11 +366,11 @@ function update(time, delta) {
   // Handle movement
   if (this.player && this.player.body && this.player.active) {
     if (this.cursors.left.isDown) {
-      this.player.setVelocityX(-250);
+      this.player.setVelocityX(-280);
       this.player.setFlipX(true);
       this.player.anims.play("right", true);
     } else if (this.cursors.right.isDown) {
-      this.player.setVelocityX(250);
+      this.player.setVelocityX(280);
       this.player.setFlipX(false);
       this.player.anims.play("right", true);
     } else {
@@ -386,7 +386,7 @@ function update(time, delta) {
     }
 
     if (this.cursors.up.isDown && this.player.body.touching.down) {
-      this.player.setVelocityY(-250);
+      this.player.setVelocityY(-350);
     }
   }
   // ADDED: Handle tennis ball shooting
