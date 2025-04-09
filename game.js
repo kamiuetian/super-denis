@@ -2736,7 +2736,7 @@ function createLevel2(bgRepeat) {
   // Create clouds and add skills
   for (let i = 0; i < cloudPositions.length; i++) {
     const pos = cloudPositions[i];
-    
+
     // Create cloud platform
     const cloud = this.platforms.create(pos.x, pos.y, "cloud");
     cloud.setScale(0.1); // Adjust scale as needed
@@ -2924,16 +2924,16 @@ function hitCloud(player, cloud) {
     // Animate skill icon bouncing up
     this.tweens.add({
       targets: skillIcon,
-      y: skillIcon.y - 60,
-      duration: 800,
+      y: skillIcon.y + 200,
+      duration: 4000,
       ease: "Bounce",
       onComplete: () => {
         // Fade out after 1 second
         this.tweens.add({
           targets: skillIcon,
           alpha: { from: 1, to: 0 },
-          duration: 200,
-          delay: 800,
+          duration: 3000,
+          delay: 2000,
           onComplete: () => skillIcon.destroy(),
         });
       },
