@@ -1342,48 +1342,49 @@ function activateBossArea() {
   }
 
   // Remove all platforms except ground
+  // Find this section in activateBossArea function where it handles platforms cleanup
   if (this.platforms) {
     try {
-      // Store reference to the original ground
-      let ground = null;
+      // Remove all platforms
+      this.platforms.clear(true, true);
 
-      // First try to get children safely
-      const platformChildren = this.platforms.getChildren
-        ? this.platforms.getChildren()
-        : [];
+      // Now recreate the ground using the same tiled approach as in Level 1
+      const screenWidth = this.scale.width;
+      const screenHeight = this.scale.height;
+      const groundHeight = 40;
+      const blockWidth = groundHeight;
+      const numBlocks = Math.ceil(screenWidth / blockWidth) + 1;
 
-      // Then process each platform
-      platformChildren.forEach((platform) => {
-        // Skip the ground (which is usually invisible and spans the entire level)
-        if (
-          platform.y >= this.scale.height - 50 &&
-          platform.displayWidth > this.scale.width
-        ) {
-          ground = platform;
-        } else {
-          // Remove all other platforms
-          platform.destroy();
-        }
-      });
+      // Create platforms group if it doesn't exist
+      this.platforms = this.physics.add.staticGroup();
 
-      // If we didn't find the ground, we'll create a new one
-      if (!ground) {
-        // Create a new ground platform for the boss area
-        const screenWidth = this.scale.width;
-        const screenHeight = this.scale.height;
-        const groundHeight = 40;
-
-        ground = this.platforms.create(
-          screenWidth / 2,
+      // First layer of blocks (top layer)
+      for (let i = 0; i < numBlocks; i++) {
+        const block = this.platforms.create(
+          i * (blockWidth - 7), // Same overlap as Level 1
           screenHeight - groundHeight / 2,
-          null
+          "block"
         );
-        ground.setDisplaySize(screenWidth, groundHeight);
-        ground.setVisible(false); // Keep it invisible
-        ground.refreshBody();
+
+        block.setDisplaySize(blockWidth, groundHeight);
+        block.refreshBody();
+        block.setData("isGround", true);
+      }
+
+      // Second layer of blocks (bottom layer)
+      for (let i = 0; i < numBlocks; i++) {
+        const block = this.platforms.create(
+          i * (blockWidth - 7), // Same overlap
+          screenHeight - groundHeight / 2 - (groundHeight - 7), // Position below first layer
+          "block"
+        );
+
+        block.setDisplaySize(blockWidth, groundHeight);
+        block.refreshBody();
+        block.setData("isGround", true);
       }
     } catch (error) {
-      console.error("Error cleaning up platforms:", error);
+      console.error("Error creating ground for boss area:", error);
     }
   }
 
