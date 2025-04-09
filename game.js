@@ -2936,15 +2936,15 @@ function hitCloud(player, cloud) {
     this.tweens.add({
       targets: skillIcon,
       y: skillIcon.y + 200,
-      duration: 4000,
+      duration: 2000,
       ease: "Bounce",
       onComplete: () => {
         // Fade out after 1 second
         this.tweens.add({
           targets: skillIcon,
           alpha: { from: 1, to: 0 },
-          duration: 3000,
-          delay: 2000,
+          duration: 500,
+          delay: 500,
           onComplete: () => skillIcon.destroy(),
         });
         this.tweens.add({
@@ -2956,8 +2956,8 @@ function hitCloud(player, cloud) {
             this.tweens.add({
               targets: skillIcon,
               alpha: { from: 1, to: 0 },
-              duration: 3000,
-              delay: 2000,
+              duration: 1000,
+              delay: 1000,
               onComplete: () => skillIcon.destroy(),
             });
 
@@ -2976,43 +2976,43 @@ function hitCloud(player, cloud) {
 
               // Add falling animation for each language
               // Add falling animation for each language
-              languages.forEach((language, i) => {
-                // Create text for each language
-                const langText = this.add
-                  .text(
-                    cloud.x + (Math.random() * 60 - 30), // Random horizontal offset
-                    cloud.y - 40,
-                    language,
-                    {
-                      fontSize: "20px",
-                      fill: "#ffffff",
-                      stroke: "#000000",
-                      strokeThickness: 3,
-                      fontStyle: "italic",
-                    }
-                  )
-                  .setOrigin(0.5);
+  languages.forEach((language, i) => {
+    // Create text for each language
+    const langText = this.add
+      .text(
+        cloud.x + (Math.random() * 60 - 30), // Random horizontal offset
+        cloud.y - 40,
+        language,
+        {
+          fontSize: "20px",
+          fill: "#ffffff",
+          stroke: "#000000",
+          strokeThickness: 3,
+          fontStyle: "italic",
+        }
+      )
+      .setOrigin(0.5);
 
-                // Delay each language slightly
-                this.time.delayedCall(300 * (i + 1), () => {
-                  // Use SAME animation style as skill icons - bounce effect
-                  this.tweens.add({
-                    targets: langText,
-                    y: langText.y + 200, // Move down by 200 pixels
-                    duration: 4000, // 4 seconds duration
-                    ease: "Bounce", // Same bounce effect
-                    onComplete: () => {
-                      this.tweens.add({
-                        targets: langText,
-                        alpha: { from: 1, to: 0 },
-                        duration: 3000, // 3 second fade
-                        delay: 1000, // 1 second delay before fading
-                        onComplete: () => langText.destroy(),
-                      });
-                    },
-                  });
-                });
-              });
+    // Delay each language slightly
+    this.time.delayedCall(300 * (i + 1), () => {
+      // Use SAME animation style as skill icons - bounce effect
+      this.tweens.add({
+        targets: langText,
+        y: langText.y + 200,  // Move down by 200 pixels
+        duration: 4000,       // 4 seconds duration
+        ease: "Bounce",       // Same bounce effect
+        onComplete: () => {
+          this.tweens.add({
+            targets: langText,
+            alpha: { from: 1, to: 0 },
+            duration: 3000,             // 3 second fade
+            delay: 1000,                // 1 second delay before fading
+            onComplete: () => langText.destroy(),
+          });
+        }
+      });
+    });
+  });
 
               // For languages skill only - delay the level completion
               if (this.skillCount >= level2Skills.length) {
@@ -5325,14 +5325,14 @@ function playerHitCloud(player, cloud) {
   this.tweens.add({
     targets: skillIcon,
     y: skillIcon.y + 200,
-    duration: 4000,
+    duration: 3000,
     ease: "Bounce",
     onComplete: () => {
       this.tweens.add({
         targets: skillIcon,
         alpha: { from: 1, to: 0 },
-        duration: 3000,
-        delay: 1000,
+        duration: 100,
+        delay: 100,
         onComplete: () => skillIcon.destroy(),
       });
 
