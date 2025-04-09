@@ -1096,8 +1096,7 @@ function createLevel1(bgRepeat) {
     0.3
   );
   zoneVisual.setDepth(100);*/
-  this.skillMessageCooldown = 0;
-
+  
   // Add overlap detection
   this.physics.add.overlap(
     this.player,
@@ -1141,7 +1140,7 @@ function createLevel1(bgRepeat) {
         } else {
           // Show message that player needs to collect all skills first
           const missingSkills = 6 - (this.skillCount || 0);
-          if (this.skillMessageCooldown == 0) {
+          if (!this.skillMessageCooldown) {
             createSpeechBubble.call(
               this,
               this.player.x,
@@ -1151,8 +1150,13 @@ function createLevel1(bgRepeat) {
               } before facing the boss!`,
               3000
             );
+            // Set cooldown and reset it after 3 seconds
+          this.skillMessageCooldown = true;
+          this.time.delayedCall(3000, () => {
+            this.skillMessageCooldown = false;
+          });
           }
-          this.skillMessageCooldown = 1;
+          
         }
       }
     },
