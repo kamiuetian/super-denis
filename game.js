@@ -2343,7 +2343,6 @@ function addEnemies() {
     { x: 1200, y: this.scale.height - 140, range: 300, speed: 80 },
     { x: 1900, y: this.scale.height - 140, range: 300, speed: 70 },
     { x: 2500, y: this.scale.height - 140, range: 300, speed: 90 },
-    { x: 3100, y: this.scale.height - 140, range: 300, speed: 75 },
   ];
 
   // Create each enemy
