@@ -84,7 +84,7 @@ function createStartScreen() {
   startContainer.style.height = "100%";
   startContainer.style.backgroundColor = "#002e3c"; // Semi-transparent overlay
   startContainer.style.backgroundImage = "url('assets/titlepage.png')";
-  startContainer.style.backgroundSize = "100% 100%"; // Cover the entire screen
+  startContainer.style.backgroundSize = "contain"; // Cover the entire screen
   startContainer.style.backgroundPosition = "center";
   startContainer.style.backgroundRepeat = "no-repeat"; // Add this to prevent repeating
 
