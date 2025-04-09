@@ -1059,7 +1059,7 @@ function createLevel1(bgRepeat) {
     });
   }
   /**create staircase */
-  const stepWidth = 100;
+  /*const stepWidth = 100;
   const stepHeight = 30;
   const baseY = this.scale.height - 100; // Position from bottom of screen
 
@@ -1073,19 +1073,19 @@ function createLevel1(bgRepeat) {
     step.setData("isStep", true);
     step.setData("stepNumber", i);
     step.refreshBody();
-  }
+  }*/
   // Add this code immediately after creating the staircase in createLevel1 function
   // Create a trigger zone right after the last staircase step
-  const lastStepX = 2400 + 4 * 100; // Position of the 5th step (index 4)
-  const triggerX = lastStepX + 150; // Position trigger 150px after the last step
-  const triggerY = baseY - 4 * 100; // Match height of the top step
-  const triggerZone = this.add.zone(triggerX, triggerY, 500, 500);
+  const lastStepX = 3000; //2400 + 4 * 100; // Position of the 5th step (index 4)
+  const triggerX = lastStepX; //lastStepX + 150; // Position trigger 150px after the last step
+  const triggerY = 100; //baseY - 4 * 100; // Match height of the top step
+  const triggerZone = this.add.zone(triggerX, triggerY, 50, 1300);
   this.physics.world.enable(triggerZone);
   triggerZone.body.setAllowGravity(false);
   triggerZone.body.immovable = true;
 
   // Make the zone visible during development (can be removed in final version)
-  const zoneVisual = this.add.rectangle(
+  /*const zoneVisual = this.add.rectangle(
     triggerX,
     triggerY,
     50,
@@ -1093,7 +1093,8 @@ function createLevel1(bgRepeat) {
     0x00ff00,
     0.3
   );
-  zoneVisual.setDepth(100);
+  zoneVisual.setDepth(100);*/
+  this.skillMessageCooldown = 0;
 
   // Add overlap detection
   this.physics.add.overlap(
@@ -1102,9 +1103,55 @@ function createLevel1(bgRepeat) {
     () => {
       // Only trigger once
       if (!this.bossTriggered) {
-        this.bossTriggered = true;
-        console.log("Player crossed staircase - activating boss area!");
-        activateBossArea.call(this);
+        // Check if all skills are collected
+        if (this.skillCount >= 6) {
+          this.bossTriggered = true;
+          console.log("Player crossed staircase - activating boss area!");
+          const challengeMessage = this.add
+            .text(
+              this.scale.width / 2,
+              100,
+              "You found a tennis racket! Johann challenges you to a duel!",
+              {
+                fontSize: "18px",
+                fill: "#ffffff",
+                stroke: "#000000",
+                strokeThickness: 3,
+                align: "center",
+              }
+            )
+            .setOrigin(0.5, 0.5)
+            .setScrollFactor(0);
+
+          // Make message fade out
+          this.tweens.add({
+            targets: challengeMessage,
+            alpha: { from: 1, to: 0 },
+            delay: 3000,
+            duration: 1000,
+          });
+
+          // NOTE: We don't resume physics here since activateBossArea handles physics
+          // Activate boss area with short delay to allow reading the dialogue
+          this.time.delayedCall(3000, () => {
+            activateBossArea.call(this);
+          });
+        } else {
+          // Show message that player needs to collect all skills first
+          const missingSkills = 6 - (this.skillCount || 0);
+          if (this.skillMessageCooldown == 0) {
+            createSpeechBubble.call(
+              this,
+              this.player.x,
+              this.player.y - 60,
+              `You need to find ${missingSkills} more skill${
+                missingSkills > 1 ? "s" : ""
+              } before facing the boss!`,
+              3000
+            );
+          }
+          this.skillMessageCooldown = this.time.now + 4000;
+        }
       }
     },
     null,
@@ -3394,7 +3441,7 @@ function collectCoin(player, coin) {
   }
 
   // CHANGED: If tennis racket (last skill) is collected, activate boss battle
-  if (this.coinCount == 6) {
+  /*if (this.coinCount == 6) {
     // Enable tennis ball shooting ability
     this.hasTennisRacket = true;
 
@@ -3426,7 +3473,7 @@ function collectCoin(player, coin) {
 
     // Activate the boss area
     activateBossArea.call(this);
-  }
+  }*/
 }
 
 // Update the gameWin function to reflect the skills collection
@@ -4537,7 +4584,7 @@ function hitMysteryBox(player, box) {
   });
 
   // Activate boss area immediately if it's the tennis racket skill
-  if (isGuitarSkill) {
+  /*if (isGuitarSkill) {
     console.log("Tennis racket skill activated! Entering boss area...");
 
     // Enable tennis ball shooting ability
@@ -4573,7 +4620,7 @@ function hitMysteryBox(player, box) {
     this.time.delayedCall(3000, () => {
       activateBossArea.call(this);
     });
-  }
+  }*/
 
   // Particle effect
   const particles = this.add.particles(boxX, boxY - 10, "coin", {
