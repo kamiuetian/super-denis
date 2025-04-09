@@ -251,7 +251,7 @@ function setupBackground() {
   this.physics.world.setBounds(0, 0, worldWidth, screenHeight);
 
   // Ensure the camera won't show beyond the world bounds
-  this.cameras.main.setBounds(0, 0, worldWidth, screenHeight);
+  this.cameras.main.setBounds(0, 0, worldWidth, 3000);
 
   return bgRepeat;
 }
@@ -1291,7 +1291,7 @@ function createLevel1(bgRepeat) {
   );
 
   // Set up camera to follow player
-  this.cameras.main.setBounds(0, 0, 3200, this.scale.height);
+  this.cameras.main.setBounds(0, 0, 3200, 3000);
   this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
 
   // Add instructions
@@ -2763,7 +2763,7 @@ function createLevel2(bgRepeat) {
   );
 
   // Set up camera to follow player
-  this.cameras.main.setBounds(0, 0, 5000, this.scale.height);
+  this.cameras.main.setBounds(0, 0, 5000, 3000);
   this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
 }
 
@@ -4149,7 +4149,7 @@ function createLevel3(bgRepeat) {
   this.physics.add.collider(this.player, this.platforms, hitCloud, null, this);
 
   // Set up camera to follow player
-  this.cameras.main.setBounds(0, 0, 5000, this.scale.height);
+  this.cameras.main.setBounds(0, 0, 5000, 3000);
   this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
 
   // 10. Add pre-level dialogue
@@ -4167,7 +4167,7 @@ function createLevel3(bgRepeat) {
   this.player.setVelocity(0, 0);
   this.player.clearTint();
   this.player.setAlpha(1);
-  this.cameras.main.setBounds(0, 0, 5000, this.scale.height);
+  this.cameras.main.setBounds(0, 0, 5000, 3000);
   this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
   this.add
     .line(
