@@ -998,6 +998,19 @@ function createLevel1(bgRepeat) {
 
   // Scale the pipe to appropriate size without distortion
   flag.setScale(3); // Adjust this value as needed to match your sprite size
+const invisibleBarrier = this.physics.add.staticImage(
+  flagx + 5, // Position 5px after flag
+  this.scale.height / 2, // Middle of the screen height
+  null // No texture
+);
+
+// Make barrier tall and thin
+invisibleBarrier.setDisplaySize(10, this.scale.height * 2);
+invisibleBarrier.visible = false; // Make it invisible
+invisibleBarrier.refreshBody();
+
+// Add to platforms group for collision with player
+this.platforms.add(invisibleBarrier);
 
   // Make sure pipe has collision
   this.platforms.add(flag);
@@ -1082,21 +1095,21 @@ function createLevel1(bgRepeat) {
   const lastStepX = 3000; //2400 + 4 * 100; // Position of the 5th step (index 4)
   const triggerX = lastStepX; //lastStepX + 150; // Position trigger 150px after the last step
   const triggerY = 100; //baseY - 4 * 100; // Match height of the top step
-  const triggerZone = this.add.zone(triggerX, triggerY, 50, 1300);
+  const triggerZone = this.add.zone(triggerX, triggerY, 50, 1300); // Adjust width and height as needed
   this.physics.world.enable(triggerZone);
   triggerZone.body.setAllowGravity(false);
   triggerZone.body.immovable = true;
 
   // Make the zone visible during development (can be removed in final version)
-  /*const zoneVisual = this.add.rectangle(
+  const zoneVisual = this.add.rectangle(
     triggerX,
     triggerY,
     50,
-    100,
+    1300,
     0x00ff00,
     0.3
   );
-  zoneVisual.setDepth(100);*/
+  zoneVisual.setDepth(100);
 
   // Add overlap detection
   this.physics.add.overlap(
