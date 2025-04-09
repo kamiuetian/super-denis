@@ -251,7 +251,7 @@ function setupBackground() {
   this.physics.world.setBounds(0, 0, worldWidth, screenHeight);
 
   // Ensure the camera won't show beyond the world bounds
-  this.cameras.main.setBounds(0, 0, worldWidth, 3000);
+  this.cameras.main.setBounds(0, 0, worldWidth, screenHeight);
 
   return bgRepeat;
 }
@@ -1291,7 +1291,7 @@ function createLevel1(bgRepeat) {
   );
 
   // Set up camera to follow player
-  this.cameras.main.setBounds(0, 0, 3200, 3000);
+  this.cameras.main.setBounds(0, 0, 3200, this.scale.height);
   this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
 
   // Add instructions
@@ -2681,18 +2681,18 @@ function createLevel2(bgRepeat) {
 
   // 7. Create cloud platforms with skills
   const cloudPositions = [
-    { x: 100, y: this.scale.height - 100 },
-    { x: 300, y: this.scale.height - 210 },
-    { x: 550, y: this.scale.height - 190 },
-    { x: 800, y: this.scale.height - 300 },
-    { x: 1100, y: this.scale.height - 250 },
-    { x: 1300, y: this.scale.height - 350 },
-    { x: 1500, y: this.scale.height - 200 },
-    { x: 1750, y: this.scale.height - 300 },
-    { x: 1900, y: this.scale.height - 200 },
-    { x: 2050, y: this.scale.height - 320 },
-    { x: 2200, y: this.scale.height - 250 },
-    { x: 2400, y: this.scale.height - 300 },
+    { x: 100, y: this.scale.height - 200 },
+    { x: 300, y: this.scale.height - 310 },
+    { x: 550, y: this.scale.height - 290 },
+    { x: 800, y: this.scale.height - 400 },
+    { x: 1100, y: this.scale.height - 350 },
+    { x: 1300, y: this.scale.height - 450 },
+    { x: 1500, y: this.scale.height - 300 },
+    { x: 1750, y: this.scale.height - 400 },
+    { x: 1900, y: this.scale.height - 300 },
+    { x: 2050, y: this.scale.height - 420 },
+    { x: 2200, y: this.scale.height - 350 },
+    { x: 2400, y: this.scale.height - 400 },
   ];
 
   // Create clouds and add skills
@@ -2763,7 +2763,7 @@ function createLevel2(bgRepeat) {
   );
 
   // Set up camera to follow player
-  this.cameras.main.setBounds(0, 0, 5000, 3000);
+  this.cameras.main.setBounds(0, 0, 5000, this.scale.height);
   this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
 }
 
@@ -3924,25 +3924,25 @@ function createLevel3(bgRepeat) {
   const groundTop = this.scale.height - groundHeight;
 
   const ground = this.platforms.create(
-    2000,
-    this.scale.height - groundHeight / 2, // Position at bottom of visible area
+    5000 / 2, // Center point of the level width
+    this.scale.height - groundHeight / 2,
     null
   );
-  ground.setDisplaySize(bgRepeat * this.scale.width, groundHeight);
+  ground.setDisplaySize(5000 + 200, groundHeight);
   ground.setVisible(true); // Make it visible like in Level 1
   ground.refreshBody();
   ground.setData("isGround", true); // Tag to identify ground in collision handler
 
   // 3. Set background - blue sky
-  const skyBackground = this.add.rectangle(
-    0,
-    0,
+  const groundVisual = this.add.tileSprite(
+    0, // Start at left edge
+    groundTop,
     5000,
-    this.scale.height,
-    0x87ceeb // Sky blue color
+    groundHeight * 2,
+    "block"
   );
-  skyBackground.setOrigin(0, 0);
-  skyBackground.setDepth(-2);
+  groundVisual.setOrigin(0, 0);
+  groundVisual.setDepth(5);
 
   // 4. Initialize skill counter
   this.coinCount = 0;
@@ -4149,9 +4149,25 @@ function createLevel3(bgRepeat) {
   this.physics.add.collider(this.player, this.platforms, hitCloud, null, this);
 
   // Set up camera to follow player
-  this.cameras.main.setBounds(0, 0, 5000, 3000);
-  this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
-
+  this.cameras.main.setBounds(
+    0, // Left bound
+    0, // Top bound
+    5000, // Width
+    groundTop + 40 // Restrict bottom to just below ground level
+  );
+  this.cameras.main.startFollow(
+    this.player,
+    true, // Round pixels
+    0.1, // X-axis lerp (smoothness)
+    0.1, // Y-axis lerp (smoothness)
+    0, // X-offset
+    50, // Y-offset to keep player above center
+    {
+      width: 200, // Width of deadzone
+      height: 200, // Height of deadzone
+      bottom: 100, // Extra bottom padding for deadzone
+    }
+  );
   // 10. Add pre-level dialogue
 
   // CRITICAL FIX: Make sure cursors are properly initialized for this level
@@ -4161,13 +4177,15 @@ function createLevel3(bgRepeat) {
 
   // CRITICAL FIX: Make sure physics are working properly
   this.physics.world.enable(this.player);
+  this.physics.world.setBounds(0, 0, 5000, this.scale.height + 200);
+
   this.player.body.setCollideWorldBounds(true);
 
   // Make sure the player is visible and movable
   this.player.setVelocity(0, 0);
   this.player.clearTint();
   this.player.setAlpha(1);
-  this.cameras.main.setBounds(0, 0, 5000, 3000);
+  this.cameras.main.setBounds(0, 0, 5000, this.scale.height);
   this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
   this.add
     .line(
@@ -5131,7 +5149,7 @@ function playerHitCloud(player, cloud) {
       targets: skillText,
       scaleX: { from: 0.5, to: 1 },
       scaleY: { from: 0.5, to: 1 },
-      duration: 300,
+      duration: 500,
       ease: "Back.easeOut",
     });
   }
