@@ -2975,6 +2975,7 @@ function hitCloud(player, cloud) {
               ];
 
               // Add falling animation for each language
+              // Add falling animation for each language
               languages.forEach((language, i) => {
                 // Create text for each language
                 const langText = this.add
@@ -2994,15 +2995,21 @@ function hitCloud(player, cloud) {
 
                 // Delay each language slightly
                 this.time.delayedCall(300 * (i + 1), () => {
-                  // Add falling animation with slight horizontal movement
+                  // Use SAME animation style as skill icons - bounce effect
                   this.tweens.add({
                     targets: langText,
-                    y: langText.y + 300,
-                    x: langText.x + (Math.random() * 60 - 30), // Random drift
-                    alpha: { from: 1, to: 0 },
-                    duration: 3000,
-                    ease: "Cubic.easeIn",
-                    onComplete: () => langText.destroy(),
+                    y: langText.y + 200, // Move down by 200 pixels
+                    duration: 4000, // 4 seconds duration
+                    ease: "Bounce", // Same bounce effect
+                    onComplete: () => {
+                      this.tweens.add({
+                        targets: langText,
+                        alpha: { from: 1, to: 0 },
+                        duration: 3000, // 3 second fade
+                        delay: 1000, // 1 second delay before fading
+                        onComplete: () => langText.destroy(),
+                      });
+                    },
                   });
                 });
               });
