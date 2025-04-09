@@ -75,7 +75,7 @@
             // Hide the video content
             document.getElementById('video').style.display = 'none';
 
-            // Show and configure the game container
+            // Show the game container but don't start the game yet
             const gameContainer = document.getElementById('game-container');
             gameContainer.style.display = 'block';
             gameContainer.style.width = '100vw';
@@ -84,23 +84,28 @@
             // Set the level globally
             selectedLevel = 3;
 
-            // Start the game
-            if (!game) {
-                game = new Phaser.Game(config);
-                gameStarted = true;
-            } else {
-                // If game already exists, restart with new level
-                game.scene.scenes[0].scene.restart();
-            }
+            // First show the Level 3 intro dialogue
+            showLevel3Intro(() => {
+                // This callback will run after the dialogue finishes
 
-            // Add window resize handler
-            window.addEventListener("resize", function () {
-                if (game) {
-                    game.scale.resize(window.innerWidth, window.innerHeight);
+                // Start the game
+                if (!game) {
+                    game = new Phaser.Game(config);
+                    gameStarted = true;
+                } else {
+                    // If game already exists, restart with new level
+                    game.scene.scenes[0].scene.restart();
                 }
-            });
 
-            console.log("Starting game with level:", selectedLevel);
+                // Add window resize handler
+                window.addEventListener("resize", function () {
+                    if (game) {
+                        game.scale.resize(window.innerWidth, window.innerHeight);
+                    }
+                });
+
+                console.log("Starting game with level:", selectedLevel);
+            });
         }
     </script>
 </body>

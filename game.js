@@ -34,11 +34,12 @@ const config = {
   },
 };
 
-// Game initialization
+// Modify startGame function to use this dialogue for Level 3
 function startGame(level) {
+  // Hide menu elements
   document.getElementsByClassName("bg")[0].style.display = "none";
 
-  // Set game container to full screen dimensions
+  // Set game container to full screen
   const gameContainer = document.getElementById("game-container");
   gameContainer.style.width = "100vw";
   gameContainer.style.height = "100vh";
@@ -46,13 +47,50 @@ function startGame(level) {
   gameContainer.style.padding = "0";
   gameContainer.style.overflow = "hidden";
 
+  // Store selected level
   selectedLevel = level;
+
+  // For Level 3, show the intro dialogue
+  if (level === 3) {
+    // Hide game container temporarily
+    gameContainer.style.display = "none";
+
+    // Show Level 3 intro dialogue
+    showLevel3Intro(() => {
+      // Show game container
+      gameContainer.style.display = "block";
+
+      // Initialize the game
+      if (!game) {
+        game = new Phaser.Game(config);
+      } else {
+        game.scale.resize(window.innerWidth, window.innerHeight);
+      }
+
+      // Set flag to skip in-game dialogue since we showed it already
+      if (game && game.scene && game.scene.scenes[0]) {
+        game.scene.scenes[0].dialogueShown = true;
+      }
+    });
+  } else {
+    // For other levels, start the game directly
+    if (!game) {
+      game = new Phaser.Game(config);
+    } else {
+      game.scale.resize(window.innerWidth, window.innerHeight);
+    }
+  }
+
+  gameStarted = true;
+}
+
+// Add this helper function to handle the actual game initialization
+function initializeGame() {
   if (!game) {
     game = new Phaser.Game(config);
   } else {
     game.scale.resize(window.innerWidth, window.innerHeight);
   }
-  gameStarted = true;
 
   // Add window resize handler
   window.addEventListener("resize", () => {
@@ -5231,4 +5269,170 @@ function cloudFallDeath(player, cloud) {
     resetSkillPanel.call(this); // Add this line
     this.scene.restart();
   });
+}
+// Modify the showLevel3Intro function to auto-start after dialogue
+function showLevel3Intro(callback) {
+  // Create the intro container
+  const introContainer = document.createElement("div");
+  introContainer.id = "level3-intro-container";
+  introContainer.style.position = "fixed";
+  introContainer.style.top = "0";
+  introContainer.style.left = "0";
+  introContainer.style.width = "100%";
+  introContainer.style.height = "100%";
+  introContainer.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
+  introContainer.style.zIndex = "1000";
+  introContainer.style.display = "flex";
+  introContainer.style.justifyContent = "center";
+  introContainer.style.alignItems = "center";
+
+  // Add the character image
+  const character = document.createElement("img");
+  character.id = "intro-character";
+  character.src = "assets/mario.png";
+  character.style.position = "absolute";
+  character.style.width = "80px";
+  character.style.height = "120px";
+  character.style.bottom = "50px";
+  character.style.left = "50px";
+  character.style.transition = "left 2s ease-in-out";
+
+  // Create the dialogue box
+  const dialogBox = document.createElement("div");
+  dialogBox.id = "level3-dialog";
+  dialogBox.style.position = "absolute";
+  dialogBox.style.width = "70%";
+  dialogBox.style.padding = "20px";
+  dialogBox.style.backgroundColor = "#FFFFFF";
+  dialogBox.style.border = "2px solid #333333";
+  dialogBox.style.color = "#000000";
+  dialogBox.style.fontFamily = "Comic Sans MS, Arial, sans-serif";
+  dialogBox.style.fontSize = "18px";
+  dialogBox.style.textAlign = "left";
+  dialogBox.style.bottom = "150px";
+  dialogBox.style.display = "none";
+  dialogBox.style.opacity = "0";
+  dialogBox.style.transition = "opacity 0.5s ease-in-out";
+  dialogBox.style.borderRadius = "20px";
+  dialogBox.style.boxShadow = "0 4px 8px rgba(0,0,0,0.2)";
+
+  // Create speech bubble tail
+  const speechTail = document.createElement("div");
+  speechTail.style.position = "absolute";
+  speechTail.style.bottom = "-20px";
+  speechTail.style.left = "50px";
+  speechTail.style.width = "0";
+  speechTail.style.height = "0";
+  speechTail.style.borderLeft = "15px solid transparent";
+  speechTail.style.borderRight = "15px solid transparent";
+  speechTail.style.borderTop = "20px solid #FFFFFF";
+  speechTail.style.zIndex = "1";
+
+  // Create border for speech tail
+  const speechTailBorder = document.createElement("div");
+  speechTailBorder.style.position = "absolute";
+  speechTailBorder.style.bottom = "-23px";
+  speechTailBorder.style.left = "50px";
+  speechTailBorder.style.width = "0";
+  speechTailBorder.style.height = "0";
+  speechTailBorder.style.borderLeft = "17px solid transparent";
+  speechTailBorder.style.borderRight = "17px solid transparent";
+  speechTailBorder.style.borderTop = "23px solid #333333";
+  speechTailBorder.style.zIndex = "0";
+
+  // Character name element
+  const characterName = document.createElement("div");
+  characterName.textContent = "DENIS";
+  characterName.style.color = "#4A89DC";
+  characterName.style.fontWeight = "bold";
+  characterName.style.fontSize = "22px";
+  characterName.style.marginBottom = "10px";
+  characterName.style.textTransform = "uppercase";
+  dialogBox.appendChild(characterName);
+
+  // Dialog text element
+  const dialogText = document.createElement("div");
+  dialogText.id = "level3-dialog-text";
+  dialogText.style.lineHeight = "1.5";
+  dialogText.style.marginBottom = "15px";
+  dialogBox.appendChild(dialogText);
+
+  // Counter text for auto-start
+  const counterText = document.createElement("div");
+  counterText.id = "counter-text";
+  counterText.style.textAlign = "center";
+  counterText.style.marginTop = "20px";
+  counterText.style.color = "#888";
+  counterText.style.fontSize = "16px";
+  counterText.style.visibility = "hidden";
+  dialogBox.appendChild(counterText);
+
+  // Add the speech tail elements to the dialog box
+  dialogBox.appendChild(speechTailBorder);
+  dialogBox.appendChild(speechTail);
+
+  // Add elements to container
+  introContainer.appendChild(character);
+  introContainer.appendChild(dialogBox);
+  document.body.appendChild(introContainer);
+
+  // Animation sequence
+  setTimeout(() => {
+    character.style.left = "180px"; // Move character to position
+
+    setTimeout(() => {
+      dialogBox.style.display = "block";
+      setTimeout(() => {
+        dialogBox.style.opacity = "1";
+
+        // Type the dialogue text
+        const dialogContent =
+          "Alright, Level 3. Time to get a bit personal. I've always been curious about how tech shapes the world—and how finance can steer that change. IDDP feels like the place where I can actually explore both and grow through each of them. Let's go!";
+
+        // Typing animation
+        let i = 0;
+        const typeInterval = setInterval(() => {
+          if (i < dialogContent.length) {
+            dialogText.textContent += dialogContent.charAt(i);
+            i++;
+          } else {
+            clearInterval(typeInterval);
+
+            // Show countdown instead of button
+            counterText.style.visibility = "visible";
+            let secondsLeft = 3;
+
+            // Update counter text
+            const updateCounter = () => {
+              counterText.textContent = `Starting in ${secondsLeft} second${
+                secondsLeft !== 1 ? "s" : ""
+              }...`;
+            };
+
+            // Initial counter display
+            updateCounter();
+
+            // Start countdown
+            const countdownInterval = setInterval(() => {
+              secondsLeft--;
+
+              if (secondsLeft <= 0) {
+                clearInterval(countdownInterval);
+                // Fade out intro container
+                introContainer.style.opacity = "0";
+                setTimeout(() => {
+                  introContainer.remove();
+                  if (callback) callback(); // Start the actual level
+                }, 500);
+              } else {
+                updateCounter();
+              }
+            }, 1000);
+          }
+        }, 30); // Speed of typing
+      }, 100);
+    }, 2100);
+  }, 500);
+
+  return introContainer;
 }
