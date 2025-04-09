@@ -2545,7 +2545,12 @@ const level2Skills = [
     name: "ICT Infrastructure",
     message: "Building solid foundations",
   },
-  { icon: "🌍", name: "Languages", message: "I speak six languages!" },
+  {
+    icon: "🌍",
+    name: "Languages",
+    message: "I speak six languages!",
+    langs: ["English", "Urdu", "French", "German", "Spanish", "Arabic"],
+  },
 ];
 // Replace the existing createLevel2 function with this complete implementation
 function createLevel2(bgRepeat) {
@@ -2794,6 +2799,7 @@ function createLevel2(bgRepeat) {
     "cloud"
   );
   bossCloud.setScale(0.25);
+  bossCloud.setData("isPlatform", true);
   bossCloud.refreshBody();
 
   // 9. Add collision detection
@@ -2905,7 +2911,12 @@ function hitCloud(player, cloud) {
         name: "ICT Infrastructure",
         message: "Building solid foundations",
       },
-      { icon: "🌍", name: "Languages", message: "I speak six languages!" },
+      {
+        icon: "🌍",
+        name: "Languages",
+        message: "I speak six languages!",
+        langs: ["English", "Urdu"],
+      },
     ];
     const currentSkill = level2Skills[skillIndex % level2Skills.length];
 
@@ -2935,6 +2946,79 @@ function hitCloud(player, cloud) {
           duration: 3000,
           delay: 2000,
           onComplete: () => skillIcon.destroy(),
+        });
+        this.tweens.add({
+          targets: skillIcon,
+          y: skillIcon.y + 200,
+          duration: 4000,
+          ease: "Bounce",
+          onComplete: () => {
+            this.tweens.add({
+              targets: skillIcon,
+              alpha: { from: 1, to: 0 },
+              duration: 3000,
+              delay: 2000,
+              onComplete: () => skillIcon.destroy(),
+            });
+
+            // SPECIAL CASE FOR LANGUAGES (index 11)
+            if (skillIndex === 11) {
+              console.log("Falling languages animation triggered");
+              // Create language array if not already defined
+              const languages = [
+                "English",
+                "Urdu",
+                "French",
+                "German",
+                "Spanish",
+                "Arabic",
+              ];
+
+              // Add falling animation for each language
+              languages.forEach((language, i) => {
+                // Create text for each language
+                const langText = this.add
+                  .text(
+                    cloud.x + (Math.random() * 60 - 30), // Random horizontal offset
+                    cloud.y - 40,
+                    language,
+                    {
+                      fontSize: "20px",
+                      fill: "#ffffff",
+                      stroke: "#000000",
+                      strokeThickness: 3,
+                      fontStyle: "italic",
+                    }
+                  )
+                  .setOrigin(0.5);
+
+                // Delay each language slightly
+                this.time.delayedCall(300 * (i + 1), () => {
+                  // Add falling animation with slight horizontal movement
+                  this.tweens.add({
+                    targets: langText,
+                    y: langText.y + 300,
+                    x: langText.x + (Math.random() * 60 - 30), // Random drift
+                    alpha: { from: 1, to: 0 },
+                    duration: 3000,
+                    ease: "Cubic.easeIn",
+                    onComplete: () => langText.destroy(),
+                  });
+                });
+              });
+
+              // For languages skill only - delay the level completion
+              if (this.skillCount >= level2Skills.length) {
+                // Wait for languages to fall before showing completion
+                this.time.delayedCall(6000, () => {
+                  this.levelCompleting = true;
+                  this.physics.pause();
+                  levelComplete.call(this);
+                });
+                return; // Skip the normal completion check
+              }
+            }
+          },
         });
       },
     });
@@ -3140,7 +3224,7 @@ function levelComplete() {
 
 // Update function for boss tennis ball shooting
 function updateBoss(time) {
-  if (time - this.boss.lastShotTime > 3000) {
+  if (time - this.boss.lastShotTime > 5000) {
     // Create tennis ball
     const ball = this.tennisBalls
       .create(this.boss.x, this.boss.y, "tennisball")
@@ -5223,7 +5307,7 @@ function playerHitCloud(player, cloud) {
   }
 
   // 3. Create the falling skill symbol effect
-  const symbol = this.add.text(
+  const skillIcon = this.add.text(
     cloud.x,
     cloud.y,
     `${level2Skills[skillIndex].icon} ${level2Skills[skillIndex].name}`,
@@ -5232,12 +5316,77 @@ function playerHitCloud(player, cloud) {
 
   // Animate the symbol falling from the cloud
   this.tweens.add({
-    targets: symbol,
-    y: cloud.y + 100,
-    alpha: { from: 1, to: 0 },
-    duration: 1500,
-    ease: "Bounce.easeOut",
-    onComplete: () => symbol.destroy(),
+    targets: skillIcon,
+    y: skillIcon.y + 200,
+    duration: 4000,
+    ease: "Bounce",
+    onComplete: () => {
+      this.tweens.add({
+        targets: skillIcon,
+        alpha: { from: 1, to: 0 },
+        duration: 3000,
+        delay: 1000,
+        onComplete: () => skillIcon.destroy(),
+      });
+
+      // SPECIAL CASE FOR LANGUAGES (index 11)
+      if (skillIndex === 11) {
+        console.log("Falling languages animation triggered");
+        // Create language array if not already defined
+        const languages = [
+          "English",
+          "Urdu",
+          "French",
+          "German",
+          "Spanish",
+          "Arabic",
+        ];
+
+        // Add falling animation for each language
+        languages.forEach((language, i) => {
+          // Create text for each language
+          const langText = this.add
+            .text(
+              cloud.x + (Math.random() * 60 - 30), // Random horizontal offset
+              cloud.y - 40,
+              language,
+              {
+                fontSize: "20px",
+                fill: "#ffffff",
+                stroke: "#000000",
+                strokeThickness: 3,
+                fontStyle: "italic",
+              }
+            )
+            .setOrigin(0.5);
+
+          // Delay each language slightly
+          this.time.delayedCall(300 * (i + 1), () => {
+            // Add falling animation with slight horizontal movement
+            this.tweens.add({
+              targets: langText,
+              y: langText.y + 300,
+              x: langText.x + (Math.random() * 60 - 30), // Random drift
+              alpha: { from: 1, to: 0 },
+              duration: 3000,
+              ease: "Cubic.easeIn",
+              onComplete: () => langText.destroy(),
+            });
+          });
+        });
+
+        // For languages skill only - delay the level completion
+        if (this.skillCount >= level2Skills.length) {
+          // Wait for languages to fall before showing completion
+          this.time.delayedCall(6000, () => {
+            this.levelCompleting = true;
+            this.physics.pause();
+            levelComplete.call(this);
+          });
+          return; // Skip the normal completion check
+        }
+      }
+    },
   });
 
   // 4. Update skill counter
@@ -5271,7 +5420,7 @@ function playerHitCloud(player, cloud) {
         .setOrigin(0.5)
         .setScrollFactor(0);
 
-      this.time.delayedCall(2000, () => {
+      this.time.delayedCall(6000, () => {
         // Progress to next section or level
         levelComplete.call(this);
       });
