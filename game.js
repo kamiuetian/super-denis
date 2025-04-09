@@ -5334,12 +5334,12 @@ function playerHitCloud(player, cloud) {
         console.log("Falling languages animation triggered");
         // Create language array if not already defined
         const languages = [
-          "English",
-          "Urdu",
-          "French",
           "German",
-          "Spanish",
-          "Arabic",
+          "english",
+          "turkish",
+          "chinese",
+          "italien",
+          "spanish",
         ];
 
         // Add falling animation for each language
@@ -5402,7 +5402,7 @@ function playerHitCloud(player, cloud) {
   if (this.skillCount >= level2Skills.length) {
     this.levelCompleting = true;
 
-    this.time.delayedCall(1000, () => {
+    this.time.delayedCall(8000, () => {
       this.physics.pause();
 
       const completionText = this.add
@@ -5420,7 +5420,7 @@ function playerHitCloud(player, cloud) {
         .setOrigin(0.5)
         .setScrollFactor(0);
 
-      this.time.delayedCall(6000, () => {
+      this.time.delayedCall(10000, () => {
         // Progress to next section or level
         levelComplete.call(this);
       });
