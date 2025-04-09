@@ -2718,30 +2718,34 @@ function createLevel2(bgRepeat) {
 
   // 7. Create cloud platforms with skills
   const cloudPositions = [
-    { x: 200, y: this.scale.height - 200 },
-    { x: 400, y: this.scale.height - 310 },
-    { x: 650, y: this.scale.height - 290 },
-    { x: 850, y: this.scale.height - 400 },
-    { x: 1100, y: this.scale.height - 350 },
-    { x: 1300, y: this.scale.height - 450 },
-    { x: 1500, y: this.scale.height - 300 },
-    { x: 1750, y: this.scale.height - 400 },
-    { x: 1900, y: this.scale.height - 300 },
-    { x: 2050, y: this.scale.height - 420 },
-    { x: 2200, y: this.scale.height - 350 },
-    { x: 2400, y: this.scale.height - 400 },
+    { x: 300, y: this.scale.height - 200 },
+    { x: 500, y: this.scale.height - 310 },
+    { x: 750, y: this.scale.height - 290 },
+    { x: 950, y: this.scale.height - 400 },
+    { x: 1200, y: this.scale.height - 350 },
+    { x: 1400, y: this.scale.height - 450 },
+    { x: 1600, y: this.scale.height - 300 },
+    { x: 1850, y: this.scale.height - 400 },
+    { x: 2000, y: this.scale.height - 300 },
+    { x: 2150, y: this.scale.height - 420 },
+    { x: 2300, y: this.scale.height - 350 },
+    { x: 2500, y: this.scale.height - 400 },
+    { x: 100, y: this.scale.height - 400 },
   ];
 
   // Create clouds and add skills
   for (let i = 0; i < cloudPositions.length; i++) {
     const pos = cloudPositions[i];
-
+    
     // Create cloud platform
     const cloud = this.platforms.create(pos.x, pos.y, "cloud");
     cloud.setScale(0.1); // Adjust scale as needed
     cloud.refreshBody();
     cloud.setData("touched", false);
     cloud.setData("skillIndex", i); // Store index for skill item
+    if (i == 12) {
+      cloud.setData("isPlatform", true);
+    }
     // Add a subtle floating animation to clouds
     this.tweens.add({
       targets: cloud,
@@ -2753,15 +2757,17 @@ function createLevel2(bgRepeat) {
     });
 
     // Create skill item (invisible at first)
-    const skill = this.skillItems.create(pos.x, pos.y - 30, "mysteryBlock");
-    skill.setScale(0);
-    skill.setVisible(false);
-    skill.setData("skillIndex", i);
-    skill.setData("revealed", false);
+    if (i <= 11) {
+      const skill = this.skillItems.create(pos.x, pos.y - 30, "mysteryBlock");
+      skill.setScale(0);
+      skill.setVisible(false);
+      skill.setData("skillIndex", i);
+      skill.setData("revealed", false);
 
-    // Store reference to cloud and skill
-    cloud.setData("skillItem", skill);
-    skill.setData("cloud", cloud);
+      // Store reference to cloud and skill
+      cloud.setData("skillItem", skill);
+      skill.setData("cloud", cloud);
+    }
   }
 
   // 8. Add Johann (boss) in the top right corner
@@ -2800,8 +2806,8 @@ function createLevel2(bgRepeat) {
   );
   if (this.player) {
     // Place the player directly above the first cloud
-    this.player.x = cloudPositions[0].x;
-    this.player.y = cloudPositions[0].y - 80; // Adjust height as needed
+    this.player.x = cloudPositions[12].x;
+    this.player.y = cloudPositions[12].y - 80; // Adjust height as needed
 
     // Reset player velocity
     this.player.setVelocity(0, 0);
@@ -5164,6 +5170,9 @@ function collectSkill(player, skill) {
 
 // In the playerHitCloud function (or whatever handles cloud collision)
 function playerHitCloud(player, cloud) {
+  if (cloud.getData("isPlatform")) {
+    return;
+  }
   if (cloud.getData("isDeadlyGround")) {
     // Call the death function if player hits deadly ground
     cloudFallDeath.call(this, player);
