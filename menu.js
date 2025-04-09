@@ -89,6 +89,26 @@ function createLogo(container) {
 
   return logo;
 }
+// Add this function in menu.js - can be placed near the createLogo function
+function addBottomBorder(container) {
+  // Remove any existing border style
+  container.style.borderBottom = "";
+
+  // Create bottom border div
+  const bottomBorder = document.createElement("div");
+  bottomBorder.style.position = "absolute";
+  bottomBorder.style.bottom = "0";
+  bottomBorder.style.left = "0";
+  bottomBorder.style.width = "100%";
+  bottomBorder.style.height = "10px";
+  bottomBorder.style.backgroundColor = "#fed200"; // Yellow color
+  bottomBorder.style.zIndex = "1001"; // Make sure it's visible
+
+  // Append border to container
+  container.appendChild(bottomBorder);
+
+  return bottomBorder;
+}
 // Add this function above createIntroScreen
 function createStartScreen() {
   // Create container
@@ -122,7 +142,7 @@ function createStartScreen() {
   title.style.marginBottom = "30px";
   title.style.fontFamily = "Comic Sans MS, Arial, sans-serif";
   title.style.textShadow = "2px 2px 4px rgba(0,0,0,0.5)";
-
+  addBottomBorder(startContainer);
   // Create start button
   const startButton = document.createElement("button");
   startButton.textContent = "CLICK TO BEGIN";
@@ -195,7 +215,7 @@ function createIntroScreen() {
   introContainer.style.display = "flex";
   introContainer.style.justifyContent = "center";
   introContainer.style.alignItems = "center";
-
+  addBottomBorder(introContainer);
   // Replace the character div with an image
   const character = document.createElement("img");
   character.id = "intro-character";
@@ -459,7 +479,7 @@ function initMenu() {
   for (let button of levelButtons) {
     button.style.display = "none";
   }
-
+  addBottomBorder(gameMenu);
   // Start with the start screen instead of intro
   createStartScreen();
 }
