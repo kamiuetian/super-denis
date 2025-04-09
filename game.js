@@ -523,8 +523,8 @@ function cloudFallDeath(player) {
 
   // Restart on click
   restartButton.on("pointerdown", () => {
-    resetSkillPanel.call(this);  // Add this line
-  this.scene.restart();
+    resetSkillPanel.call(this); // Add this line
+    this.scene.restart();
   });
 }
 // Function to shoot tennis ball
@@ -2195,8 +2195,8 @@ function hitByBossBall(player, ball) {
 
   // Add click handler to restart
   restartButton.on("pointerdown", () => {
-    resetSkillPanel.call(this);  // Add this line
-  this.scene.restart();
+    resetSkillPanel.call(this); // Add this line
+    this.scene.restart();
   });
 
   // REMOVED: Automatic restart timer
@@ -2288,7 +2288,7 @@ function resetSkillPanel() {
   this.skillCount = 0;
   this.coinCount = 0;
   this.itemCount = 0;
-  
+
   // Reset skill texts
   if (this.skillTexts && this.skillTexts.length > 0) {
     for (let i = 0; i < this.skillTexts.length; i++) {
@@ -2298,15 +2298,19 @@ function resetSkillPanel() {
       }
     }
   }
-  
+
   // Reset counter displays
   if (this.skillsCounter) {
-    this.skillsCounter.setText("Skills: 0/" + (selectedLevel === 1 ? "6" : "12"));
+    this.skillsCounter.setText(
+      "Skills: 0/" + (selectedLevel === 1 ? "6" : "12")
+    );
   }
   if (this.smallCounter) {
-    this.smallCounter.setText("Skills: 0/" + (selectedLevel === 1 ? "6" : "12"));
+    this.smallCounter.setText(
+      "Skills: 0/" + (selectedLevel === 1 ? "6" : "12")
+    );
   }
-  
+
   // Reset tennis racket status
   this.hasTennisRacket = false;
 }
@@ -2355,24 +2359,6 @@ function addEnemies() {
     // Set initial velocity
     enemy.setVelocityX(-pos.speed);
 
-    // Create movement bounds markers (for debugging - remove in final game)
-    this.add
-      .line(0, 0, enemy.leftBound, pos.y, enemy.leftBound, pos.y - 50, 0xff0000)
-      .setLineWidth(2)
-      .setAlpha(0.3);
-    this.add
-      .line(
-        0,
-        0,
-        enemy.rightBound,
-        pos.y,
-        enemy.rightBound,
-        pos.y - 50,
-        0xff0000
-      )
-      .setLineWidth(2)
-      .setAlpha(0.3);
-
     // Add world bounds collision handler for backup direction change
     enemy.body.onWorldBounds = true;
   }
@@ -2387,7 +2373,23 @@ function addEnemies() {
       enemy.flipX = enemy.direction > 0;
     }
   });
+this.physics.add.collider(
+  this.enemies,
+  this.platforms,
+  (enemy, platform) => {
+    // Don't react to ground collisions (only side/vertical collisions)
+    if (platform.getData("isGround") && enemy.body.touching.down) {
+      return;
+    }
 
+    // Reverse direction
+    enemy.direction *= -1;
+    enemy.setVelocityX(enemy.speed * enemy.direction);
+    enemy.flipX = enemy.direction > 0;
+  },
+  null,
+  this
+);
   // Create a movement controller
   this.enemyController = this.time.addEvent({
     delay: 100, // Check 10 times per second
@@ -3678,8 +3680,8 @@ function hitEnemy(player, enemy) {
   this.time.delayedCall(
     5000,
     () => {
-      resetSkillPanel.call(this);  // Add this line
-  this.scene.restart();
+      resetSkillPanel.call(this); // Add this line
+      this.scene.restart();
     },
     [],
     this
@@ -3707,8 +3709,8 @@ function fallDown(player, sky) {
   this.time.delayedCall(
     5000,
     () => {
-      resetSkillPanel.call(this);  // Add this line
-  this.scene.restart();
+      resetSkillPanel.call(this); // Add this line
+      this.scene.restart();
     },
     [],
     this
@@ -4910,8 +4912,8 @@ function riverDeath(player, river) {
 
   // Restart on click
   restartButton.on("pointerdown", () => {
-    resetSkillPanel.call(this);  // Add this line
-  this.scene.restart();
+    resetSkillPanel.call(this); // Add this line
+    this.scene.restart();
   });
 }
 
@@ -5190,7 +5192,7 @@ function cloudFallDeath(player, cloud) {
 
   // Restart on click
   restartButton.on("pointerdown", () => {
-    resetSkillPanel.call(this);  // Add this line
-  this.scene.restart();
+    resetSkillPanel.call(this); // Add this line
+    this.scene.restart();
   });
 }
