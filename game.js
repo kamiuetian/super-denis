@@ -2555,19 +2555,56 @@ function createLevel2(bgRepeat) {
   this.tennisBalls = this.physics.add.group();
 
   // 2. Set up the ground (invisible, just for preventing falling)
-  const groundHeight = 40; // Match Level 1's ground height
-  const ground = this.platforms.create(
-    //(bgRepeat * this.scale.width) / 2,
-    2500,
-    this.scale.height - groundHeight / 2, // Position at bottom of visible area
+  const groundHeight = 40;
+  const groundTop = this.scale.height - groundHeight;
+
+  // Create multiple ground segments to ensure proper collision from x=0
+  // First segment - left edge (x=0 to x=1000)
+  const groundLeft = this.platforms.create(
+    500, // Center of first segment (0-1000)
+    this.scale.height - groundHeight / 2,
     null
   );
-  ground.setDisplaySize(bgRepeat * this.scale.width, groundHeight);
-  ground.setVisible(true); // Make it visible like in Level 1
-  ground.refreshBody();
-  ground.setData("isGround", true); // Tag to identify ground in collision handler
-  ground.setData("isDeadlyGround", true); // Add new deadly tag
-  // Create a visual indicator that the ground is deadly
+  groundLeft.setDisplaySize(1000, groundHeight);
+  groundLeft.setVisible(false);
+  groundLeft.refreshBody();
+  groundLeft.setData("isGround", true);
+  groundLeft.setData("isDeadlyGround", true);
+
+  // Middle segment - center area (x=1000 to x=4000)
+  const groundMiddle = this.platforms.create(
+    2500, // Center of middle segment (1000-4000)
+    this.scale.height - groundHeight / 2,
+    null
+  );
+  groundMiddle.setDisplaySize(3000, groundHeight);
+  groundMiddle.setVisible(false);
+  groundMiddle.refreshBody();
+  groundMiddle.setData("isGround", true);
+  groundMiddle.setData("isDeadlyGround", true);
+
+  // Right segment - right area (x=4000 to x=5000)
+  const groundRight = this.platforms.create(
+    4500, // Center of right segment (4000-5000)
+    this.scale.height - groundHeight / 2,
+    null
+  );
+  groundRight.setDisplaySize(1000, groundHeight);
+  groundRight.setVisible(false);
+  groundRight.refreshBody();
+  groundRight.setData("isGround", true);
+  groundRight.setData("isDeadlyGround", true);
+  // Create the visible ground using a tileSprite that starts at x=0
+  const groundVisual = this.add.tileSprite(
+    0, // Start at left edge
+    groundTop,
+    5000, // Full width
+    groundHeight * 2,
+    "block"
+  );
+  groundVisual.setOrigin(0, 0);
+  groundVisual.setDepth(5);
+
   const dangerZone = this.add.graphics();
   dangerZone.fillStyle(0xff0000, 0.3); // Semi-transparent red
   dangerZone.fillRect(
@@ -2681,10 +2718,10 @@ function createLevel2(bgRepeat) {
 
   // 7. Create cloud platforms with skills
   const cloudPositions = [
-    { x: 100, y: this.scale.height - 200 },
-    { x: 300, y: this.scale.height - 310 },
-    { x: 550, y: this.scale.height - 290 },
-    { x: 800, y: this.scale.height - 400 },
+    { x: 200, y: this.scale.height - 200 },
+    { x: 400, y: this.scale.height - 310 },
+    { x: 650, y: this.scale.height - 290 },
+    { x: 850, y: this.scale.height - 400 },
     { x: 1100, y: this.scale.height - 350 },
     { x: 1300, y: this.scale.height - 450 },
     { x: 1500, y: this.scale.height - 300 },
@@ -2761,7 +2798,19 @@ function createLevel2(bgRepeat) {
     null,
     this
   );
+  if (this.player) {
+    // Place the player directly above the first cloud
+    this.player.x = cloudPositions[0].x;
+    this.player.y = cloudPositions[0].y - 80; // Adjust height as needed
 
+    // Reset player velocity
+    this.player.setVelocity(0, 0);
+
+    // Reset player state
+    this.player.clearTint();
+    this.player.setAlpha(1);
+    this.player.anims.play("stand");
+  }
   // Set up camera to follow player
   this.cameras.main.setBounds(0, 0, 5000, this.scale.height);
   this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
@@ -3085,21 +3134,28 @@ function levelComplete() {
 
 // Update function for boss tennis ball shooting
 function updateBoss(time) {
-  // Check if it's time to shoot
   if (time - this.boss.lastShotTime > 3000) {
     // Create tennis ball
     const ball = this.tennisBalls
       .create(this.boss.x, this.boss.y, "tennisball")
-      .setScale(0.05)
-      .setTint(0xff0000)
+      .setScale(0.03) // Small size
+      .setTint(0xffff00) // Yellow color
       .setDepth(100);
 
-    // Aim at player
+    // Aim generally at player but with randomization
     const dx = this.player.x - this.boss.x;
     const dy = this.player.y - this.boss.y;
-    const angle = Math.atan2(dy, dx);
-    const speed = 150;
 
+    // Base angle toward player
+    let angle = Math.atan2(dy, dx);
+
+    // Add random angle deviation (-0.3 to 0.3 radians, about ±17 degrees)
+    angle += Math.random() * 0.6 - 0.3;
+
+    // Randomize speed between 120-180
+    const speed = 120 + Math.random() * 60;
+
+    // Set velocity with randomized angle and speed
     ball.setVelocity(Math.cos(angle) * speed, Math.sin(angle) * speed);
 
     // Set physics properties
@@ -3120,8 +3176,11 @@ function updateBoss(time) {
       this
     );
 
-    // Destroy after 5 seconds
-    this.time.delayedCall(5000, () => {
+    // Randomize destruction time between 5-8 seconds
+    const destroyTime = 5000 + Math.random() * 3000;
+
+    // Destroy after random time
+    this.time.delayedCall(destroyTime, () => {
       if (ball.active) {
         ball.destroy();
       }
