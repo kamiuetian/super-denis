@@ -221,6 +221,7 @@ function setupBackground() {
 // Set up the player
 function setupPlayer() {
   this.player = this.physics.add.sprite(100, 300, "mario");
+  this.player.body.setGravityY(800);
   this.player.setScale(PLAYER_SCALE);
   this.player.setVisible(true);
   this.player.setBounce(0.2);
@@ -389,7 +390,7 @@ function update(time, delta) {
     }
 
     if (this.cursors.up.isDown && this.player.body.touching.down) {
-      this.player.setVelocityY(-350);
+      this.player.setVelocityY(-750);
     }
   }
   // ADDED: Handle tennis ball shooting
@@ -2373,23 +2374,23 @@ function addEnemies() {
       enemy.flipX = enemy.direction > 0;
     }
   });
-this.physics.add.collider(
-  this.enemies,
-  this.platforms,
-  (enemy, platform) => {
-    // Don't react to ground collisions (only side/vertical collisions)
-    if (platform.getData("isGround") && enemy.body.touching.down) {
-      return;
-    }
+  this.physics.add.collider(
+    this.enemies,
+    this.platforms,
+    (enemy, platform) => {
+      // Don't react to ground collisions (only side/vertical collisions)
+      if (platform.getData("isGround") && enemy.body.touching.down) {
+        return;
+      }
 
-    // Reverse direction
-    enemy.direction *= -1;
-    enemy.setVelocityX(enemy.speed * enemy.direction);
-    enemy.flipX = enemy.direction > 0;
-  },
-  null,
-  this
-);
+      // Reverse direction
+      enemy.direction *= -1;
+      enemy.setVelocityX(enemy.speed * enemy.direction);
+      enemy.flipX = enemy.direction > 0;
+    },
+    null,
+    this
+  );
   // Create a movement controller
   this.enemyController = this.time.addEvent({
     delay: 100, // Check 10 times per second
