@@ -71,7 +71,24 @@ function fadeOutIntroMusic(duration = 1000) {
     }, fadeInterval);
   }
 }
+// Add this function to create consistent logo across all screens
+function createLogo(container) {
+  // Create logo element
+  const logo = document.createElement("img");
+  logo.src = "assets/logo.png"; // Make sure this file exists in your assets folder
+  logo.alt = "Logo";
+  logo.style.position = "absolute";
+  logo.style.top = "15px";
+  logo.style.right = "15px";
+  logo.style.width = "120px"; // Adjust size as needed
+  logo.style.height = "auto";
+  logo.style.zIndex = "1001"; // Make sure it appears above other elements
 
+  // Add the logo to the specified container
+  container.appendChild(logo);
+
+  return logo;
+}
 // Add this function above createIntroScreen
 function createStartScreen() {
   // Create container
@@ -83,7 +100,7 @@ function createStartScreen() {
   startContainer.style.width = "100%";
   startContainer.style.height = "100%";
   startContainer.style.backgroundColor = "#002e3c"; // Semi-transparent overlay
-  startContainer.style.backgroundImage = "url('assets/titlepage.png')";
+  //startContainer.style.backgroundImage = "url('assets/titlepage.png')";
   startContainer.style.backgroundSize = "100% 100%"; // Cover the entire screen
   startContainer.style.backgroundPosition = "center";
   startContainer.style.backgroundRepeat = "no-repeat"; // Add this to prevent repeating
@@ -134,6 +151,9 @@ function createStartScreen() {
   instruction.style.marginTop = "20px";
   instruction.style.fontSize = "16px";
 
+  // Add logo to top right
+  createLogo(startContainer);
+
   // Handle click event
   startButton.onclick = () => {
     // Fade out start screen
@@ -166,7 +186,7 @@ function createIntroScreen() {
   introContainer.style.width = "100%";
   introContainer.style.height = "100%";
   introContainer.style.backgroundColor = "#002e3c";
-  introContainer.style.backgroundImage = "url('assets/titlepage.png')";
+  //introContainer.style.backgroundImage = "url('assets/titlepage.png')";
   introContainer.style.backgroundSize = "contain";
   introContainer.style.backgroundPosition = "center";
   introContainer.style.backgroundRepeat = "no-repeat"; // Prevent repeating
@@ -255,6 +275,9 @@ function createIntroScreen() {
   // Add the speech tail elements to the dialog box
   dialogBox.appendChild(speechTailBorder);
   dialogBox.appendChild(speechTail);
+
+  // Add logo to top right
+  createLogo(introContainer);
 
   // Add elements to container
   introContainer.appendChild(character);
@@ -421,11 +444,15 @@ function initMenu() {
   gameMenu.style.display = "none";
 
   // Add background image to game menu
-  gameMenu.style.backgroundImage = "url('assets/titlepage.png')";
+  // gameMenu.style.backgroundImage = "url('assets/titlepage.png')";
   gameMenu.style.backgroundSize = "contain"; // Cover the entire screen
   gameMenu.style.backgroundRepeat = "no-repeat"; // Prevent repeating
   gameMenu.style.backgroundPosition = "center";
   gameMenu.style.backgroundColor = "#002e3c";
+  gameMenu.style.borderBottom = "10px solid #fed200";
+
+  // Add logo to top right of game menu
+  createLogo(gameMenu);
 
   // Hide level options initially
   const levelButtons = document.getElementsByClassName("level-option");
