@@ -1124,7 +1124,7 @@ function createLevel1(bgRepeat) {
       if (!this.bossTriggered) {
         // Check if all skills are collected
         console.log("Skills collected:", this.skillCount);
-        if (this.skillCount >= 6) {
+        if (this.skillCount >= 0) {
           this.bossTriggered = true;
           console.log("Player crossed staircase - activating boss area!");
           const challengeMessage = this.add
@@ -1349,7 +1349,7 @@ function activateBossArea() {
       this.platforms.clear(true, true);
 
       // Now recreate the ground using the same tiled approach as in Level 1
-      const screenWidth = this.scale.width;
+      const screenWidth = this.scale.width * 3;
       const screenHeight = this.scale.height;
       const groundHeight = 40;
       const blockWidth = groundHeight;
@@ -2334,7 +2334,17 @@ function resetSkillPanel() {
       "Skills: 0/" + (selectedLevel === 1 ? "6" : "12")
     );
   }
+  // NEW: Reset movement-related flags
+  this.dialogueActive = false;
+  this.playerImmune = false;
+  this.bossTriggered = false;
+  this.playerDying = false;
+  this.inDialogue = false;
 
+  // NEW: Make sure physics is not paused when restarting
+  if (this.physics && this.physics.world) {
+    this.physics.resume();
+  }
   // Reset tennis racket status
   this.hasTennisRacket = false;
 }
@@ -3876,7 +3886,7 @@ function createLevel3(bgRepeat) {
   const groundTop = this.scale.height - groundHeight;
 
   const ground = this.platforms.create(
-    2500,
+    2000,
     this.scale.height - groundHeight / 2, // Position at bottom of visible area
     null
   );
@@ -4631,6 +4641,7 @@ function hitMysteryBox(player, box) {
         // Player has landed, show speech bubble
         landingCheck.remove();
         this.dialogueActive = true;
+        this.physics.pause();
         player.setVelocity(0, 0);
         player.anims.play("stand");
 
@@ -4644,6 +4655,7 @@ function hitMysteryBox(player, box) {
         );
         this.time.delayedCall(3000, () => {
           this.dialogueActive = false;
+          this.physics.resume();
         });
         // Check if all skills collected
         if (this.skillCount >= 6) {
