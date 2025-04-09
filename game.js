@@ -998,19 +998,19 @@ function createLevel1(bgRepeat) {
 
   // Scale the pipe to appropriate size without distortion
   flag.setScale(3); // Adjust this value as needed to match your sprite size
-const invisibleBarrier = this.physics.add.staticImage(
-  flagx + 5, // Position 5px after flag
-  this.scale.height / 2, // Middle of the screen height
-  null // No texture
-);
+  const invisibleBarrier = this.physics.add.staticImage(
+    flagx + 5, // Position 5px after flag
+    this.scale.height / 2, // Middle of the screen height
+    null // No texture
+  );
 
-// Make barrier tall and thin
-invisibleBarrier.setDisplaySize(10, this.scale.height * 2);
-invisibleBarrier.visible = false; // Make it invisible
-invisibleBarrier.refreshBody();
+  // Make barrier tall and thin
+  invisibleBarrier.setDisplaySize(10, this.scale.height * 2);
+  invisibleBarrier.visible = false; // Make it invisible
+  invisibleBarrier.refreshBody();
 
-// Add to platforms group for collision with player
-this.platforms.add(invisibleBarrier);
+  // Add to platforms group for collision with player
+  this.platforms.add(invisibleBarrier);
 
   // Make sure pipe has collision
   this.platforms.add(flag);
@@ -1092,20 +1092,24 @@ this.platforms.add(invisibleBarrier);
   }*/
   // Add this code immediately after creating the staircase in createLevel1 function
   // Create a trigger zone right after the last staircase step
-  const lastStepX = 3000; //2400 + 4 * 100; // Position of the 5th step (index 4)
-  const triggerX = lastStepX; //lastStepX + 150; // Position trigger 150px after the last step
-  const triggerY = 100; //baseY - 4 * 100; // Match height of the top step
-  const triggerZone = this.add.zone(triggerX, triggerY, 50, 1300); // Adjust width and height as needed
+  const triggerX = 3000;
+  const groundY = this.scale.height - groundHeight; // Ground top position
+  const triggerHeight = this.scale.height; // Full screen height
+  const triggerZone = this.add.zone(
+    triggerX,
+    groundY - triggerHeight / 2, // Position centered from ground up
+    50, // Width
+    triggerHeight // Height covers entire screen
+  );
   this.physics.world.enable(triggerZone);
   triggerZone.body.setAllowGravity(false);
   triggerZone.body.immovable = true;
 
-  // Make the zone visible during development (can be removed in final version)
   const zoneVisual = this.add.rectangle(
     triggerX,
-    triggerY,
+    groundY - triggerHeight / 2, // Match zone position
     50,
-    1300,
+    triggerHeight,
     0x00ff00,
     0.3
   );
