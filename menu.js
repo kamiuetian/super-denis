@@ -84,9 +84,10 @@ function createStartScreen() {
   startContainer.style.height = "100%";
   startContainer.style.backgroundColor = "#002e3c"; // Semi-transparent overlay
   startContainer.style.backgroundImage = "url('assets/titlepage.png')";
-  startContainer.style.backgroundSize = "contain"; // Cover the entire screen
+  startContainer.style.backgroundSize = "100% 100%"; // Cover the entire screen
   startContainer.style.backgroundPosition = "center";
   startContainer.style.backgroundRepeat = "no-repeat"; // Add this to prevent repeating
+  startContainer.style.borderBottom = "10px solid #fed200";
 
   startContainer.style.zIndex = "1000";
   startContainer.style.display = "flex";
@@ -164,10 +165,12 @@ function createIntroScreen() {
   introContainer.style.left = "0";
   introContainer.style.width = "100%";
   introContainer.style.height = "100%";
-  introContainer.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
+  introContainer.style.backgroundColor = "#002e3c";
   introContainer.style.backgroundImage = "url('assets/titlepage.png')";
-  introContainer.style.backgroundSize = "cover";
+  introContainer.style.backgroundSize = "contain";
   introContainer.style.backgroundPosition = "center";
+  introContainer.style.backgroundRepeat = "no-repeat"; // Prevent repeating
+  introContainer.style.borderBottom = "10px solid #fed200";
   introContainer.style.zIndex = "1000";
   introContainer.style.display = "flex";
   introContainer.style.justifyContent = "center";
@@ -419,9 +422,10 @@ function initMenu() {
 
   // Add background image to game menu
   gameMenu.style.backgroundImage = "url('assets/titlepage.png')";
-  gameMenu.style.backgroundSize = "cover";
+  gameMenu.style.backgroundSize = "contain"; // Cover the entire screen
+  gameMenu.style.backgroundRepeat = "no-repeat"; // Prevent repeating
   gameMenu.style.backgroundPosition = "center";
-  gameMenu.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
+  gameMenu.style.backgroundColor = "#002e3c";
 
   // Hide level options initially
   const levelButtons = document.getElementsByClassName("level-option");
