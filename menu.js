@@ -82,7 +82,12 @@ function createStartScreen() {
   startContainer.style.left = "0";
   startContainer.style.width = "100%";
   startContainer.style.height = "100%";
-  startContainer.style.backgroundColor = "rgba(0, 0, 0, 0.9)";
+  startContainer.style.backgroundColor = "#002e3c"; // Semi-transparent overlay
+  startContainer.style.backgroundImage = "url('assets/titlepage.png')";
+  startContainer.style.backgroundSize = "100% 100%"; // Cover the entire screen
+  startContainer.style.backgroundPosition = "center";
+  startContainer.style.backgroundRepeat = "no-repeat"; // Add this to prevent repeating
+
   startContainer.style.zIndex = "1000";
   startContainer.style.display = "flex";
   startContainer.style.flexDirection = "column";
@@ -160,6 +165,9 @@ function createIntroScreen() {
   introContainer.style.width = "100%";
   introContainer.style.height = "100%";
   introContainer.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
+  introContainer.style.backgroundImage = "url('assets/titlepage.png')";
+  introContainer.style.backgroundSize = "cover";
+  introContainer.style.backgroundPosition = "center";
   introContainer.style.zIndex = "1000";
   introContainer.style.display = "flex";
   introContainer.style.justifyContent = "center";
@@ -406,7 +414,14 @@ function initMenu() {
   console.log("Initializing menu...");
 
   // Hide game menu initially
-  document.getElementById("game-menu").style.display = "none";
+  const gameMenu = document.getElementById("game-menu");
+  gameMenu.style.display = "none";
+
+  // Add background image to game menu
+  gameMenu.style.backgroundImage = "url('assets/titlepage.png')";
+  gameMenu.style.backgroundSize = "cover";
+  gameMenu.style.backgroundPosition = "center";
+  gameMenu.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
 
   // Hide level options initially
   const levelButtons = document.getElementsByClassName("level-option");
