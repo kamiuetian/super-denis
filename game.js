@@ -523,7 +523,8 @@ function cloudFallDeath(player) {
 
   // Restart on click
   restartButton.on("pointerdown", () => {
-    this.scene.restart();
+    resetSkillPanel.call(this);  // Add this line
+  this.scene.restart();
   });
 }
 // Function to shoot tennis ball
@@ -1150,7 +1151,7 @@ function createLevel1(bgRepeat) {
               3000
             );
           }
-          this.skillMessageCooldown = this.time.now + 4000;
+          this.skillMessageCooldown = 1;
         }
       }
     },
@@ -1229,7 +1230,7 @@ function createLevel1(bgRepeat) {
   );
 
   // Set up camera to follow player
-  this.cameras.main.setBounds(0, 0, 5000, this.scale.height);
+  this.cameras.main.setBounds(0, 0, 3200, this.scale.height);
   this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
 
   // Add instructions
@@ -2194,7 +2195,8 @@ function hitByBossBall(player, ball) {
 
   // Add click handler to restart
   restartButton.on("pointerdown", () => {
-    this.scene.restart();
+    resetSkillPanel.call(this);  // Add this line
+  this.scene.restart();
   });
 
   // REMOVED: Automatic restart timer
@@ -2280,67 +2282,142 @@ function createSpeechBubble(x, y, text, duration = 3000) {
 
   return bubbleContainer;
 }
+// Add this function to reset all skill-related variables
+function resetSkillPanel() {
+  // Reset skill counters
+  this.skillCount = 0;
+  this.coinCount = 0;
+  this.itemCount = 0;
+  
+  // Reset skill texts
+  if (this.skillTexts && this.skillTexts.length > 0) {
+    for (let i = 0; i < this.skillTexts.length; i++) {
+      if (this.skillTexts[i]) {
+        this.skillTexts[i].setText("");
+        this.skillTexts[i].setAlpha(0);
+      }
+    }
+  }
+  
+  // Reset counter displays
+  if (this.skillsCounter) {
+    this.skillsCounter.setText("Skills: 0/" + (selectedLevel === 1 ? "6" : "12"));
+  }
+  if (this.smallCounter) {
+    this.smallCounter.setText("Skills: 0/" + (selectedLevel === 1 ? "6" : "12"));
+  }
+  
+  // Reset tennis racket status
+  this.hasTennisRacket = false;
+}
 // Add this function right after the createLevel1 function, around line 450
 
 // After the platformPositions and loop to create platforms in your createLevel1 function
 // Add this code to create visible enemies:
+// Completely revised addEnemies function - simplified for reliable movement
 function addEnemies() {
-  // Create patrolling goompa enemies with proper positioning
+  // Clear any existing enemies to avoid conflicts
+  if (this.enemies) {
+    this.enemies.clear(true, true);
+  }
+
+  // Create new enemy group with proper physics settings
+  this.enemies = this.physics.add.group({
+    bounceX: 0, // Don't bounce on walls
+    collideWorldBounds: true,
+  });
+
+  // Define enemy positions with patrol ranges
   const enemyPositions = [
-    { x: 600, y: this.scale.height - 80, range: 300, speed: 40 },
-    { x: 1200, y: this.scale.height - 80, range: 200, speed: 70 },
-    { x: 1900, y: this.scale.height - 80, range: 280, speed: 55 },
-    { x: 2500, y: this.scale.height - 80, range: 220, speed: 80 },
-    { x: 3100, y: this.scale.height - 80, range: 160, speed: 65 },
+    { x: 600, y: this.scale.height - 140, range: 300, speed: 60 },
+    { x: 1200, y: this.scale.height - 140, range: 300, speed: 80 },
+    { x: 1900, y: this.scale.height - 140, range: 300, speed: 70 },
+    { x: 2500, y: this.scale.height - 140, range: 300, speed: 90 },
+    { x: 3100, y: this.scale.height - 140, range: 300, speed: 75 },
   ];
 
+  // Create each enemy
   for (const pos of enemyPositions) {
-    // Create enemy with visible properties
+    // Create enemy with basic properties
     const enemy = this.enemies
       .create(pos.x, pos.y, "enemy")
-      .setScale(0.2) // Make it bigger so it's visible
-      .setCollideWorldBounds(true)
-      .setBounce(1)
-      .setData("startX", pos.x)
-      .setData("range", pos.range)
-      .setVelocityX(-pos.speed);
+      .setScale(0.2)
+      .setTint(0xff0000)
+      .setDepth(20);
 
-    // Make sure they're visible and on top
-    enemy.setDepth(20); // Higher depth to be above everything
-    enemy.setAlpha(1); // Fully visible
-    enemy.setTint(0xff0000); // Bright red tint for visibility
+    // Store patrol information as custom properties
+    enemy.startX = pos.x;
+    enemy.leftBound = pos.x - pos.range / 2;
+    enemy.rightBound = pos.x + pos.range / 2;
+    enemy.speed = pos.speed;
+    enemy.direction = -1; // Start moving left
 
-    // Position above ground (important!)
-    enemy.y = this.scale.height - 85;
-    // Add simple AI to make them patrol back and forth
-    this.time.addEvent({
-      delay: 2000 + Math.random() * 1000, // Random patrol timing
-      callback: () => {
-        if (enemy && enemy.active) {
-          enemy.setVelocityX(-enemy.body.velocity.x); // Reverse direction
+    // Set initial velocity
+    enemy.setVelocityX(-pos.speed);
 
-          // Calculate new maximum range positions
-          const leftBound = pos.x - pos.range / 2;
-          const rightBound = pos.x + pos.range / 2;
+    // Create movement bounds markers (for debugging - remove in final game)
+    this.add
+      .line(0, 0, enemy.leftBound, pos.y, enemy.leftBound, pos.y - 50, 0xff0000)
+      .setLineWidth(2)
+      .setAlpha(0.3);
+    this.add
+      .line(
+        0,
+        0,
+        enemy.rightBound,
+        pos.y,
+        enemy.rightBound,
+        pos.y - 50,
+        0xff0000
+      )
+      .setLineWidth(2)
+      .setAlpha(0.3);
 
-          // Keep enemy within its patrol range
-          if (enemy.x < leftBound) {
-            enemy.setVelocityX(Math.abs(pos.speed));
-          } else if (enemy.x > rightBound) {
-            enemy.setVelocityX(-Math.abs(pos.speed));
-          }
-        }
-      },
-      loop: true,
-    });
-    console.log(
-      "Created enemy at",
-      enemy.x,
-      enemy.y,
-      "with depth",
-      enemy.depth
-    );
+    // Add world bounds collision handler for backup direction change
+    enemy.body.onWorldBounds = true;
   }
+
+  // Listen for world bounds collision as backup
+  this.physics.world.on("worldbounds", (body) => {
+    const enemy = body.gameObject;
+    if (enemy && enemy.texture.key === "enemy") {
+      // Reverse direction when hitting world bounds
+      enemy.direction *= -1;
+      enemy.setVelocityX(enemy.speed * enemy.direction);
+      enemy.flipX = enemy.direction > 0;
+    }
+  });
+
+  // Create a movement controller
+  this.enemyController = this.time.addEvent({
+    delay: 100, // Check 10 times per second
+    callback: () => {
+      // Loop through all active enemies
+      this.enemies.getChildren().forEach((enemy) => {
+        if (!enemy || !enemy.active) return;
+
+        // Check if enemy has reached its patrol boundary
+        if (
+          (enemy.direction === -1 && enemy.x <= enemy.leftBound) ||
+          (enemy.direction === 1 && enemy.x >= enemy.rightBound)
+        ) {
+          // Reverse direction
+          enemy.direction *= -1;
+          enemy.setVelocityX(enemy.speed * enemy.direction);
+          enemy.flipX = enemy.direction > 0;
+        }
+      });
+    },
+    callbackScope: this,
+    loop: true,
+  });
+
+  // Set up collisions with platforms and player
+  this.physics.add.collider(this.enemies, this.platforms);
+
+  console.log(
+    "Created " + enemyPositions.length + " enemies with patrol behavior"
+  );
 }
 /**Level 2 skills */
 const level2Skills = [
@@ -3601,7 +3678,8 @@ function hitEnemy(player, enemy) {
   this.time.delayedCall(
     5000,
     () => {
-      this.scene.restart();
+      resetSkillPanel.call(this);  // Add this line
+  this.scene.restart();
     },
     [],
     this
@@ -3629,7 +3707,8 @@ function fallDown(player, sky) {
   this.time.delayedCall(
     5000,
     () => {
-      this.scene.restart();
+      resetSkillPanel.call(this);  // Add this line
+  this.scene.restart();
     },
     [],
     this
@@ -4831,7 +4910,8 @@ function riverDeath(player, river) {
 
   // Restart on click
   restartButton.on("pointerdown", () => {
-    this.scene.restart();
+    resetSkillPanel.call(this);  // Add this line
+  this.scene.restart();
   });
 }
 
@@ -5110,6 +5190,7 @@ function cloudFallDeath(player, cloud) {
 
   // Restart on click
   restartButton.on("pointerdown", () => {
-    this.scene.restart();
+    resetSkillPanel.call(this);  // Add this line
+  this.scene.restart();
   });
 }
