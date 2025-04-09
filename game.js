@@ -840,6 +840,7 @@ function explodeTennisBall(ball) {
 // Fix the createLevel1 function to ensure coins are visible
 // Updated createLevel1 function with new block layout
 function createLevel1(bgRepeat) {
+  this.skillCount = 0;
   // 1. Create groups
   this.platforms = this.physics.add.staticGroup();
   this.mysteryBoxes = this.physics.add.staticGroup();
@@ -1096,7 +1097,7 @@ function createLevel1(bgRepeat) {
     0.3
   );
   zoneVisual.setDepth(100);*/
-  
+
   // Add overlap detection
   this.physics.add.overlap(
     this.player,
@@ -1105,6 +1106,7 @@ function createLevel1(bgRepeat) {
       // Only trigger once
       if (!this.bossTriggered) {
         // Check if all skills are collected
+        console.log("Skills collected:", this.skillCount);
         if (this.skillCount >= 6) {
           this.bossTriggered = true;
           console.log("Player crossed staircase - activating boss area!");
@@ -1151,12 +1153,11 @@ function createLevel1(bgRepeat) {
               3000
             );
             // Set cooldown and reset it after 3 seconds
-          this.skillMessageCooldown = true;
-          this.time.delayedCall(3000, () => {
-            this.skillMessageCooldown = false;
-          });
+            this.skillMessageCooldown = true;
+            this.time.delayedCall(3000, () => {
+              this.skillMessageCooldown = false;
+            });
           }
-          
         }
       }
     },
@@ -4602,6 +4603,7 @@ function hitMysteryBox(player, box) {
   this.coinCount = (this.coinCount || 0) + 1;
   this.skillsCounter.setText("Skills: " + this.coinCount + "/6");
   this.smallCounter.setText("Skills: " + this.coinCount + "/6");
+  this.skillCount = (this.skillCount || 0) + 1;
 
   // Show speech bubble with skill message
   //const speechBubble = showSpeechBubble.call(this, player, skill.message, 3000);
