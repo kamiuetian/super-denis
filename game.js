@@ -305,7 +305,7 @@ function setupPlayer() {
   this.player.setCollideWorldBounds(true);
 
   // Set appropriate collision body size (may need adjustment)
-  const bodyWidth = Math.floor(this.player.width * 0.6);
+  const bodyWidth = Math.floor(this.player.width * 0.45);
   const bodyOffset = Math.floor((this.player.width - bodyWidth) / 2);
   this.player.body.setSize(bodyWidth, this.player.height * 0.9);
   this.player.body.setOffset(bodyOffset, this.player.height * 0.1);
