@@ -145,21 +145,21 @@ function createStartScreen() {
   // Create start button
   const startButton = document.createElement("button");
   startButton.textContent = "CLICK TO BEGIN";
-  startButton.style.backgroundColor = "#fed200";
-  startButton.style.color = "#FFFFFF";
+  startButton.style.backgroundColor = "#fed200"; // Same as bottom border color
+  startButton.style.color = "#002e3c"; // Same as background color
   startButton.style.border = "none";
   startButton.style.borderRadius = "10px";
-  startButton.style.padding = "15px 30px";
-  startButton.style.fontSize = "22px";
+  startButton.style.padding = "12px 24px"; // Reduced from 15px 30px
+  startButton.style.fontSize = "20px"; // Reduced from 22px
   startButton.style.cursor = "pointer";
   startButton.style.fontWeight = "bold";
   startButton.style.transition = "transform 0.2s ease, background-color 0.3s";
   startButton.onmouseover = () => {
-    startButton.style.backgroundColor = "#3D7AC8";
+    startButton.style.backgroundColor = "#e6be00"; // Slightly darker yellow on hover
     startButton.style.transform = "scale(1.05)";
   };
   startButton.onmouseout = () => {
-    startButton.style.backgroundColor = "#4A89DC";
+    startButton.style.backgroundColor = "#fed200"; // Back to original yellow
     startButton.style.transform = "scale(1)";
   };
 
