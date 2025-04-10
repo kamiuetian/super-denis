@@ -355,6 +355,7 @@ function setupPlayer() {
     repeat: 0, // IMPORTANT: Changed from 10 to 0 - play only once
     duration: 1300, // Match your test page
   });
+  this.player.anims.play("stand", true);
 }
 
 // Create the appropriate level
