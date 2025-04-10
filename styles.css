@@ -28,45 +28,13 @@ body, html {
     flex-direction: column;
 }
 
-#main-title {
-    color: red;
-    background-color: yellow;
-    padding: 18px;
-    text-align: center;
-    font-size: 64px;
-    font-family: 'Lucida Sans';
-    margin: 10px;
-    border-radius: 10px;
-}
 
-.menu-option {
-    display: block;
-    text-align: center;
-}
 
-.level-option {
-    display: none;
-    text-align: center;
-}
 
-a {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: #4CAF50;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-    margin-top: 8px;
-}
 
-a#go-back {
-    background-color: #AA0000;
-}
 
-a:hover {
-    background-color: #45a049;
-}
+
+
 
 #game-container {
     position: relative;

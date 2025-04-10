@@ -5,16 +5,126 @@
     <meta charset="UTF-8">
     <title>The IDDP saga win Denis Tezerdi</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        #main-title {
+            font-size: 2.5rem;
+            color: white;
+            margin-bottom: 5px;
+        }
+
+        .author {
+            font-size: 1.5rem;
+            color: #fff;
+            font-weight: normal;
+            margin-top: 5px;
+            margin-bottom: 30px;
+        }
+
+        .separator {
+            width: 200px;
+            height: 2px;
+            background-color: #FFCC00;
+            /* Yellow color for the separator */
+            margin: 30px auto;
+        }
+
+        .levels-title {
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .level {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .level-number {
+            color: #FFCC00;
+            /* Yellow color for level numbers */
+            font-weight: bold;
+            width: 80px;
+            text-align: right;
+            margin-right: 15px;
+        }
+
+        .level-option {
+            background-color: #FFCC00;
+            /* Yellow background */
+            color: #000;
+            /* Black text */
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-align: center;
+            width: 200px;
+            text-decoration: none;
+            display: block;
+            margin: 10px 0;
+        }
+
+        .menu-option {
+            background-color: #FFCC00;
+            color: #000;
+            padding: 10px 20px;
+            margin: 10px 0;
+            border-radius: 5px;
+            text-decoration: none;
+            text-align: center;
+            width: 200px;
+            display: block;
+        }
+
+        #go-back {
+            margin-top: 20px;
+        }
+
+        .keyboard-commands {
+            position: absolute;
+            top: 50%;
+            right: 50px;
+            transform: translateY(-50%);
+            text-align: right;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
 
 <body>
     <div id="game-menu" class="bg hidden">
-        <h1 id="main-title">Super Bro Denis</h1>
-        <a class="menu-option" href="#" onclick="showLevels()">Play for free!!</a>
-        <a class="level-option" href="#" onclick="startGame(1)">Skills Level</a>
-        <a class="level-option" href="#" onclick="startGame(2)">Level 2</a>
-        <a class="level-option" href="#" onclick="startGame(3)">Level 3</a>
+
+        <h1 id="main-title">The IDDP saga:</h1>
+        <h2 class="author">Win Denis Tezerdi</h2>
+
+        <div class="separator"></div>
+
+        <div class="levels-title">Levels overview</div>
+
+        <div class="level">
+            <div class="level-number">Level 1</div>
+            <a class="level-option" href="#" onclick="startGame(1)">
+                Life of Denis:<br>
+                What makes me, me
+            </a>
+        </div>
+
+        <div class="level">
+            <div class="level-number">Level 2</div>
+            <a class="level-option" href="#" onclick="startGame(2)">404: Skill Gap Not Found</a>
+        </div>
+
+        <div class="level">
+            <div class="level-number">Level 3</div>
+            <a class="level-option" href="#" onclick="startGame(3)">
+                IDDP:<br>
+                It's Definitely Denis' Path
+            </a>
+        </div>
+
         <a id="go-back" class="level-option" href="#" onclick="goBackMainMenu()">Go back</a>
+
     </div>
 
     <div id="game-container"></div>

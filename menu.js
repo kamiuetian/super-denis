@@ -466,10 +466,7 @@ function initMenu() {
 
   // Add background image to game menu
   // gameMenu.style.backgroundImage = "url('assets/titlepage.png')";
-  gameMenu.style.backgroundSize = "contain"; // Cover the entire screen
-  gameMenu.style.backgroundRepeat = "no-repeat"; // Prevent repeating
-  gameMenu.style.backgroundPosition = "center";
-  gameMenu.style.backgroundColor = "#002e3c";
+   gameMenu.style.backgroundColor = "#002e3c";
   gameMenu.style.borderBottom = "10px solid #fed200";
 
   // Add logo to top right of game menu
