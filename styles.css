@@ -200,3 +200,6 @@ canvas, #game {
   justify-content: center;
   height: 100vh;
 }
+#game-menu.hidden {
+    display: none !important;
+}

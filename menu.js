@@ -377,7 +377,9 @@ function typeText(text, isLastDialog = false) {
       setTimeout(() => {
         introContainer.remove();
         // Show the game menu div
-        document.getElementById("game-menu").style.display = "flex";
+        const gameMenu = document.getElementById("game-menu");
+        gameMenu.classList.remove("hidden");
+
         // Immediately call showLevels to display level buttons
         showLevels();
       }, 1000);
@@ -461,7 +463,6 @@ function initMenu() {
 
   // Hide game menu initially
   const gameMenu = document.getElementById("game-menu");
-  gameMenu.style.display = "none";
 
   // Add background image to game menu
   // gameMenu.style.backgroundImage = "url('assets/titlepage.png')";
