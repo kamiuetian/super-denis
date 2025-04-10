@@ -103,6 +103,41 @@ function initializeGame() {
 // Preload assets
 function preload() {
   if (!gameStarted) return;
+  this.load.spritesheet(
+    "player-idle",
+    "assets/denis/School_withBackpackIdle.png",
+    {
+      frameWidth: 32,
+      frameHeight: 32,
+    }
+  );
+
+  this.load.spritesheet(
+    "player-run",
+    "assets/denis/School_withBackpackRunning.png",
+    {
+      frameWidth: 32,
+      frameHeight: 32,
+    }
+  );
+
+  this.load.spritesheet(
+    "player-jump",
+    "assets/denis/School_withBackpackJump.png",
+    {
+      frameWidth: 32,
+      frameHeight: 32,
+    }
+  );
+
+  this.load.spritesheet(
+    "player-dead",
+    "assets/denis/School_withBackpackDead.png",
+    {
+      frameWidth: 32,
+      frameHeight: 32,
+    }
+  );
   // Load Level 3 skill images
   this.load.image("customBlock", "assets/overworld/customBlock.png");
   this.load.image("blockGround", "block.png");
@@ -258,37 +293,64 @@ function setupBackground() {
 
 // Set up the player
 function setupPlayer() {
-  this.player = this.physics.add.sprite(100, 300, "mario");
+  // Create player using the idle animation's first frame
+  this.player = this.physics.add.sprite(100, 300, "player-idle");
   this.player.body.setGravityY(800);
-  this.player.setScale(PLAYER_SCALE);
+  this.player.setScale(2); // Adjust scale as needed (32px sprites may be larger than original)
   this.player.setVisible(true);
   this.player.setBounce(0.2);
   this.player.setCollideWorldBounds(true);
+
+  // Set appropriate collision body size (may need adjustment)
   const bodyWidth = Math.floor(this.player.width * 0.6);
   const bodyOffset = Math.floor((this.player.width - bodyWidth) / 2);
+  this.player.body.setSize(bodyWidth, this.player.height * 0.9);
+  this.player.body.setOffset(bodyOffset, this.player.height * 0.1);
 
-  // Set the physics body size and offset
-  this.player.body.setSize(bodyWidth, this.player.height);
-  this.player.body.setOffset(bodyOffset, 0);
+  // Create new animations using the separate sprite sheets
 
-  // Create animations
+  // Running animation
   this.anims.create({
     key: "right",
-    frames: this.anims.generateFrameNumbers("mario", { start: 1, end: 3 }),
+    frames: this.anims.generateFrameNumbers("player-run", {
+      start: 0,
+      end: -1, // Use all frames in the sprite sheet
+    }),
+    frameRate: 10,
+    repeat: -1,
+  });
+
+  // Idle animation
+  this.anims.create({
+    key: "stand",
+    frames: this.anims.generateFrameNumbers("player-idle", {
+      start: 0,
+      end: -1, // Use all frames in the sprite sheet
+    }),
     frameRate: 13,
     repeat: -1,
   });
 
-  this.anims.create({
-    key: "stand",
-    frames: [{ key: "mario", frame: 0 }],
-    frameRate: 13,
-  });
-
+  // Jump animation
   this.anims.create({
     key: "jump",
-    frames: [{ key: "mario", frame: 5 }],
-    frameRate: 13,
+    frames: this.anims.generateFrameNumbers("player-jump", {
+      start: 0,
+      end: -1, // Use all frames
+    }),
+    frameRate: 5,
+    repeat: 0, // No repeat for jump animation
+  });
+
+  // Death animation
+  this.anims.create({
+    key: "dead",
+    frames: this.anims.generateFrameNumbers("player-dead", {
+      start: 0,
+      end: -1, // Use all frames
+    }),
+    frameRate: 8,
+    repeat: 0, // No repeat for death animation
   });
 }
 
@@ -497,8 +559,13 @@ function cloudFallDeath(player) {
   // Stop player movement
   this.physics.pause();
   player.setVelocity(0, 0);
-  player.setTint(0xff0000);
-
+  // Play death animation instead of tint (add safety check)
+  if (player.anims && player.anims.exists("dead")) {
+    player.anims.play("dead");
+  } else {
+    // Fallback if animation doesn't exist
+    player.setTint(0xff0000);
+  }
   // Create fall effect
   const fallTrail = this.add.particles(player.x, player.y, "cloud", {
     speed: { min: 50, max: 100 },
@@ -2976,43 +3043,43 @@ function hitCloud(player, cloud) {
 
               // Add falling animation for each language
               // Add falling animation for each language
-  languages.forEach((language, i) => {
-    // Create text for each language
-    const langText = this.add
-      .text(
-        cloud.x + (Math.random() * 60 - 30), // Random horizontal offset
-        cloud.y - 40,
-        language,
-        {
-          fontSize: "20px",
-          fill: "#ffffff",
-          stroke: "#000000",
-          strokeThickness: 3,
-          fontStyle: "italic",
-        }
-      )
-      .setOrigin(0.5);
+              languages.forEach((language, i) => {
+                // Create text for each language
+                const langText = this.add
+                  .text(
+                    cloud.x + (Math.random() * 60 - 30), // Random horizontal offset
+                    cloud.y - 40,
+                    language,
+                    {
+                      fontSize: "20px",
+                      fill: "#ffffff",
+                      stroke: "#000000",
+                      strokeThickness: 3,
+                      fontStyle: "italic",
+                    }
+                  )
+                  .setOrigin(0.5);
 
-    // Delay each language slightly
-    this.time.delayedCall(300 * (i + 1), () => {
-      // Use SAME animation style as skill icons - bounce effect
-      this.tweens.add({
-        targets: langText,
-        y: langText.y + 200,  // Move down by 200 pixels
-        duration: 4000,       // 4 seconds duration
-        ease: "Bounce",       // Same bounce effect
-        onComplete: () => {
-          this.tweens.add({
-            targets: langText,
-            alpha: { from: 1, to: 0 },
-            duration: 3000,             // 3 second fade
-            delay: 1000,                // 1 second delay before fading
-            onComplete: () => langText.destroy(),
-          });
-        }
-      });
-    });
-  });
+                // Delay each language slightly
+                this.time.delayedCall(300 * (i + 1), () => {
+                  // Use SAME animation style as skill icons - bounce effect
+                  this.tweens.add({
+                    targets: langText,
+                    y: langText.y + 200, // Move down by 200 pixels
+                    duration: 4000, // 4 seconds duration
+                    ease: "Bounce", // Same bounce effect
+                    onComplete: () => {
+                      this.tweens.add({
+                        targets: langText,
+                        alpha: { from: 1, to: 0 },
+                        duration: 3000, // 3 second fade
+                        delay: 1000, // 1 second delay before fading
+                        onComplete: () => langText.destroy(),
+                      });
+                    },
+                  });
+                });
+              });
 
               // For languages skill only - delay the level completion
               if (this.skillCount >= level2Skills.length) {
