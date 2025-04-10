@@ -460,10 +460,10 @@ function typeText(text, isLastDialog = false) {
         startGameButton.style.fontWeight = "bold";
         startGameButton.style.transition = "background-color 0.3s";
         startGameButton.onmouseover = () => {
-          startGameButton.style.backgroundColor = "#3D7AC8";
+          startGameButton.style.backgroundColor = "#002e3c";
         };
         startGameButton.onmouseout = () => {
-          startGameButton.style.backgroundColor = "#4A89DC";
+          startGameButton.style.backgroundColor = "#002e3c";
         };
         startGameButton.onclick = () => {
           // End dialog and show main menu
