@@ -24,7 +24,7 @@ const config = {
     default: "arcade",
     arcade: {
       gravity: { y: GRAVITY },
-      debug: false,
+      debug: true,
     },
   },
   scene: {
@@ -245,6 +245,9 @@ function create() {
 
   // Setup player
   setupPlayer.call(this);
+  this.physics.world.defaults.debugBodyColor = 0xff00ff; // Bright pink
+  this.physics.world.defaults.debugShowBody = true;
+  this.physics.world.defaults.debugShowStaticBody = true;
 
   // Create level based on selection
   createLevel.call(this);
@@ -342,15 +345,15 @@ function setupPlayer() {
     repeat: 0, // No repeat for jump animation
   });
 
-  // Death animation
   this.anims.create({
     key: "dead",
     frames: this.anims.generateFrameNumbers("player-dead", {
       start: 0,
-      end: -1, // Use all frames
+      end: 13, // Match your test page - use frames 0 to 13 explicitly
     }),
-    frameRate: 8,
-    repeat: 0, // No repeat for death animation
+    frameRate: 10,
+    repeat: 0, // IMPORTANT: Changed from 10 to 0 - play only once
+    duration: 1300, // Match your test page
   });
 }
 
@@ -551,88 +554,7 @@ function update(time, delta) {
     return; // Skip rest of update for movement
   }
 }
-function cloudFallDeath(player) {
-  // Only run once
-  if (this.playerDying) return;
-  this.playerDying = true;
 
-  // Stop player movement
-  this.physics.pause();
-  player.setVelocity(0, 0);
-  // Play death animation instead of tint (add safety check)
-  if (player.anims && player.anims.exists("dead")) {
-    player.anims.play("dead");
-  } else {
-    // Fallback if animation doesn't exist
-    player.setTint(0xff0000);
-  }
-  // Create fall effect
-  const fallTrail = this.add.particles(player.x, player.y, "cloud", {
-    speed: { min: 50, max: 100 },
-    scale: { start: 0.1, end: 0 },
-    lifespan: 500,
-    quantity: 15,
-    blendMode: "ADD",
-    alpha: { start: 0.6, end: 0 },
-    emitting: false,
-  });
-
-  fallTrail.explode(15);
-
-  // Create full screen overlay
-  const overlay = this.add
-    .rectangle(0, 0, this.scale.width, this.scale.height, 0x000000, 0.8)
-    .setOrigin(0, 0)
-    .setScrollFactor(0)
-    .setDepth(999);
-
-  // Show custom message
-  const gameOverText = this.add
-    .text(
-      this.scale.width / 2,
-      this.scale.height / 2 - 100,
-      "GAME OVER\n\nWhen aiming for the clouds, don't look down!",
-      {
-        fontSize: "18px",
-        fill: "#ff0000",
-        align: "center",
-        padding: 10,
-      }
-    )
-    .setScrollFactor(0)
-    .setAlign("center")
-    .setOrigin(0.5, 0)
-    .setDepth(1000);
-
-  // Add restart button
-  const restartButton = this.add
-    .text(this.scale.width / 2, this.scale.height / 2 + 80, "[ Try Again ]", {
-      fontSize: "20px",
-      fill: "#ffffff",
-      backgroundColor: "#880000",
-      padding: { x: 15, y: 10 },
-    })
-    .setScrollFactor(0)
-    .setAlign("center")
-    .setOrigin(0.5, 0.5)
-    .setDepth(1000)
-    .setInteractive({ useHandCursor: true });
-
-  // Button hover effects
-  restartButton.on("pointerover", () => {
-    restartButton.setStyle({ fill: "#ffff00" });
-  });
-
-  restartButton.on("pointerout", () => {
-    restartButton.setStyle({ fill: "#ffffff" });
-  });
-
-  // Restart on click
-  restartButton.on("pointerdown", () => {
-    resetSkillPanel.call(this); // Add this line
-    this.scene.restart();
-  });
-}
 // Function to shoot tennis ball
 function shootTennisBall() {
   console.log("--- ATTEMPTING TO SHOOT TENNIS BALL ---");
@@ -5510,7 +5432,77 @@ function cloudFallDeath(player, cloud) {
   // Stop player movement
   this.physics.pause();
   player.setVelocity(0, 0);
-  player.setTint(0xff0000);
+  console.log("Available animations:", Object.keys(this.anims.anims.entries));
+
+  try {
+    console.log("Attempting to play death animation");
+    player.anims.play("dead");
+    console.log("Death animation played successfully");
+    player.anims.play("dead").on("animationcomplete", function () {
+      console.log("Death animation complete");
+      const overlay = this.add
+        .rectangle(0, 0, this.scale.width, this.scale.height, 0x000000, 0.8)
+        .setOrigin(0, 0)
+        .setScrollFactor(0)
+        .setDepth(999);
+
+      // Show custom message
+      const gameOverText = this.add
+        .text(
+          this.scale.width / 2,
+          this.scale.height / 2 - 100,
+          "GAME OVER\n\nWhen reaching for the clouds,\nyou need to stay focused!",
+          {
+            fontSize: "18px",
+            fill: "#ff0000",
+            align: "center",
+            padding: 10,
+          }
+        )
+        .setScrollFactor(0)
+        .setAlign("center")
+        .setOrigin(0.5, 0)
+        .setDepth(1000);
+
+      // Add restart button
+      const restartButton = this.add
+        .text(
+          this.scale.width / 2,
+          this.scale.height / 2 + 80,
+          "[ Try Again ]",
+          {
+            fontSize: "20px",
+            fill: "#ffffff",
+            backgroundColor: "#880000",
+            padding: { x: 15, y: 10 },
+          }
+        )
+        .setScrollFactor(0)
+        .setAlign("center")
+        .setOrigin(0.5, 0.5)
+        .setDepth(1000)
+        .setInteractive({ useHandCursor: true });
+
+      // Button hover effects
+      restartButton.on("pointerover", () => {
+        restartButton.setStyle({ fill: "#ffff00" });
+      });
+
+      restartButton.on("pointerout", () => {
+        restartButton.setStyle({ fill: "#ffffff" });
+      });
+
+      // Restart on click
+      restartButton.on("pointerdown", () => {
+        resetSkillPanel.call(this); // Add this line
+        this.scene.restart();
+      });
+    });
+  } catch (error) {
+    console.error("Error playing death animation:", error);
+    // Fallback if animation play fails
+    player.setTint(0xff0000);
+  }
 
   // Create fall effect
   const fallTrail = this.add.particles(player.x, player.y, "cloud", {
@@ -5526,58 +5518,6 @@ function cloudFallDeath(player, cloud) {
   fallTrail.explode(15);
 
   // Create full screen overlay
-  const overlay = this.add
-    .rectangle(0, 0, this.scale.width, this.scale.height, 0x000000, 0.8)
-    .setOrigin(0, 0)
-    .setScrollFactor(0)
-    .setDepth(999);
-
-  // Show custom message
-  const gameOverText = this.add
-    .text(
-      this.scale.width / 2,
-      this.scale.height / 2 - 100,
-      "GAME OVER\n\nWhen reaching for the clouds,\nyou need to stay focused!",
-      {
-        fontSize: "18px",
-        fill: "#ff0000",
-        align: "center",
-        padding: 10,
-      }
-    )
-    .setScrollFactor(0)
-    .setAlign("center")
-    .setOrigin(0.5, 0)
-    .setDepth(1000);
-
-  // Add restart button
-  const restartButton = this.add
-    .text(this.scale.width / 2, this.scale.height / 2 + 80, "[ Try Again ]", {
-      fontSize: "20px",
-      fill: "#ffffff",
-      backgroundColor: "#880000",
-      padding: { x: 15, y: 10 },
-    })
-    .setScrollFactor(0)
-    .setAlign("center")
-    .setOrigin(0.5, 0.5)
-    .setDepth(1000)
-    .setInteractive({ useHandCursor: true });
-
-  // Button hover effects
-  restartButton.on("pointerover", () => {
-    restartButton.setStyle({ fill: "#ffff00" });
-  });
-
-  restartButton.on("pointerout", () => {
-    restartButton.setStyle({ fill: "#ffffff" });
-  });
-
-  // Restart on click
-  restartButton.on("pointerdown", () => {
-    resetSkillPanel.call(this); // Add this line
-    this.scene.restart();
-  });
 }
 // Modify the showLevel3Intro function to auto-start after dialogue
 function showLevel3Intro(callback) {
