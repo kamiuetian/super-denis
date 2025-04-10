@@ -34,9 +34,8 @@ I am Denis and you’re about to dive into an interactive game through my world.
 `,
   `Here is my offer: a few minutes of your attention, in exchange for something memorable.
 
-Through three levels, you’ll get to know me: my personality, what I bring to the table, and what motivates me. All in just five minutes!
-
-Your mission, should you choose to accept it, is to play through each level and see how I could grow with your team.`,
+Through three levels, you’ll get to know me: my personality, what I bring to the table, and what motivates me. All in just five minutes!`,
+  `Your mission, should you choose to accept it, is to play through each level and see how I could grow with your team.`,
 ];
 
 // Add these variables at the top of your file (with your other variables)
@@ -428,79 +427,8 @@ function typeText(text, isLastDialog = false) {
   // Clear any existing buttons
   buttonContainer.innerHTML = "";
 
-  // Modify buttons based on dialog position
-  if (!isLastDialog) {
-    // Hide buttons for auto-advance dialogs
-    buttonContainer.style.display = "none";
-  } else {
-    // Show buttons only for last dialog
-    buttonContainer.style.display = "flex";
-
-    // Add Start Game button
-    const startGameButton = document.createElement("button");
-    startGameButton.textContent = "Accept the mission";
-    startGameButton.style.backgroundColor = "#4A89DC";
-    startGameButton.style.color = "#FFFFFF";
-    startGameButton.style.border = "none";
-    startGameButton.style.borderRadius = "10px";
-    startGameButton.style.padding = "8px 15px";
-    startGameButton.style.cursor = "pointer";
-    startGameButton.style.fontWeight = "bold";
-    startGameButton.style.transition = "background-color 0.3s";
-    startGameButton.onmouseover = () => {
-      startGameButton.style.backgroundColor = "#3D7AC8";
-    };
-    startGameButton.onmouseout = () => {
-      startGameButton.style.backgroundColor = "#4A89DC";
-    };
-    startGameButton.onclick = () => {
-      // End dialog and show main menu
-      fadeOutIntroMusic(1500);
-      const introContainer = document.getElementById("intro-container");
-      introContainer.style.opacity = "0";
-      setTimeout(() => {
-        introContainer.remove();
-        // Show the game menu div
-        const gameMenu = document.getElementById("game-menu");
-        gameMenu.classList.remove("hidden");
-
-        // Immediately call showLevels to display level buttons
-        showLevels();
-      }, 1000);
-    };
-    buttonContainer.appendChild(startGameButton);
-
-    // Add Go to Videos button
-    const videoButton = document.createElement("button");
-    videoButton.textContent = "Decline the mission";
-    videoButton.style.backgroundColor = "#FF5722"; // Different color to distinguish
-    videoButton.style.color = "#FFFFFF";
-    videoButton.style.border = "none";
-    videoButton.style.borderRadius = "10px";
-    videoButton.style.padding = "8px 15px";
-    videoButton.style.cursor = "pointer";
-    videoButton.style.fontWeight = "bold";
-    videoButton.style.transition = "background-color 0.3s";
-    videoButton.onmouseover = () => {
-      videoButton.style.backgroundColor = "#E64A19";
-    };
-    videoButton.onmouseout = () => {
-      videoButton.style.backgroundColor = "#FF5722";
-    };
-    videoButton.onclick = () => {
-      // Show confirmation dialog
-      showConfirmationModal(
-        "Playing through the game will give you the full experience of my interactive resume. Are you sure you want to skip to the videos?",
-        "Continue to Videos",
-        "Stay Here",
-        () => {
-          // This function runs if they confirm
-          window.open("videos.html", "_blank");
-        }
-      );
-    };
-    buttonContainer.appendChild(videoButton);
-  }
+  // Hide buttons initially - always hide until text is fully typed
+  buttonContainer.style.display = "none";
 
   // Typewriter effect
   const typeInterval = setInterval(() => {
@@ -515,6 +443,75 @@ function typeText(text, isLastDialog = false) {
         setTimeout(() => {
           showNextIntroDialog(true);
         }, 2000);
+      } else {
+        // MOVED HERE: Only create and show buttons after text is fully typed
+        // and only if it's the last dialog
+        buttonContainer.style.display = "flex"; // Now show the buttons
+
+        // Add Start Game button
+        const startGameButton = document.createElement("button");
+        startGameButton.textContent = "Accept the mission";
+        startGameButton.style.backgroundColor = "#4A89DC";
+        startGameButton.style.color = "#FFFFFF";
+        startGameButton.style.border = "none";
+        startGameButton.style.borderRadius = "10px";
+        startGameButton.style.padding = "8px 15px";
+        startGameButton.style.cursor = "pointer";
+        startGameButton.style.fontWeight = "bold";
+        startGameButton.style.transition = "background-color 0.3s";
+        startGameButton.onmouseover = () => {
+          startGameButton.style.backgroundColor = "#3D7AC8";
+        };
+        startGameButton.onmouseout = () => {
+          startGameButton.style.backgroundColor = "#4A89DC";
+        };
+        startGameButton.onclick = () => {
+          // End dialog and show main menu
+          fadeOutIntroMusic(1500);
+          const introContainer = document.getElementById("intro-container");
+          introContainer.style.opacity = "0";
+          setTimeout(() => {
+            introContainer.remove();
+            // Show the game menu div
+            const gameMenu = document.getElementById("game-menu");
+            gameMenu.classList.remove("hidden");
+
+            // Immediately call showLevels to display level buttons
+            showLevels();
+          }, 1000);
+        };
+        buttonContainer.appendChild(startGameButton);
+
+        // Add Go to Videos button
+        const videoButton = document.createElement("button");
+        videoButton.textContent = "Decline the mission";
+        videoButton.style.backgroundColor = "#FF5722"; // Different color to distinguish
+        videoButton.style.color = "#FFFFFF";
+        videoButton.style.border = "none";
+        videoButton.style.borderRadius = "10px";
+        videoButton.style.padding = "8px 15px";
+        videoButton.style.cursor = "pointer";
+        videoButton.style.fontWeight = "bold";
+        videoButton.style.transition = "background-color 0.3s";
+        videoButton.onmouseover = () => {
+          videoButton.style.backgroundColor = "#E64A19";
+        };
+        videoButton.onmouseout = () => {
+          videoButton.style.backgroundColor = "#FF5722";
+        };
+        videoButton.onclick = () => {
+          // Show confirmation dialog
+          showConfirmationModal(
+            "Playing through the game will give you the full experience of my interactive resume. Are you sure you want to skip to the videos?",
+            "Continue to Videos",
+            "Stay Here",
+            () => {
+              // This function runs if they confirm
+              window.open("videos.html", "_blank");
+            }
+          );
+        };
+        buttonContainer.appendChild(videoButton);
       }
     }
   }, 60);
