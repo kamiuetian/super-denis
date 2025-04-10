@@ -136,8 +136,8 @@ function createStartScreen() {
 
   // Create logo/title
   const title = document.createElement("h1");
-  title.textContent = "Super Denis";
-  title.style.color = "#4A89DC";
+  title.textContent = "The IDDP saga win Denis Tezerdi";
+  title.style.color = "#fed200";
   title.style.fontSize = "48px";
   title.style.marginBottom = "30px";
   title.style.fontFamily = "Comic Sans MS, Arial, sans-serif";
@@ -146,7 +146,7 @@ function createStartScreen() {
   // Create start button
   const startButton = document.createElement("button");
   startButton.textContent = "CLICK TO BEGIN";
-  startButton.style.backgroundColor = "#4A89DC";
+  startButton.style.backgroundColor = "#fed200";
   startButton.style.color = "#FFFFFF";
   startButton.style.border = "none";
   startButton.style.borderRadius = "10px";
@@ -189,7 +189,7 @@ function createStartScreen() {
   // Append elements
   startContainer.appendChild(title);
   startContainer.appendChild(startButton);
-  startContainer.appendChild(instruction);
+  //startContainer.appendChild(instruction);
   document.body.appendChild(startContainer);
 }
 
