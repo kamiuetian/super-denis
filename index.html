@@ -6,43 +6,48 @@
     <title>The IDDP saga win Denis Tezerdi</title>
     <link rel="stylesheet" href="styles.css">
     <style>
-       
+
     </style>
 </head>
 
 <body>
     <div id="game-menu" class="bg hidden">
 
-        <h1 id="main-title">The IDDP Saga:</h1>
-        <h2 class="author">Win Denis Tezerdi</h2>
+        <!-- Two-column menu layout -->
+        <div class="levels-container">
+            <!-- Left column - level numbers -->
+            <div class="level-numbers-column">
+                <div class="level-number">Level 1</div>
+                <div class="level-number">Level 2</div>
+                <div class="level-number">Level 3</div>
+            </div>
 
-        <div class="separator"></div>
+            <!-- Right column - level content -->
+            <div class="level-content-column">
+                <h1 id="main-title">The IDDP Saga:</h1>
+                <h2 class="author">Win Denis Tezerdi</h2>
 
-        <div class="levels-title">Levels overview</div>
+                <div class="separator"></div>
 
-        <div class="level">
-            <div class="level-number">Level 1</div>
-            <a class="level-option" href="#" onclick="startGame(1)">
-                Life of Denis:<br>
-                What makes me, me
-            </a>
+                <div class="levels-title">Levels overview</div>
+                <a class="level-option" href="#" onclick="startGame(1)">
+                    Life of Denis:<br>
+                    What makes me, me
+                </a>
+
+                <a class="level-option" href="#" onclick="startGame(2)">
+                    404: Skill Gap Not Found
+                </a>
+
+                <a class="level-option" href="#" onclick="startGame(3)">
+                    Level 3:<br>
+                    IDDP:<br>
+                    It's Definitely Denis' Path
+                </a>
+                <a id="go-back" class="level-option" href="#" onclick="goBackMainMenu()">Go back</a>
+
+            </div>
         </div>
-
-        <div class="level">
-            <div class="level-number">Level 2</div>
-            <a class="level-option" href="#" onclick="startGame(2)">404: Skill Gap Not Found</a>
-        </div>
-
-        <div class="level">
-            <div class="level-number">Level 3</div>
-            <a class="level-option" href="#" onclick="startGame(3)">
-                Level 3:<br>
-                IDDP:<br>
-                It's Definitely Denis' Path
-            </a>
-        </div>
-
-        <a id="go-back" class="level-option" href="#" onclick="goBackMainMenu()">Go back</a>
 
     </div>
 

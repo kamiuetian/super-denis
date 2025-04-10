@@ -217,15 +217,64 @@ function createIntroScreen() {
   introContainer.style.alignItems = "center";
   addBottomBorder(introContainer);
   // Replace the character div with an image
-  const character = document.createElement("img");
+  const character = document.createElement("canvas");
   character.id = "intro-character";
-  character.src = "assets/mario.png"; // Set the image source
+  character.width = 32 * 3; // Each frame is 32px wide, scale by 3
+  character.height = 32 * 3; // Each frame is 32px high, scale by 3
   character.style.position = "absolute";
-  character.style.width = "50px";
-  character.style.height = "80px";
-  character.style.bottom = "50px";
+  character.style.bottom = "10px";
   character.style.left = "50px";
-  character.style.transition = "left 4s ease-in-out"; // Double the duration from 2s to 4s
+  character.style.transition = "left 4s ease-in-out";
+  character.style.zIndex = "1000";
+
+  // Add the character animation logic
+  const ctx = character.getContext("2d");
+  const spriteSheet = new Image();
+  spriteSheet.src = "assets/denis/NavySuitRunning.png";
+
+  // Set up animation variables
+  let frameIndex = 0;
+  const frameCount = 8; // NavySuitRunning.png has 8 frames
+  const frameWidth = 32;
+  const frameHeight = 32;
+  let lastFrameTime = 0;
+  const frameDelay = 100; // 100ms between frames (10fps)
+
+  // Animation function
+  function animateCharacter(timestamp) {
+    if (!lastFrameTime) lastFrameTime = timestamp;
+
+    // Only update animation if enough time has passed
+    if (timestamp - lastFrameTime > frameDelay) {
+      // Clear canvas
+      ctx.clearRect(0, 0, character.width, character.height);
+
+      // Draw the current frame
+      ctx.drawImage(
+        spriteSheet,
+        frameIndex * frameWidth,
+        0, // Source x, y
+        frameWidth,
+        frameHeight, // Source width, height
+        0,
+        0, // Destination x, y
+        character.width,
+        character.height // Destination width, height
+      );
+
+      // Update frame index
+      frameIndex = (frameIndex + 1) % frameCount;
+      lastFrameTime = timestamp;
+    }
+
+    // Continue animation loop
+    requestAnimationFrame(animateCharacter);
+  }
+
+  // Start animation when image loads
+  spriteSheet.onload = () => {
+    requestAnimationFrame(animateCharacter);
+  };
 
   // Create dialog box as a speech bubble
   const dialogBox = document.createElement("div");

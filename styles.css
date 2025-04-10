@@ -159,7 +159,27 @@ canvas, #game {
 #intro-character {
   box-shadow: 0 0 15px rgba(255, 68, 68, 0.6);
 }
+.levels-container {
+    display: flex;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
 
+.level-numbers-column {
+    flex: 0 0 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    padding-right: 15px;
+}
+
+.level-content-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
 /* Make sure game menu is centered nicely */
 #game-menu {
   display: flex;
