@@ -156,9 +156,7 @@ canvas, #game {
   background-color: #fff;
 }
 
-#intro-character {
-  box-shadow: 0 0 15px rgba(255, 68, 68, 0.6);
-}
+
 .levels-container {
     display: flex;
     width: 100%;

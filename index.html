@@ -12,6 +12,12 @@
 
 <body>
     <div id="game-menu" class="bg hidden">
+        <h1 id="main-title">The IDDP Saga:</h1>
+        <h2 class="author">Win Denis Tezerdi</h2>
+
+        <div class="separator"></div>
+
+        <div class="levels-title">Levels overview</div>
 
         <!-- Two-column menu layout -->
         <div class="levels-container">
@@ -24,12 +30,6 @@
 
             <!-- Right column - level content -->
             <div class="level-content-column">
-                <h1 id="main-title">The IDDP Saga:</h1>
-                <h2 class="author">Win Denis Tezerdi</h2>
-
-                <div class="separator"></div>
-
-                <div class="levels-title">Levels overview</div>
                 <a class="level-option" href="#" onclick="startGame(1)">
                     Life of Denis:<br>
                     What makes me, me
@@ -44,11 +44,10 @@
                     IDDP:<br>
                     It's Definitely Denis' Path
                 </a>
-                <a id="go-back" class="level-option" href="#" onclick="goBackMainMenu()">Go back</a>
-
             </div>
         </div>
 
+        <a id="go-back" class="level-option" href="#" onclick="goBackMainMenu()">Go back</a>
     </div>
 
     <div id="game-container"></div>

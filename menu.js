@@ -217,6 +217,7 @@ function createIntroScreen() {
   introContainer.style.alignItems = "center";
   addBottomBorder(introContainer);
   // Replace the character div with an image
+  // Replace the character div with a canvas for animation
   const character = document.createElement("canvas");
   character.id = "intro-character";
   character.width = 32 * 3; // Each frame is 32px wide, scale by 3
@@ -229,8 +230,14 @@ function createIntroScreen() {
 
   // Add the character animation logic
   const ctx = character.getContext("2d");
+  ctx.imageSmoothingEnabled = false; // Disable anti-aliasing to prevent glow
+
   const spriteSheet = new Image();
   spriteSheet.src = "assets/denis/NavySuitRunning.png";
+
+  // Add static image for when character stops
+  const staticImage = new Image();
+  staticImage.src = "assets/denis/NavySuit.png";
 
   // Set up animation variables
   let frameIndex = 0;
@@ -239,35 +246,53 @@ function createIntroScreen() {
   const frameHeight = 32;
   let lastFrameTime = 0;
   const frameDelay = 100; // 100ms between frames (10fps)
+  let useStaticImage = false; // Add this flag
 
   // Animation function
   function animateCharacter(timestamp) {
     if (!lastFrameTime) lastFrameTime = timestamp;
 
-    // Only update animation if enough time has passed
+    // Always update if enough time has passed (removed animationActive check)
     if (timestamp - lastFrameTime > frameDelay) {
       // Clear canvas
       ctx.clearRect(0, 0, character.width, character.height);
 
-      // Draw the current frame
-      ctx.drawImage(
-        spriteSheet,
-        frameIndex * frameWidth,
-        0, // Source x, y
-        frameWidth,
-        frameHeight, // Source width, height
-        0,
-        0, // Destination x, y
-        character.width,
-        character.height // Destination width, height
-      );
+      // Draw the appropriate image based on state
+      if (useStaticImage) {
+        // Draw static image (no frame index needed)
+        ctx.drawImage(
+          staticImage,
+          0,
+          0,
+          staticImage.width,
+          staticImage.height,
+          0,
+          0,
+          character.width,
+          character.height
+        );
+      } else {
+        // Draw running animation frame
+        ctx.drawImage(
+          spriteSheet,
+          frameIndex * frameWidth,
+          0,
+          frameWidth,
+          frameHeight,
+          0,
+          0,
+          character.width,
+          character.height
+        );
 
-      // Update frame index
-      frameIndex = (frameIndex + 1) % frameCount;
+        // Update frame index (only for running animation)
+        frameIndex = (frameIndex + 1) % frameCount;
+      }
+
       lastFrameTime = timestamp;
     }
 
-    // Continue animation loop
+    // Always continue animation loop
     requestAnimationFrame(animateCharacter);
   }
 
@@ -275,6 +300,8 @@ function createIntroScreen() {
   spriteSheet.onload = () => {
     requestAnimationFrame(animateCharacter);
   };
+
+  // Start animation sequence
 
   // Create dialog box as a speech bubble
   const dialogBox = document.createElement("div");
@@ -356,8 +383,9 @@ function createIntroScreen() {
   // Start animation sequence
   setTimeout(() => {
     character.style.left = "calc(50% - 25px)"; // Move to center
-
+    
     setTimeout(() => {
+      useStaticImage = true;
       dialogBox.style.display = "block";
       setTimeout(() => {
         dialogBox.style.opacity = "1";
