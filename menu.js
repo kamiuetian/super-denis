@@ -36,7 +36,7 @@ I am Denis and you’re about to dive into an interactive game through my world.
 
 Through three levels, you’ll get to know me: my personality, what I bring to the table, and what motivates me. All in just five minutes!
 
-Your mission, should you choose to accept it, is to play through each level and see how I could grow with your team`,
+Your mission, should you choose to accept it, is to play through each level and see how I could grow with your team.`,
 ];
 
 // Add these variables at the top of your file (with your other variables)
