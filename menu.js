@@ -136,13 +136,12 @@ function createStartScreen() {
 
   // Create logo/title
   const title = document.createElement("h1");
-  title.textContent = "The IDDP saga win Denis Tezerdi";
-  title.style.color = "#fed200";
-  title.style.fontSize = "48px";
-  title.style.marginBottom = "30px";
-  title.style.fontFamily = "Comic Sans MS, Arial, sans-serif";
-  title.style.textShadow = "2px 2px 4px rgba(0,0,0,0.5)";
+  title.textContent = "The IDDP Saga: ";
+  title.id = "main-title";
   addBottomBorder(startContainer);
+  const subtile = document.createElement("h2");
+  subtile.textContent = "win Denis Tezerdi";
+  subtile.className = "author";
   // Create start button
   const startButton = document.createElement("button");
   startButton.textContent = "CLICK TO BEGIN";
@@ -188,6 +187,7 @@ function createStartScreen() {
 
   // Append elements
   startContainer.appendChild(title);
+  startContainer.appendChild(subtile);
   startContainer.appendChild(startButton);
   //startContainer.appendChild(instruction);
   document.body.appendChild(startContainer);
@@ -466,7 +466,7 @@ function initMenu() {
 
   // Add background image to game menu
   // gameMenu.style.backgroundImage = "url('assets/titlepage.png')";
-   gameMenu.style.backgroundColor = "#002e3c";
+  gameMenu.style.backgroundColor = "#002e3c";
   gameMenu.style.borderBottom = "10px solid #fed200";
 
   // Add logo to top right of game menu
