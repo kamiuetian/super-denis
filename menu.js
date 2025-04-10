@@ -28,8 +28,15 @@ function goBackMainMenu() {
 // New intro sequence functionality
 let currentDialogIndex = 0;
 const introDialogs = [
-  "Hey, I am Denis and I am applying for the job at Bank.",
-  "Your goal is to select me after going through my resume in three levels. See you at the finish line with Job Letter!",
+  `Welcome, brave Recruiter!
+
+I am Denis and you’re about to dive into an interactive game through my world. 
+`,
+  `Here is my offer: a few minutes of your attention, in exchange for something memorable.
+
+Through three levels, you’ll get to know me: my personality, what I bring to the table, and what motivates me. All in just five minutes!
+
+Your mission, should you choose to accept it, is to play through each level and see how I could grow with your team`,
 ];
 
 // Add these variables at the top of your file (with your other variables)
@@ -383,7 +390,7 @@ function createIntroScreen() {
   // Start animation sequence
   setTimeout(() => {
     character.style.left = "calc(50% - 25px)"; // Move to center
-    
+
     setTimeout(() => {
       useStaticImage = true;
       dialogBox.style.display = "block";
@@ -431,7 +438,7 @@ function typeText(text, isLastDialog = false) {
 
     // Add Start Game button
     const startGameButton = document.createElement("button");
-    startGameButton.textContent = "START GAME";
+    startGameButton.textContent = "Accept the mission";
     startGameButton.style.backgroundColor = "#4A89DC";
     startGameButton.style.color = "#FFFFFF";
     startGameButton.style.border = "none";
@@ -465,7 +472,7 @@ function typeText(text, isLastDialog = false) {
 
     // Add Go to Videos button
     const videoButton = document.createElement("button");
-    videoButton.textContent = "GO TO VIDEOS";
+    videoButton.textContent = "Decline the mission";
     videoButton.style.backgroundColor = "#FF5722"; // Different color to distinguish
     videoButton.style.color = "#FFFFFF";
     videoButton.style.border = "none";
