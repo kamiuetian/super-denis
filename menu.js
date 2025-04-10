@@ -357,7 +357,7 @@ function createIntroScreen() {
   // Character name element with updated styling
   const characterName = document.createElement("div");
   characterName.textContent = "DENIS";
-  characterName.style.color = "#4A89DC"; // Blue color for name
+  characterName.style.color = "#002e3c"; // Blue color for name
   characterName.style.fontWeight = "bold";
   characterName.style.fontSize = "22px";
   characterName.style.marginBottom = "10px";
@@ -388,7 +388,7 @@ function createIntroScreen() {
 
   // Start animation sequence
   setTimeout(() => {
-    character.style.left = "calc(50% - 25px)"; // Move to center
+    character.style.left = "calc(50% - 40px)"; // Move to center
 
     setTimeout(() => {
       useStaticImage = true;
@@ -451,7 +451,7 @@ function typeText(text, isLastDialog = false) {
         // Add Start Game button
         const startGameButton = document.createElement("button");
         startGameButton.textContent = "Accept the mission";
-        startGameButton.style.backgroundColor = "#4A89DC";
+        startGameButton.style.backgroundColor = "#002e3c";
         startGameButton.style.color = "#FFFFFF";
         startGameButton.style.border = "none";
         startGameButton.style.borderRadius = "10px";
