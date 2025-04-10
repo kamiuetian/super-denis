@@ -461,9 +461,11 @@ function typeText(text, isLastDialog = false) {
         startGameButton.style.transition = "background-color 0.3s";
         startGameButton.onmouseover = () => {
           startGameButton.style.backgroundColor = "#002e3c";
+          startGameButton.style.opacity = "0.7"; // Slightly transparent on hover
         };
         startGameButton.onmouseout = () => {
           startGameButton.style.backgroundColor = "#002e3c";
+          startGameButton.style.opacity = "1"; // Slightly transparent on hover
         };
         startGameButton.onclick = () => {
           // End dialog and show main menu
