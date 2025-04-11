@@ -1,15 +1,20 @@
-html, body {
+html,
+body {
     margin: 0;
     padding: 0;
     width: 100%;
     height: 100%;
-    overflow: hidden; /* Prevent scrollbars */
+    overflow: hidden;
+    /* Prevent scrollbars */
+    font-family: Arial, sans-serif;
 }
 
-body, html {
+body,
+html {
     height: 100%;
     margin: 0;
-    background-color: #002e3c;
+    background-color: #004851;
+    /* Teal background color from screenshot */
     padding: 0;
     overflow: hidden;
 }
@@ -18,23 +23,14 @@ body, html {
     position: fixed;
     top: 0;
     left: 0;
-     width: 100%;
+    width: 100%;
     height: 100%;
-    
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 100;
     flex-direction: column;
 }
-
-
-
-
-
-
-
-
 
 #game-container {
     position: relative;
@@ -43,6 +39,143 @@ body, html {
     height: 100%;
 }
 
+.commerzbank-logo {
+    position: absolute;
+    top: 40px;
+    right: 40px;
+    width: 160px;
+    height: 50px;
+    background-image: url("assets/logo.png")
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.menu-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.header-section {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.levels-table {
+    border-collapse: separate;
+    border-spacing: 0 20px;
+    /* Vertical space between table rows */
+    margin: 0 auto;
+}
+
+.levels-table td {
+    padding: 0;
+    vertical-align: middle;
+}
+
+.levels-table td:first-child {
+    padding-right: 20px;
+    text-align: right;
+}
+
+/* Make sure game menu is centered nicely */
+#game-menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    position: relative;
+}
+
+#game-menu.hidden {
+    display: none !important;
+}
+
+#main-title {
+    font-size: 2.5rem;
+    color: white;
+    margin-bottom: 5px;
+    text-align: center;
+}
+
+.author {
+    font-size: 1.5rem;
+    color: #fff;
+    font-weight: normal;
+    margin-top: 5px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.separator {
+    width: 360px;
+    height: 2px;
+    background-color: #FFCC00;
+    /* Yellow color for the separator */
+    margin: 20px auto;
+}
+
+.levels-title {
+    margin-bottom: 20px;
+    color: #fff;
+    font-size: 1.3rem;
+    text-align: center;
+}
+
+.level-number {
+    color: #FFCC00;
+    /* Yellow color for level numbers */
+    font-weight: bold;
+    font-size: 1.1rem;
+    white-space: nowrap;
+}
+
+.level-option {
+    background-color: #FFCC00;
+    /* Yellow background */
+    color: #000;
+    /* Black text */
+    padding: 12px 20px;
+    border-radius: 5px;
+    text-align: center;
+    width: 250px;
+    text-decoration: none;
+    display: block;
+    font-weight: bold;
+    margin: 0 auto;
+    /* Center align in the column */
+}
+
+/* Make the Go back button smaller */
+#go-back {
+    width: 120px !important;
+    /* Smaller width */
+    padding: 8px 15px !important;
+    /* Smaller padding */
+    font-size: 0.95rem !important;
+    /* Slightly smaller font */
+    margin-top: 10px;
+}
+
+.keyboard-commands {
+    position: absolute;
+    top: 50%;
+    right: 50px;
+    transform: translateY(-50%);
+    text-align: right;
+    color: white;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+.hidden {
+    display: none;
+}
+
+/* Skills container and other styles preserved from original CSS */
 #skills-container {
     float: right;
     width: 250px;
@@ -103,8 +236,8 @@ body, html {
     background-position: center;
 }
 
-canvas, #game {
-    /* Maintain aspect ratio while scaling to fit */
+canvas,
+#game {
     max-width: 100%;
     max-height: 100%;
     width: auto;
@@ -112,7 +245,6 @@ canvas, #game {
     object-fit: contain;
 }
 
-/* Add this if you're using a background image directly on the container */
 .game-background {
     position: absolute;
     top: 0;
@@ -124,151 +256,39 @@ canvas, #game {
     background-position: center;
 }
 
-/* Add these styles to your existing CSS file */
-
 @keyframes codTextGlow {
-  0% { text-shadow: 0 0 5px rgba(255, 204, 0, 0.5); }
-  50% { text-shadow: 0 0 15px rgba(255, 204, 0, 0.8); }
-  100% { text-shadow: 0 0 5px rgba(255, 204, 0, 0.5); }
+    0% {
+        text-shadow: 0 0 5px rgba(255, 204, 0, 0.5);
+    }
+
+    50% {
+        text-shadow: 0 0 15px rgba(255, 204, 0, 0.8);
+    }
+
+    100% {
+        text-shadow: 0 0 5px rgba(255, 204, 0, 0.5);
+    }
 }
 
 #intro-container {
-  font-family: 'Arial', sans-serif;
-  
-  transition: opacity 1s ease-out;
+    font-family: 'Arial', sans-serif;
+    transition: opacity 1s ease-out;
 }
 
 #intro-dialog {
-  box-shadow: 0 0 20px rgba(255, 204, 0, 0.3);
-  border-radius: 3px;
-  letter-spacing: 0.5px;
-  line-height: 1.5;
+    box-shadow: 0 0 20px rgba(255, 204, 0, 0.3);
+    border-radius: 3px;
+    letter-spacing: 0.5px;
+    line-height: 1.5;
 }
 
 #intro-dialog button {
-  font-family: 'Arial', sans-serif;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  transition: background-color 0.3s ease;
+    font-family: 'Arial', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: background-color 0.3s ease;
 }
 
 #intro-dialog button:hover {
-  background-color: #fff;
+    background-color: #fff;
 }
-
-
-.levels-container {
-    display: flex;
-    width: 100%;
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-.level-numbers-column {
-    flex: 0 0 100px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    padding-right: 15px;
-}
-
-.level-content-column {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-/* Make sure game menu is centered nicely */
-#game-menu {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-}
-#game-menu.hidden {
-    display: none !important;
-}
- #main-title {
-     font-size: 2.5rem;
-     color: white;
-     margin-bottom: 5px;
- }
-
- .author {
-     font-size: 1.5rem;
-     color: #fff;
-     font-weight: normal;
-     margin-top: 5px;
-     margin-bottom: 30px;
- }
-
- .separator {
-     width: 200px;
-     height: 2px;
-     background-color: #FFCC00;
-     /* Yellow color for the separator */
-     margin: 30px auto;
- }
-
- .levels-title {
-     margin-bottom: 20px;
-     color: #fff;
- }
-
- .level {
-     display: flex;
-     align-items: center;
-     margin-bottom: 15px;
- }
-
- .level-number {
-     color: #FFCC00;
-     /* Yellow color for level numbers */
-     font-weight: bold;
-     width: 80px;
-     text-align: right;
-     margin-right: 15px;
- }
-
- .level-option {
-     background-color: #FFCC00;
-     /* Yellow background */
-     color: #000;
-     /* Black text */
-     padding: 10px 20px;
-     border-radius: 5px;
-     text-align: center;
-     width: 200px;
-     text-decoration: none;
-     display: block;
-     margin: 10px 0;
- }
-
- .menu-option {
-     background-color: #FFCC00;
-     color: #000;
-     padding: 10px 20px;
-     margin: 10px 0;
-     border-radius: 5px;
-     text-decoration: none;
-     text-align: center;
-     width: 200px;
-     display: block;
- }
-
- #go-back {
-     margin-top: 20px;
- }
-
- .keyboard-commands {
-     position: absolute;
-     top: 50%;
-     right: 50px;
-     transform: translateY(-50%);
-     text-align: right;
- }
-
- .hidden {
-     display: none;
- }
