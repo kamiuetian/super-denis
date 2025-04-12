@@ -103,6 +103,10 @@ function initializeGame() {
 // Preload assets
 function preload() {
   if (!gameStarted) return;
+  this.load.spritesheet("monster-run", "assets/denis/MonsterRunning.png", {
+    frameWidth: 32,
+    frameHeight: 32,
+  });
   this.load.spritesheet(
     "player-idle",
     "assets/denis/School_withBackpackIdle.png",
@@ -1486,8 +1490,8 @@ function activateBossArea() {
 
   // Create boss at the right side - DO NOT ATTACK YET
   this.boss = this.physics.add
-    .sprite(screenWidth * 0.8, -100, "enemy") // CHANGED: Using enemy sprite
-    .setScale(0.3); // Adjusted scale for enemy sprite
+    .sprite(screenWidth * 0.8, -100, "monster-run") // CHANGED: Using enemy sprite
+    .setScale(4); // Adjusted scale for enemy sprite
 
   // Set boss properties
   this.boss.health = 3;
@@ -1498,7 +1502,7 @@ function activateBossArea() {
   } catch (e) {
     console.error("Failed to initialize localStorage for boss health:", e);
   }
-
+  this.boss.anims.play("monster-running", true);
   this.boss.direction = -1;
   this.boss.lastShotTime = this.time.now + 10000; // 10 second delay before first attack
   this.boss.setCollideWorldBounds(true);
@@ -1954,11 +1958,12 @@ function hitBoss(ball, boss) {
 
     // FIXED: Always spawn at safe height with CONSISTENT appearance
     this.boss = this.physics.add
-      .sprite(fixedX, screenHeight - 120, "enemy") // FIXED: Use enemy sprite consistently
+      .sprite(fixedX, screenHeight - 120, "monster-run") // FIXED: Use enemy sprite consistently
       .setScale(0.3) // FIXED: Use same scale as original (0.3)
       .setVisible(true)
       .setAlpha(1)
       .setDepth(100);
+    this.boss.anims.play("monster-running", true);
 
     // Add a flash effect to make the respawn obvious
     this.boss.setTintFill(0xffff00); // FIXED: Use yellow tint to match original
@@ -2771,16 +2776,16 @@ function createLevel2(bgRepeat) {
       //this.scale.width * bgRepeat * 0.85,
       2600,
       this.scale.height * 0.05,
-      "enemy" // Using existing enemy sprite for now
+      "monster-run" // Using existing enemy sprite for now
     )
-    .setScale(0.2)
+    .setScale(4)
     .setDepth(20);
 
   this.boss.setCollideWorldBounds(true);
   this.boss.setBounce(1);
   this.boss.setImmovable(true);
   this.boss.lastShotTime = 0;
-
+  this.boss.anims.play("monster-running", true);
   // Put boss on a special cloud
   const bossCloud = this.platforms.create(
     //this.scale.width * bgRepeat * 0.85,

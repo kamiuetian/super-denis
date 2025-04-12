@@ -54,6 +54,7 @@
         <button id="play-idle">Play Idle Animation</button>
         <button id="play-run">Play Run Animation</button>
         <button id="play-jump">Play Jump Animation</button>
+        <button id="play-monster">Play Monster Animation</button>
     </div>
 
     <script>
@@ -93,6 +94,11 @@
                 frameWidth: 32,
                 frameHeight: 32
             });
+
+            this.load.spritesheet('monster-run', 'assets/denis/MonsterRunning.png', {
+                frameWidth: 32,
+                frameHeight: 32
+            });
         }
 
         function create() {
@@ -101,11 +107,13 @@
             let runSheet = this.textures.get('player-run');
             let idleSheet = this.textures.get('player-idle');
             let jumpSheet = this.textures.get('player-jump');
+            let monsterSheet = this.textures.get('monster-run');
 
             console.log(`Dead sprite frames: ${deadSheet.frameTotal}`);
             console.log(`Run sprite frames: ${runSheet.frameTotal}`);
             console.log(`Idle sprite frames: ${idleSheet.frameTotal}`);
             console.log(`Jump sprite frames: ${jumpSheet.frameTotal}`);
+            console.log(`Monster sprite frames: ${monsterSheet.frameTotal}`);
 
             // Create player in center
             player = this.add.sprite(400, 200, 'player-idle').setScale(4);
@@ -150,6 +158,16 @@
                 }),
                 frameRate: 5,
                 repeat: 0
+            });
+
+            this.anims.create({
+                key: 'monster-running',
+                frames: this.anims.generateFrameNumbers('monster-run', {
+                    start: 0,
+                    end: -1 // Use all frames
+                }),
+                frameRate: 10,
+                repeat: -1
             });
 
             // Start with idle
@@ -197,6 +215,16 @@
                 player.play('jump');
                 animationInfo.setText('Animation: jump (playing)');
             });
+
+            document.getElementById('play-monster').addEventListener('click', () => {
+                // Switch to monster sprite
+                player.setTexture('monster-run');
+                player.play('monster-running');
+                animationInfo.setText('Animation: monster-running (playing)');
+
+                // Optionally show monster frames
+                showMonsterFrames(scene);
+            });
         }
 
         // Function to show individual frames of a sprite sheet
@@ -234,6 +262,50 @@
             // Add additional info text
             const infoText = scene.add.text(400, 270,
                 `Total frames in dead spritesheet: ${frameCount}`, {
+                fontSize: '14px',
+                fill: '#fff',
+                backgroundColor: '#000',
+                padding: { x: 5, y: 5 }
+            }).setOrigin(0.5);
+
+            scene.frameTexts.push(infoText);
+        }
+
+        // Function to show individual frames of the monster sprite sheet
+        function showMonsterFrames(scene) {
+            // Clean up any previous frame display
+            if (scene.frameSprites) {
+                scene.frameSprites.forEach(s => s.destroy());
+                scene.frameTexts.forEach(t => t.destroy());
+            }
+
+            scene.frameSprites = [];
+            scene.frameTexts = [];
+
+            // Get details about the monster spritesheet
+            const sheet = scene.textures.get('monster-run');
+            const frameCount = sheet.frameTotal;
+
+            // Display each frame
+            for (let i = 0; i < frameCount; i++) {
+                const x = 100 + (i % 6) * 100;
+                const y = 300 + Math.floor(i / 6) * 100;
+
+                const frameSprite = scene.add.sprite(x, y, 'monster-run', i).setScale(2);
+                const frameText = scene.add.text(x, y + 40, `Frame ${i}`, {
+                    fontSize: '12px',
+                    fill: '#fff',
+                    backgroundColor: '#000',
+                    padding: { x: 2, y: 2 }
+                }).setOrigin(0.5);
+
+                scene.frameSprites.push(frameSprite);
+                scene.frameTexts.push(frameText);
+            }
+
+            // Add additional info text
+            const infoText = scene.add.text(400, 270,
+                `Total frames in monster spritesheet: ${frameCount}`, {
                 fontSize: '14px',
                 fill: '#fff',
                 backgroundColor: '#000',
