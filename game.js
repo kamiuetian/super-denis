@@ -896,6 +896,7 @@ function createLevel1(bgRepeat) {
   const groundHeight = 40;
   const blockWidth = groundHeight; // Make blocks square based on ground height
   const worldWidth = 5000;
+  const worldHeight = 5000;
   const numBlocks = Math.ceil(worldWidth / blockWidth) + 1; // Add one extra block
 
   for (let i = 0; i < numBlocks; i++) {
@@ -1293,10 +1294,14 @@ function createLevel1(bgRepeat) {
     null,
     this
   );
+  this.physics.world.setBounds(0, 0, worldWidth, worldHeight);
 
   // Set up camera to follow player
-  this.cameras.main.setBounds(0, 0, 3200, this.scale.height);
-  this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
+  this.cameras.main.setBounds(0, 0, worldWidth, worldHeight);
+  this.cameras.main.startFollow(this.player, true, 0.1, 0.1, 0, 0);
+  const deadZoneWidth = this.scale.width / 3;
+  const deadZoneHeight = this.scale.height / 3;
+  this.cameras.main.setDeadzone(deadZoneWidth, deadZoneHeight);
 
   // Add instructions
   const instructionText = this.add
@@ -1323,16 +1328,12 @@ function createLevel1(bgRepeat) {
     duration: 1000,
     ease: "Power2",
   });
+  fixCameraBounds.call(this);
 }
 // Add this function near the other game functions
 function activateBossArea() {
   // First pause all physics to prevent anything from happening during the transition
   this.physics.pause();
-
-  // Fade out
-  //this.cameras.main.fadeOut(1000, 0, 0, 0);
-
-  //this.cameras.main.once("camerafadeoutcomplete", () => {
   // Set global immunity flag immediately
   this.playerImmune = true;
 
@@ -2421,7 +2422,7 @@ function addEnemies() {
     // Create enemy with basic properties
     const enemy = this.enemies
       .create(pos.x, pos.y, "monster-run")
-      .setScale(3)
+      .setScale(2)
       .setTint(0xff0000)
       .setDepth(20);
 
@@ -4711,6 +4712,9 @@ function resizeGame() {
   const viewportHeight = window.innerHeight;
 
   game.scale.resize(viewportWidth, viewportHeight);
+  if (game.scene && game.scene.scenes[0]) {
+    fixCameraBounds.call(game.scene.scenes[0]);
+  }
 }
 
 // Update the boss.update function in the activateBossArea function
@@ -5701,4 +5705,45 @@ function showLevel3Intro(callback) {
   }, 500);
 
   return introContainer;
+}
+
+/**New fixcamera */
+function fixCameraBounds() {
+  // Get the camera and its dimensions
+  const camera = this.cameras.main;
+  const gameWidth = this.game.config.width;
+  const gameHeight = this.game.config.height;
+
+  // Set world bounds that prevent going back past x=0
+  // Player can move infinitely in positive x and y directions
+  this.physics.world.setBounds(0, -100000, 200000, 200000);
+
+  // Configure camera to follow the player
+  // boundToWorld: false is CRUCIAL to allow the camera to follow beyond default world bounds
+  camera.startFollow(this.player, true, 0.1, 0.1, 0, 0);
+  camera.followOffset.set(0, 0);
+  camera.setLerp(0.1, 0.1);
+  camera.setBounds(0, -100000, 200000, 200100);
+
+  // Disable the camera's bounds so it can follow the player anywhere
+  camera.useBounds = false;
+
+  // Override the update method to apply our custom constraints
+  const originalUpdate = camera.update;
+  camera.update = function () {
+    // Call the original update method
+    originalUpdate.apply(this, arguments);
+
+    // Apply our constraints after the camera has been updated
+
+    // 1. Never show below ground (ground is at the bottom of the screen)
+    if (this.scrollY + gameHeight > gameHeight) {
+      this.scrollY = 0;
+    }
+
+    // 2. Never show left of x=0
+    if (this.scrollX < 0) {
+      this.scrollX = 0;
+    }
+  };
 }
