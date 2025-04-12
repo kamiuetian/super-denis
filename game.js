@@ -1969,7 +1969,7 @@ function hitBoss(ball, boss) {
     // FIXED: Always spawn at safe height with CONSISTENT appearance
     this.boss = this.physics.add
       .sprite(fixedX, screenHeight - 120, "monster-run") // FIXED: Use enemy sprite consistently
-      .setScale(0.3) // FIXED: Use same scale as original (0.3)
+      .setScale(3) // FIXED: Use same scale as original (0.3)
       .setVisible(true)
       .setAlpha(1)
       .setDepth(100);

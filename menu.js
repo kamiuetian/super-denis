@@ -182,7 +182,7 @@ function createStartScreen() {
   // Handle click event
   startButton.onclick = () => {
     // Fade out start screen
-    startContainer.style.opacity = "0";
+    startContainer.style.opacity = "1";
 
     // Remove the start screen after fade and start intro
     setTimeout(() => {
