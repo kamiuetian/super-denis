@@ -349,66 +349,72 @@ function setupBackground() {
 }
 
 // Set up the player
+// Modify setupPlayer function to make player size responsive
 function setupPlayer() {
+  // Calculate responsive scaling
+  const scaleFactor = getResponsiveScaleFactor();
+  const playerBaseScale = 2; // Your original player scale
+  const responsivePlayerScale = playerBaseScale * scaleFactor;
+
   // Create player using the idle animation's first frame
   this.player = this.physics.add.sprite(100, 300, "player-idle");
   this.player.body.setGravityY(800);
-  this.player.setScale(2); // Adjust scale as needed (32px sprites may be larger than original)
+
+  // Apply responsive scaling
+  this.player.setScale(responsivePlayerScale);
+
   this.player.setVisible(true);
   this.player.setBounce(0.2);
   this.player.setCollideWorldBounds(true);
 
-  // Set appropriate collision body size (may need adjustment)
+  // Scale the collision body proportionally
   const bodyWidth = Math.floor(this.player.width * 0.45);
   const bodyOffset = Math.floor((this.player.width - bodyWidth) / 2);
   this.player.body.setSize(bodyWidth, this.player.height * 0.9);
   this.player.body.setOffset(bodyOffset, this.player.height * 0.1);
 
-  // Create new animations using the separate sprite sheets
-
-  // Running animation
+  // Create animations as before
   this.anims.create({
     key: "right",
     frames: this.anims.generateFrameNumbers("player-run", {
       start: 0,
-      end: -1, // Use all frames in the sprite sheet
+      end: -1,
     }),
     frameRate: 10,
     repeat: -1,
   });
 
-  // Idle animation
   this.anims.create({
     key: "stand",
     frames: this.anims.generateFrameNumbers("player-idle", {
       start: 0,
-      end: -1, // Use all frames in the sprite sheet
+      end: -1,
     }),
     frameRate: 13,
     repeat: -1,
   });
 
-  // Jump animation
   this.anims.create({
     key: "jump",
     frames: this.anims.generateFrameNumbers("player-jump", {
       start: 0,
-      end: -1, // Use all frames
+      end: -1,
     }),
     frameRate: 5,
-    repeat: 0, // No repeat for jump animation
+    repeat: 0,
   });
 
   this.anims.create({
     key: "dead",
     frames: this.anims.generateFrameNumbers("player-dead", {
       start: 0,
-      end: 13, // Match your test page - use frames 0 to 13 explicitly
+      end: 13,
     }),
     frameRate: 10,
-    repeat: 0, // IMPORTANT: Changed from 10 to 0 - play only once
-    duration: 1300, // Match your test page
+    repeat: 0,
+    duration: 1300,
   });
+
   this.player.anims.play("stand", true);
 }
 
@@ -958,36 +964,41 @@ function createLevel1(bgRepeat) {
     bounceY: 0,
   });
 
-  // 2. Set up the ground
+  // 2. Set up the ground with exact positioning to avoid gaps
   const groundHeight = 40 * scaleY;
   const blockWidth = groundHeight; // Make blocks square based on ground height
   const worldWidth = 5000;
   const worldHeight = 5000;
   const numBlocks = Math.ceil(worldWidth / blockWidth) + 1; // Add one extra block
 
+  // First ground layer with no gaps
   for (let i = 0; i < numBlocks; i++) {
     const block = this.platforms.create(
-      i * (blockWidth - 7 * scaleX), // Subtract scaled pixels to create overlap
+      i * blockWidth, // Use exact width with no subtraction for overlap
       currentHeight - groundHeight / 2,
       "block"
     );
 
-    block.setDisplaySize(blockWidth, groundHeight); // Square blocks
+    block.setDisplaySize(blockWidth, groundHeight);
     block.refreshBody();
     block.setData("isGround", true);
+    block.setDepth(5);
+    block.setAlpha(1);
   }
 
-  // Second layer of ground
+  // Second ground layer with no gaps
   for (let i = 0; i < numBlocks; i++) {
     const block = this.platforms.create(
-      i * (blockWidth - 7 * scaleX), // Same overlap as first layer
-      currentHeight - groundHeight / 2 - (groundHeight - 7 * scaleY), // Position below first layer
+      i * blockWidth, // Use exact width with no subtraction
+      currentHeight - groundHeight * 1.5, // Exactly half a block above first layer
       "block"
     );
 
-    block.setDisplaySize(blockWidth, groundHeight); // Square blocks
+    block.setDisplaySize(blockWidth, groundHeight);
     block.refreshBody();
     block.setData("isGround", true);
+    block.setDepth(5);
+    block.setAlpha(1);
   }
 
   // 3. Create the main platform blocks - now using responsive positioning
@@ -1019,16 +1030,63 @@ function createLevel1(bgRepeat) {
     { xOriginal: 2644, yFromBottom: 400, width: 48, height: 48 },
   ];
 
-  // Create brick blocks
+  // Group blocks that should be connected to avoid gaps
+  const connectedPlatforms = [
+    // Connected blocks at y=300
+    { startIndex: 3, count: 4, yFromBottom: 300 },
+    // Connected blocks at y=400 (indices 19-22)
+    { startIndex: 19, count: 4, yFromBottom: 400 },
+    // Connected blocks at y=700 (indices 12-16)
+    { startIndex: 12, count: 5, yFromBottom: 700 },
+    // Connected blocks at y=500 (indices 7-8)
+    { startIndex: 7, count: 2, yFromBottom: 500 },
+    // Connected blocks at y=400 (indices 9-11)
+    { startIndex: 9, count: 3, yFromBottom: 400 },
+  ];
+
+  // Create connected platforms first (no gaps)
+  for (const platform of connectedPlatforms) {
+    // Calculate the starting position
+    const firstBlockIndex = platform.startIndex;
+    const firstBlock = brickBlocks[firstBlockIndex];
+    const startX = getScaledX(firstBlock.xOriginal);
+    const y = getScaledYFromBottom(platform.yFromBottom);
+    const blockSize = (48 * objectScale) / 3; // Size of each block
+
+    // Create one larger platform instead of multiple small ones
+    const width = blockSize * platform.count;
+    const combinedPlatform = this.platforms.create(
+      startX + width / 2 - blockSize / 2, // Center position
+      y,
+      "emptyBlock",
+      0
+    );
+
+    // Set the correct width to cover all blocks without gaps
+    combinedPlatform.setScale((objectScale * platform.count) / 3);
+    combinedPlatform.refreshBody();
+
+    // Mark these blocks as processed
+    for (let i = 0; i < platform.count; i++) {
+      if (firstBlockIndex + i < brickBlocks.length) {
+        brickBlocks[firstBlockIndex + i].processed = true;
+      }
+    }
+  }
+
+  // Create the remaining individual blocks
   for (const block of brickBlocks) {
+    // Skip already processed blocks
+    if (block.processed) continue;
+
     // Calculate responsive positions
     const x = getScaledX(block.xOriginal);
     const y = getScaledYFromBottom(block.yFromBottom);
 
-    // Create the platform with appropriate texture
+    // Create the platform
     const platform = this.platforms.create(x, y, "emptyBlock", 0);
 
-    // Apply scale - use objectScale for consistent sizing
+    // Apply scale
     platform.setScale(objectScale);
     platform.refreshBody();
   }
@@ -2456,6 +2514,11 @@ function resetSkillPanel() {
 // Add this code to create visible enemies:
 // Completely revised addEnemies function - simplified for reliable movement
 function addEnemies() {
+  // Calculate responsive scaling
+  const scaleFactor = getResponsiveScaleFactor();
+  const enemyBaseScale = 2; // Your original enemy scale
+  const responsiveEnemyScale = enemyBaseScale * scaleFactor;
+
   // Clear any existing enemies to avoid conflicts
   if (this.enemies) {
     this.enemies.clear(true, true);
@@ -2463,11 +2526,11 @@ function addEnemies() {
 
   // Create new enemy group with proper physics settings
   this.enemies = this.physics.add.group({
-    bounceX: 0, // Don't bounce on walls
+    bounceX: 0,
     collideWorldBounds: true,
   });
 
-  // Define enemy positions with patrol ranges
+  // Define enemy positions with patrol ranges - scale positions if needed
   const enemyPositions = [
     { x: 600, y: this.scale.height - 140, range: 300, speed: 60 },
     { x: 1200, y: this.scale.height - 140, range: 300, speed: 80 },
@@ -2475,12 +2538,11 @@ function addEnemies() {
     { x: 2500, y: this.scale.height - 140, range: 300, speed: 90 },
   ];
 
-  // Create each enemy
+  // Create each enemy with responsive scaling
   for (const pos of enemyPositions) {
-    // Create enemy with basic properties
     const enemy = this.enemies
       .create(pos.x, pos.y, "monster-run")
-      .setScale(2)
+      .setScale(responsiveEnemyScale)
       .setTint(0xff0000)
       .setDepth(20);
 
@@ -2489,36 +2551,34 @@ function addEnemies() {
     enemy.leftBound = pos.x - pos.range / 2;
     enemy.rightBound = pos.x + pos.range / 2;
     enemy.speed = pos.speed;
-    enemy.direction = -1; // Start moving left
+    enemy.direction = -1;
 
     // Set initial velocity
     enemy.setVelocityX(-pos.speed);
 
-    // Add world bounds collision handler for backup direction change
+    // Add world bounds collision handler
     enemy.body.onWorldBounds = true;
-    enemy.anims.play("monster-run", true); // Play running animation
+    enemy.anims.play("monster-run", true);
   }
 
-  // Listen for world bounds collision as backup
+  // Rest of the function remains the same
   this.physics.world.on("worldbounds", (body) => {
     const enemy = body.gameObject;
     if (enemy && enemy.texture.key === "enemy") {
-      // Reverse direction when hitting world bounds
       enemy.direction *= -1;
       enemy.setVelocityX(enemy.speed * enemy.direction);
       enemy.flipX = enemy.direction > 0;
     }
   });
+
+  // Platform collisions
   this.physics.add.collider(
     this.enemies,
     this.platforms,
     (enemy, platform) => {
-      // Don't react to ground collisions (only side/vertical collisions)
       if (platform.getData("isGround") && enemy.body.touching.down) {
         return;
       }
-
-      // Reverse direction
       enemy.direction *= -1;
       enemy.setVelocityX(enemy.speed * enemy.direction);
       enemy.flipX = enemy.direction > 0;
@@ -2526,20 +2586,17 @@ function addEnemies() {
     null,
     this
   );
-  // Create a movement controller
+
+  // Movement controller
   this.enemyController = this.time.addEvent({
-    delay: 100, // Check 10 times per second
+    delay: 100,
     callback: () => {
-      // Loop through all active enemies
       this.enemies.getChildren().forEach((enemy) => {
         if (!enemy || !enemy.active) return;
-
-        // Check if enemy has reached its patrol boundary
         if (
           (enemy.direction === -1 && enemy.x <= enemy.leftBound) ||
           (enemy.direction === 1 && enemy.x >= enemy.rightBound)
         ) {
-          // Reverse direction
           enemy.direction *= -1;
           enemy.setVelocityX(enemy.speed * enemy.direction);
           enemy.flipX = enemy.direction > 0;
@@ -2550,7 +2607,7 @@ function addEnemies() {
     loop: true,
   });
 
-  // Set up collisions with platforms and player
+  // Collisions
   this.physics.add.collider(this.enemies, this.platforms);
 
   console.log(
@@ -2619,84 +2676,96 @@ const level2Skills = [
 ];
 // Replace the existing createLevel2 function with this complete implementation
 function createLevel2(bgRepeat) {
-  // 1. First create the groups
+  // Calculate responsive scaling
+  const baseWidth = 1920;
+  const baseHeight = 1080;
+  const currentWidth = this.scale.width;
+  const currentHeight = this.scale.height;
+  const scaleX = currentWidth / baseWidth;
+  const scaleY = currentHeight / baseHeight;
+  const objectScale = Math.min(scaleX, scaleY);
+
+  // 1. Create the groups
   this.platforms = this.physics.add.staticGroup();
   this.skillItems = this.physics.add.staticGroup();
   this.tennisBalls = this.physics.add.group();
 
-  // 2. Set up the ground (invisible, just for preventing falling)
-  const groundHeight = 40;
-  const groundTop = this.scale.height - groundHeight;
+  // 2. Set up the ground with scaled dimensions
+  const groundHeight = 40 * scaleY; // Scale ground height
+  const groundTop = currentHeight - groundHeight;
 
-  // Create multiple ground segments to ensure proper collision from x=0
-  // First segment - left edge (x=0 to x=1000)
+  // Create ground segments with proper scaling
+  // First segment - left edge
   const groundLeft = this.platforms.create(
-    500, // Center of first segment (0-1000)
-    this.scale.height - groundHeight / 2,
+    500 * scaleX, // Scale position
+    currentHeight - groundHeight / 2,
     null
   );
-  groundLeft.setDisplaySize(1000, groundHeight);
+  groundLeft.setDisplaySize(1000 * scaleX, groundHeight); // Scale size
   groundLeft.setVisible(false);
   groundLeft.refreshBody();
   groundLeft.setData("isGround", true);
   groundLeft.setData("isDeadlyGround", true);
 
-  // Middle segment - center area (x=1000 to x=4000)
+  // Middle segment
   const groundMiddle = this.platforms.create(
-    2500, // Center of middle segment (1000-4000)
-    this.scale.height - groundHeight / 2,
+    2500 * scaleX,
+    currentHeight - groundHeight / 2,
     null
   );
-  groundMiddle.setDisplaySize(3000, groundHeight);
+  groundMiddle.setDisplaySize(3000 * scaleX, groundHeight);
   groundMiddle.setVisible(false);
   groundMiddle.refreshBody();
   groundMiddle.setData("isGround", true);
   groundMiddle.setData("isDeadlyGround", true);
 
-  // Right segment - right area (x=4000 to x=5000)
+  // Right segment
   const groundRight = this.platforms.create(
-    4500, // Center of right segment (4000-5000)
-    this.scale.height - groundHeight / 2,
+    4500 * scaleX,
+    currentHeight - groundHeight / 2,
     null
   );
-  groundRight.setDisplaySize(1000, groundHeight);
+  groundRight.setDisplaySize(1000 * scaleX, groundHeight);
   groundRight.setVisible(false);
   groundRight.refreshBody();
   groundRight.setData("isGround", true);
   groundRight.setData("isDeadlyGround", true);
-  // Create the visible ground using a tileSprite that starts at x=0
+
+  // Create visible ground tileSprite with scaling
   const groundVisual = this.add.tileSprite(
-    0, // Start at left edge
+    0,
     groundTop,
-    5000, // Full width
+    5000 * scaleX,
     groundHeight * 2,
     "block"
   );
   groundVisual.setOrigin(0, 0);
   groundVisual.setDepth(5);
 
+  // Danger zone with responsive dimensions
   const dangerZone = this.add.graphics();
-  dangerZone.fillStyle(0xff0000, 0.3); // Semi-transparent red
+  dangerZone.fillStyle(0xff0000, 0.3);
   dangerZone.fillRect(
     0,
-    this.scale.height - groundHeight,
-    bgRepeat * this.scale.width,
+    currentHeight - groundHeight,
+    5000 * scaleX,
     groundHeight
   );
-  dangerZone.lineStyle(2, 0xff0000, 0.8);
+  dangerZone.lineStyle(2 * scaleY, 0xff0000, 0.8);
   dangerZone.lineBetween(
     0,
-    this.scale.height - groundHeight,
-    5000,
-    this.scale.height - groundHeight
+    currentHeight - groundHeight,
+    5000 * scaleX,
+    currentHeight - groundHeight
   );
+
   // 3. Set background - blue sky
   const skyBackground = this.add.rectangle(
     0,
     0,
-    5000,
-    this.scale.height,
-    0x87ceeb // Sky blue color
+    5000 * scaleX,
+    currentHeight,
+    0x87ceeb
   );
   skyBackground.setOrigin(0, 0);
   skyBackground.setDepth(-2);
@@ -2704,43 +2773,52 @@ function createLevel2(bgRepeat) {
   // 4. Initialize skill counter
   this.coinCount = 0;
 
-  // 5. Create skills panel inside game canvas (same as level 1)
+  // 5. Create skills panel with responsive positioning and sizing
+  const panelWidth = 200 * scaleX;
+  const panelHeight = 360 * scaleY;
+  const panelX = currentWidth - panelWidth - 20 * scaleX;
+  const panelY = 20 * scaleY;
+
   this.skillsPanel = this.add.graphics();
   this.skillsPanel.fillStyle(0x000000, 0.8);
-  this.skillsPanel.fillRect(this.scale.width - 220, 20, 200, 360);
-  this.skillsPanel.lineStyle(2, 0xffd700, 1);
-  this.skillsPanel.strokeRect(this.scale.width - 220, 20, 200, 360);
+  this.skillsPanel.fillRect(panelX, panelY, panelWidth, panelHeight);
+  this.skillsPanel.lineStyle(2 * scaleY, 0xffd700, 1);
+  this.skillsPanel.strokeRect(panelX, panelY, panelWidth, panelHeight);
   this.skillsPanel.setScrollFactor(0);
 
-  // Title
+  // Title with responsive font
+  const titleSize = Math.max(18 * scaleY, 14); // Minimum size of 14px
   this.add
-    .text(this.scale.width - 190, 30, "MY SKILLS", {
-      fontSize: "18px",
+    .text(panelX + 30 * scaleX, panelY + 30 * scaleY, "MY SKILLS", {
+      fontSize: `${titleSize}px`,
       fill: "#FFD700",
       fontWeight: "bold",
     })
     .setScrollFactor(0);
 
-  // Skills counter
+  // Skills counter with responsive font
+  const counterSize = Math.max(16 * scaleY, 12); // Minimum size of 12px
   this.skillsCounter = this.add
-    .text(this.scale.width - 190, 350, "Skills: 0/12", {
-      fontSize: "16px",
+    .text(panelX + 30 * scaleX, panelY + 350 * scaleY, "Skills: 0/12", {
+      fontSize: `${counterSize}px`,
       fill: "#FFD700",
       fontWeight: "bold",
     })
     .setScrollFactor(0);
 
-  // Create skill text objects - 12 skills for Level 2
+  // Create skill text objects with responsive positioning and font size
   this.skillTexts = [];
+  const skillSize = Math.max(12 * scaleY, 10); // Minimum size of 10px
+  const skillSpacing = 20 * scaleY;
 
   for (let i = 0; i < level2Skills.length; i++) {
     const skillText = this.add
       .text(
-        this.scale.width - 195,
-        60 + i * 20,
+        panelX + 25 * scaleX,
+        panelY + 60 * scaleY + i * skillSpacing,
         level2Skills[i].icon + " " + level2Skills[i].name,
         {
-          fontSize: "12px",
+          fontSize: `${skillSize}px`,
           fill: "#FFFFFF",
           fontFamily: "Arial",
         }
@@ -2752,25 +2830,27 @@ function createLevel2(bgRepeat) {
     this.skillTexts.push(skillText);
   }
 
-  // Small skills counter in bottom left
+  // Small skills counter with responsive positioning and font
+  const smallCounterSize = Math.max(20 * scaleY, 16); // Minimum size of 16px
   this.smallCounter = this.add
-    .text(20, 20, "Skills: 0/12", {
-      fontSize: "20px",
+    .text(20 * scaleX, 20 * scaleY, "Skills: 0/12", {
+      fontSize: `${smallCounterSize}px`,
       fill: "#ffffff",
     })
     .setScrollFactor(0);
 
-  // 6. Add instructions
+  // 6. Add instructions with responsive text
+  const instructionSize = Math.max(24 * scaleY, 18); // Minimum size of 18px
   const instructionText = this.add
     .text(
-      this.scale.width / 2,
-      80,
+      currentWidth / 2,
+      80 * scaleY,
       "Jump on clouds to discover my professional skills!",
       {
-        fontSize: "24px",
+        fontSize: `${instructionSize}px`,
         fill: "#ffffff",
         stroke: "#000000",
-        strokeThickness: 4,
+        strokeThickness: 4 * scaleY,
         fontStyle: "bold",
       }
     )
@@ -2786,41 +2866,42 @@ function createLevel2(bgRepeat) {
     ease: "Power2",
   });
 
-  // 7. Create cloud platforms with skills
+  // 7. Create cloud platforms with responsive positioning
   const cloudPositions = [
-    { x: 300, y: this.scale.height - 200 },
-    { x: 500, y: this.scale.height - 310 },
-    { x: 750, y: this.scale.height - 290 },
-    { x: 950, y: this.scale.height - 400 },
-    { x: 1200, y: this.scale.height - 350 },
-    { x: 1400, y: this.scale.height - 450 },
-    { x: 1600, y: this.scale.height - 300 },
-    { x: 1850, y: this.scale.height - 400 },
-    { x: 2000, y: this.scale.height - 300 },
-    { x: 2150, y: this.scale.height - 420 },
-    { x: 2300, y: this.scale.height - 350 },
-    { x: 2500, y: this.scale.height - 400 },
-    { x: 100, y: this.scale.height - 400 },
+    { xRatio: 250 / baseWidth, yFromBottom: 100 },
+    { xRatio: 500 / baseWidth, yFromBottom: 210 },
+    { xRatio: 750 / baseWidth, yFromBottom: 190 },
+    { xRatio: 1000 / baseWidth, yFromBottom: 300 },
+    { xRatio: 1250 / baseWidth, yFromBottom: 250 },
+    { xRatio: 1500 / baseWidth, yFromBottom: 350 },
+    { xRatio: 1750 / baseWidth, yFromBottom: 200 },
+    { xRatio: 2000 / baseWidth, yFromBottom: 300 },
+    { xRatio: 2300 / baseWidth, yFromBottom: 200 },
+    { xRatio: 2600 / baseWidth, yFromBottom: 320 },
+    { xRatio: 2850 / baseWidth, yFromBottom: 250 },
+    { xRatio: 3100 / baseWidth, yFromBottom: 300 },
   ];
 
   // Create clouds and add skills
   for (let i = 0; i < cloudPositions.length; i++) {
     const pos = cloudPositions[i];
 
-    // Create cloud platform
-    const cloud = this.platforms.create(pos.x, pos.y, "cloud");
-    cloud.setScale(0.1); // Adjust scale as needed
+    // Calculate responsive positions
+    const x = pos.xRatio * currentWidth;
+    const y = currentHeight - pos.yFromBottom * scaleY;
+
+    // Create cloud platform with responsive scale
+    const cloud = this.platforms.create(x, y, "cloud");
+    cloud.setScale(0.1 * objectScale); // Scale based on screen size
     cloud.refreshBody();
     cloud.setData("touched", false);
-    cloud.setData("skillIndex", i); // Store index for skill item
-    if (i == 12) {
-      cloud.setData("isPlatform", true);
-    }
+    cloud.setData("skillIndex", i);
+
     // Add a subtle floating animation to clouds
     this.tweens.add({
       targets: cloud,
-      y: pos.y - 15,
-      duration: 2000 + Math.random() * 1000, // Randomize duration
+      y: y - 15 * scaleY, // Scale animation amount
+      duration: 2000 + Math.random() * 1000,
       yoyo: true,
       repeat: -1,
       ease: "Sine.easeInOut",
@@ -2828,7 +2909,7 @@ function createLevel2(bgRepeat) {
 
     // Create skill item (invisible at first)
     if (i <= 11) {
-      const skill = this.skillItems.create(pos.x, pos.y - 30, "mysteryBlock");
+      const skill = this.skillItems.create(x, y - 30 * scaleY, "mysteryBlock");
       skill.setScale(0);
       skill.setVisible(false);
       skill.setData("skillIndex", i);
@@ -2842,13 +2923,8 @@ function createLevel2(bgRepeat) {
 
   // 8. Add Johann (boss) in the top right corner
   this.boss = this.physics.add
-    .sprite(
-      //this.scale.width * bgRepeat * 0.85,
-      2600,
-      this.scale.height * 0.05,
-      "monster-run" // Using existing enemy sprite for now
-    )
-    .setScale(4)
+    .sprite(2600 * scaleX, currentHeight * 0.05, "monster-run")
+    .setScale(4 * objectScale)
     .setDepth(20);
 
   this.boss.setCollideWorldBounds(true);
@@ -2856,14 +2932,14 @@ function createLevel2(bgRepeat) {
   this.boss.setImmovable(true);
   this.boss.lastShotTime = 0;
   this.boss.anims.play("monster-run", true);
-  // Put boss on a special cloud
+
+  // Put boss on a special cloud with scaled size
   const bossCloud = this.platforms.create(
-    //this.scale.width * bgRepeat * 0.85,
-    2600,
-    this.scale.height * 0.05,
+    2600 * scaleX,
+    currentHeight * 0.05,
     "cloud"
   );
-  bossCloud.setScale(0.25);
+  bossCloud.setScale(0.25 * objectScale);
   bossCloud.setData("isPlatform", true);
   bossCloud.refreshBody();
 
@@ -2875,24 +2951,30 @@ function createLevel2(bgRepeat) {
     null,
     this
   );
+
+  // Position the player with responsive coordinates
   if (this.player) {
-    // Place the player directly above the first cloud
-    this.player.x = cloudPositions[12].x;
-    this.player.y = cloudPositions[12].y - 80; // Adjust height as needed
+    // Position above the first cloud
+    this.player.x = cloudPositions[12]
+      ? cloudPositions[12].xRatio * currentWidth
+      : cloudPositions[0].xRatio * currentWidth;
+    this.player.y =
+      (cloudPositions[12]
+        ? currentHeight - cloudPositions[12].yFromBottom * scaleY
+        : currentHeight - cloudPositions[0].yFromBottom * scaleY) -
+      80 * scaleY;
 
     // Reset player velocity
     this.player.setVelocity(0, 0);
-
-    // Reset player state
     this.player.clearTint();
     this.player.setAlpha(1);
     this.player.anims.play("stand");
   }
-  // Set up camera to follow player
-  /*this.cameras.main.setBounds(0, 0, 5000, this.scale.height);
-  this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
-*/
+
+  // Setup camera with proper bounds
   fixCameraBounds.call(this);
+
+  return this.platforms;
 }
 
 // Function to handle cloud collision
@@ -5507,85 +5589,17 @@ function playerHitCloud(player, cloud) {
   }
 }
 // Function to handle death from falling off clouds in Level 2
-function cloudFallDeath(player, cloud) {
+function cloudFallDeath(player) {
   // Only run once
   if (this.playerDying) return;
   this.playerDying = true;
 
+  console.log("Player hit deadly ground - triggering death sequence");
+
   // Stop player movement
   this.physics.pause();
   player.setVelocity(0, 0);
-  console.log("Available animations:", Object.keys(this.anims.anims.entries));
-
-  try {
-    console.log("Attempting to play death animation");
-    player.anims.play("dead");
-    console.log("Death animation played successfully");
-    player.anims.play("dead").on("animationcomplete", function () {
-      console.log("Death animation complete");
-      const overlay = this.add
-        .rectangle(0, 0, this.scale.width, this.scale.height, 0x000000, 0.8)
-        .setOrigin(0, 0)
-        .setScrollFactor(0)
-        .setDepth(999);
-
-      // Show custom message
-      const gameOverText = this.add
-        .text(
-          this.scale.width / 2,
-          this.scale.height / 2 - 100,
-          "GAME OVER\n\nWhen reaching for the clouds,\nyou need to stay focused!",
-          {
-            fontSize: "18px",
-            fill: "#ff0000",
-            align: "center",
-            padding: 10,
-          }
-        )
-        .setScrollFactor(0)
-        .setAlign("center")
-        .setOrigin(0.5, 0)
-        .setDepth(1000);
-
-      // Add restart button
-      const restartButton = this.add
-        .text(
-          this.scale.width / 2,
-          this.scale.height / 2 + 80,
-          "[ Try Again ]",
-          {
-            fontSize: "20px",
-            fill: "#ffffff",
-            backgroundColor: "#880000",
-            padding: { x: 15, y: 10 },
-          }
-        )
-        .setScrollFactor(0)
-        .setAlign("center")
-        .setOrigin(0.5, 0.5)
-        .setDepth(1000)
-        .setInteractive({ useHandCursor: true });
-
-      // Button hover effects
-      restartButton.on("pointerover", () => {
-        restartButton.setStyle({ fill: "#ffff00" });
-      });
-
-      restartButton.on("pointerout", () => {
-        restartButton.setStyle({ fill: "#ffffff" });
-      });
-
-      // Restart on click
-      restartButton.on("pointerdown", () => {
-        resetSkillPanel.call(this); // Add this line
-        this.scene.restart();
-      });
-    });
-  } catch (error) {
-    console.error("Error playing death animation:", error);
-    // Fallback if animation play fails
-    player.setTint(0xff0000);
-  }
+  player.setTint(0xff0000);  // Set red tint immediately
 
   // Create fall effect
   const fallTrail = this.add.particles(player.x, player.y, "cloud", {
@@ -5595,12 +5609,89 @@ function cloudFallDeath(player, cloud) {
     quantity: 15,
     blendMode: "ADD",
     alpha: { start: 0.6, end: 0 },
-    emitting: false,
+    emitting: false
   });
-
   fallTrail.explode(15);
 
-  // Create full screen overlay
+  // Store scene reference to avoid 'this' context issues
+  const currentScene = this;
+  
+  // Try to play death animation if available
+  try {
+    player.anims.play("dead");
+    
+    // Use a direct timeout instead of relying on animation complete
+    this.time.delayedCall(1300, function() {
+      showGameOverScreen();
+    });
+  } catch (error) {
+    console.error("Error playing death animation:", error);
+    // Fallback if animation play fails - show game over immediately
+    showGameOverScreen();
+  }
+  
+  // Define game over screen function with proper scene context
+  function showGameOverScreen() {
+    // Create full screen overlay
+    const overlay = currentScene.add.rectangle(
+      0, 0, 
+      currentScene.scale.width, currentScene.scale.height, 
+      0x000000, 0.8
+    )
+    .setOrigin(0, 0)
+    .setScrollFactor(0)
+    .setDepth(999);
+
+    // Show custom message
+    const gameOverText = currentScene.add.text(
+      currentScene.scale.width / 2,
+      currentScene.scale.height / 2 - 100,
+      "GAME OVER\n\nWhen reaching for the clouds,\nyou need to stay focused!",
+      {
+        fontSize: "18px",
+        fill: "#ff0000",
+        align: "center",
+        padding: 10,
+      }
+    )
+    .setScrollFactor(0)
+    .setAlign("center")
+    .setOrigin(0.5, 0)
+    .setDepth(1000);
+
+    // Add restart button
+    const restartButton = currentScene.add.text(
+      currentScene.scale.width / 2,
+      currentScene.scale.height / 2 + 80,
+      "[ Try Again ]",
+      {
+        fontSize: "20px",
+        fill: "#ffffff",
+        backgroundColor: "#880000",
+        padding: { x: 15, y: 10 },
+      }
+    )
+    .setScrollFactor(0)
+    .setAlign("center")
+    .setOrigin(0.5, 0.5)
+    .setDepth(1000)
+    .setInteractive({ useHandCursor: true });
+
+    // Button hover effects
+    restartButton.on("pointerover", () => {
+      restartButton.setStyle({ fill: "#ffff00" });
+    });
+
+    restartButton.on("pointerout", () => {
+      restartButton.setStyle({ fill: "#ffffff" });
+    });
+
+    // Restart on click
+    restartButton.on("pointerdown", () => {
+      resetSkillPanel.call(currentScene);
+      currentScene.scene.restart();
+    });
+  }
 }
 // Modify the showLevel3Intro function to auto-start after dialogue
 function showLevel3Intro(callback) {
@@ -5773,22 +5864,43 @@ function showLevel3Intro(callback) {
 function fixCameraBounds() {
   // Get the camera and its dimensions
   const camera = this.cameras.main;
-  const gameWidth = this.game.config.width;
-  const gameHeight = this.game.config.height;
+  const gameWidth = this.scale.width;
+  const gameHeight = this.scale.height;
 
-  // Set world bounds that prevent going back past x=0
-  // Player can move infinitely in positive x and y directions
-  this.physics.world.setBounds(0, -100000, 200000, 200000);
-  camera.setBackgroundColor("0x87ceeb");
-  // Configure camera to follow the player
-  // boundToWorld: false is CRUCIAL to allow the camera to follow beyond default world bounds
+  // Define ground height based on your level creation
+  const groundHeight = 40 * (this.scale.height / 1080);
+
+  // Set sky blue background color
+  camera.setBackgroundColor(0x87ceeb);
+
+  // Determine the highest platform's Y position (lowest Y value)
+  // Based on your level data, the highest platform is at y = this.scale.height - 700
+  const highestPlatformY = this.scale.height - 700;
+
+  // Set the top camera boundary to be 400 pixels above the highest platform
+  const topBoundary = highestPlatformY - 400;
+
+  // Set the bottom camera boundary to ensure ground is visible
+  // We want to see the entire ground, so position camera boundary just above ground
+  const bottomBoundary = this.scale.height - groundHeight * 2;
+
+  // Set world bounds with limited vertical movement
+  this.physics.world.setBounds(
+    0,
+    topBoundary,
+    5000,
+    bottomBoundary - topBoundary + 100
+  );
+
+  // Configure camera with default zoom (1.0)
+  camera.setZoom(1.0);
   camera.startFollow(this.player, true, 0.1, 0.1, 0, 0);
   camera.followOffset.set(0, 0);
   camera.setLerp(0.1, 0.1);
-  camera.setBounds(0, -100000, 200000, 200100);
 
-  // Disable the camera's bounds so it can follow the player anywhere
-  camera.useBounds = false;
+  // Use camera bounds to limit vertical movement
+  camera.setBounds(0, topBoundary, 5000, bottomBoundary - topBoundary);
+  camera.useBounds = true;
 
   // Override the update method to apply our custom constraints
   const originalUpdate = camera.update;
@@ -5796,16 +5908,31 @@ function fixCameraBounds() {
     // Call the original update method
     originalUpdate.apply(this, arguments);
 
-    // Apply our constraints after the camera has been updated
-
-    // 1. Never show below ground (ground is at the bottom of the screen)
-    if (this.scrollY + gameHeight > gameHeight) {
-      this.scrollY = 0;
+    // CRITICAL: Always ensure ground is visible by keeping camera bottom at or above ground level
+    if (this.scrollY + gameHeight > bottomBoundary) {
+      // Adjust camera position to show ground
+      this.scrollY = bottomBoundary - gameHeight;
     }
 
-    // 2. Never show left of x=0
+    // Never show left of x=0
     if (this.scrollX < 0) {
       this.scrollX = 0;
     }
   };
+}
+function getResponsiveScaleFactor() {
+  // Base dimensions that your game was designed for
+  const baseWidth = 1920;
+  const baseHeight = 1080;
+
+  // Current dimensions
+  const currentWidth = window.innerWidth;
+  const currentHeight = window.innerHeight;
+
+  // Calculate scaling factors
+  const scaleX = currentWidth / baseWidth;
+  const scaleY = currentHeight / baseHeight;
+
+  // Use the smaller scale for consistent proportions
+  return Math.min(scaleX, scaleY);
 }
