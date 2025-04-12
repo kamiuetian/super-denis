@@ -2871,8 +2871,10 @@ function createLevel2(bgRepeat) {
     this.player.anims.play("stand");
   }
   // Set up camera to follow player
-  this.cameras.main.setBounds(0, 0, 5000, this.scale.height);
+  /*this.cameras.main.setBounds(0, 0, 5000, this.scale.height);
   this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
+*/
+  fixCameraBounds.call(this);
 }
 
 // Function to handle cloud collision
@@ -4352,7 +4354,7 @@ function createLevel3(bgRepeat) {
   this.physics.add.collider(this.player, this.platforms, hitCloud, null, this);
 
   // Set up camera to follow player
-  this.cameras.main.setBounds(
+  /*this.cameras.main.setBounds(
     0, // Left bound
     0, // Top bound
     5000, // Width
@@ -4370,7 +4372,9 @@ function createLevel3(bgRepeat) {
       height: 200, // Height of deadzone
       bottom: 100, // Extra bottom padding for deadzone
     }
-  );
+  );*/
+  fixCameraBounds.call(this);
+
   // 10. Add pre-level dialogue
 
   // CRITICAL FIX: Make sure cursors are properly initialized for this level
@@ -5757,7 +5761,7 @@ function fixCameraBounds() {
   // Set world bounds that prevent going back past x=0
   // Player can move infinitely in positive x and y directions
   this.physics.world.setBounds(0, -100000, 200000, 200000);
-  camera.setBackgroundColor("#ffffff");
+  camera.setBackgroundColor("0x87ceeb");
   // Configure camera to follow the player
   // boundToWorld: false is CRUCIAL to allow the camera to follow beyond default world bounds
   camera.startFollow(this.player, true, 0.1, 0.1, 0, 0);
