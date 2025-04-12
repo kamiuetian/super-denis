@@ -974,12 +974,12 @@ function createLevel1(bgRepeat) {
   // First ground layer with no gaps
   for (let i = 0; i < numBlocks; i++) {
     const block = this.platforms.create(
-      i * blockWidth, // Use exact width with no subtraction for overlap
+      i * (blockWidth - 2), // Use exact width with no subtraction for overlap
       currentHeight - groundHeight / 2,
       "block"
     );
 
-    block.setDisplaySize(blockWidth, groundHeight);
+    block.setDisplaySize(blockWidth + 4, groundHeight);
     block.refreshBody();
     block.setData("isGround", true);
     block.setDepth(5);
@@ -989,12 +989,13 @@ function createLevel1(bgRepeat) {
   // Second ground layer with no gaps
   for (let i = 0; i < numBlocks; i++) {
     const block = this.platforms.create(
-      i * blockWidth, // Use exact width with no subtraction
-      currentHeight - groundHeight * 1.5, // Exactly half a block above first layer
+      i * (blockWidth - 4), // Use exact width with no subtraction
+      currentHeight - groundHeight - groundHeight / 2, // FIXED: Position exactly at top of first layer
+      // Exactly half a block above first layer
       "block"
     );
 
-    block.setDisplaySize(blockWidth, groundHeight);
+    block.setDisplaySize(blockWidth + 4, groundHeight);
     block.refreshBody();
     block.setData("isGround", true);
     block.setDepth(5);
@@ -1030,50 +1031,6 @@ function createLevel1(bgRepeat) {
     { xOriginal: 2644, yFromBottom: 400, width: 48, height: 48 },
   ];
 
-  // Group blocks that should be connected to avoid gaps
-  const connectedPlatforms = [
-    // Connected blocks at y=300
-    { startIndex: 3, count: 4, yFromBottom: 300 },
-    // Connected blocks at y=400 (indices 19-22)
-    { startIndex: 19, count: 4, yFromBottom: 400 },
-    // Connected blocks at y=700 (indices 12-16)
-    { startIndex: 12, count: 5, yFromBottom: 700 },
-    // Connected blocks at y=500 (indices 7-8)
-    { startIndex: 7, count: 2, yFromBottom: 500 },
-    // Connected blocks at y=400 (indices 9-11)
-    { startIndex: 9, count: 3, yFromBottom: 400 },
-  ];
-
-  // Create connected platforms first (no gaps)
-  for (const platform of connectedPlatforms) {
-    // Calculate the starting position
-    const firstBlockIndex = platform.startIndex;
-    const firstBlock = brickBlocks[firstBlockIndex];
-    const startX = getScaledX(firstBlock.xOriginal);
-    const y = getScaledYFromBottom(platform.yFromBottom);
-    const blockSize = (48 * objectScale) / 3; // Size of each block
-
-    // Create one larger platform instead of multiple small ones
-    const width = blockSize * platform.count;
-    const combinedPlatform = this.platforms.create(
-      startX + width / 2 - blockSize / 2, // Center position
-      y,
-      "emptyBlock",
-      0
-    );
-
-    // Set the correct width to cover all blocks without gaps
-    combinedPlatform.setScale((objectScale * platform.count) / 3);
-    combinedPlatform.refreshBody();
-
-    // Mark these blocks as processed
-    for (let i = 0; i < platform.count; i++) {
-      if (firstBlockIndex + i < brickBlocks.length) {
-        brickBlocks[firstBlockIndex + i].processed = true;
-      }
-    }
-  }
-
   // Create the remaining individual blocks
   for (const block of brickBlocks) {
     // Skip already processed blocks
@@ -1086,8 +1043,8 @@ function createLevel1(bgRepeat) {
     // Create the platform
     const platform = this.platforms.create(x, y, "emptyBlock", 0);
 
-    // Apply scale
-    platform.setScale(objectScale);
+    // Apply scale with slightly wider width to remove gaps
+    platform.setScale(objectScale * 1.18, objectScale); // Make width 10% wider
     platform.refreshBody();
   }
 
