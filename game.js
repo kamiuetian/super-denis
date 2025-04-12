@@ -5599,7 +5599,7 @@ function cloudFallDeath(player) {
   // Stop player movement
   this.physics.pause();
   player.setVelocity(0, 0);
-  player.setTint(0xff0000);  // Set red tint immediately
+  player.setTint(0xff0000); // Set red tint immediately
 
   // Create fall effect
   const fallTrail = this.add.particles(player.x, player.y, "cloud", {
@@ -5609,19 +5609,19 @@ function cloudFallDeath(player) {
     quantity: 15,
     blendMode: "ADD",
     alpha: { start: 0.6, end: 0 },
-    emitting: false
+    emitting: false,
   });
   fallTrail.explode(15);
 
   // Store scene reference to avoid 'this' context issues
   const currentScene = this;
-  
+
   // Try to play death animation if available
   try {
     player.anims.play("dead");
-    
+
     // Use a direct timeout instead of relying on animation complete
-    this.time.delayedCall(1300, function() {
+    this.time.delayedCall(1300, function () {
       showGameOverScreen();
     });
   } catch (error) {
@@ -5629,53 +5629,59 @@ function cloudFallDeath(player) {
     // Fallback if animation play fails - show game over immediately
     showGameOverScreen();
   }
-  
+
   // Define game over screen function with proper scene context
   function showGameOverScreen() {
     // Create full screen overlay
-    const overlay = currentScene.add.rectangle(
-      0, 0, 
-      currentScene.scale.width, currentScene.scale.height, 
-      0x000000, 0.8
-    )
-    .setOrigin(0, 0)
-    .setScrollFactor(0)
-    .setDepth(999);
+    const overlay = currentScene.add
+      .rectangle(
+        0,
+        0,
+        currentScene.scale.width,
+        currentScene.scale.height,
+        0x000000,
+        0.8
+      )
+      .setOrigin(0, 0)
+      .setScrollFactor(0)
+      .setDepth(999);
 
     // Show custom message
-    const gameOverText = currentScene.add.text(
-      currentScene.scale.width / 2,
-      currentScene.scale.height / 2 - 100,
-      "GAME OVER\n\nWhen reaching for the clouds,\nyou need to stay focused!",
-      {
-        fontSize: "18px",
-        fill: "#ff0000",
-        align: "center",
-        padding: 10,
-      }
-    )
-    .setScrollFactor(0)
-    .setAlign("center")
-    .setOrigin(0.5, 0)
-    .setDepth(1000);
+    const gameOverText = currentScene.add
+      .text(
+        currentScene.scale.width / 2,
+        currentScene.scale.height / 2 - 100,
+        "GAME OVER\n\nWhen reaching for the clouds,\nyou need to stay focused!",
+        {
+          fontSize: "18px",
+          fill: "#ff0000",
+          align: "center",
+          padding: 10,
+        }
+      )
+      .setScrollFactor(0)
+      .setAlign("center")
+      .setOrigin(0.5, 0)
+      .setDepth(1000);
 
     // Add restart button
-    const restartButton = currentScene.add.text(
-      currentScene.scale.width / 2,
-      currentScene.scale.height / 2 + 80,
-      "[ Try Again ]",
-      {
-        fontSize: "20px",
-        fill: "#ffffff",
-        backgroundColor: "#880000",
-        padding: { x: 15, y: 10 },
-      }
-    )
-    .setScrollFactor(0)
-    .setAlign("center")
-    .setOrigin(0.5, 0.5)
-    .setDepth(1000)
-    .setInteractive({ useHandCursor: true });
+    const restartButton = currentScene.add
+      .text(
+        currentScene.scale.width / 2,
+        currentScene.scale.height / 2 + 80,
+        "[ Try Again ]",
+        {
+          fontSize: "20px",
+          fill: "#ffffff",
+          backgroundColor: "#880000",
+          padding: { x: 15, y: 10 },
+        }
+      )
+      .setScrollFactor(0)
+      .setAlign("center")
+      .setOrigin(0.5, 0.5)
+      .setDepth(1000)
+      .setInteractive({ useHandCursor: true });
 
     // Button hover effects
     restartButton.on("pointerover", () => {
@@ -5881,15 +5887,16 @@ function fixCameraBounds() {
   const topBoundary = highestPlatformY - 400;
 
   // Set the bottom camera boundary to ensure ground is visible
-  // We want to see the entire ground, so position camera boundary just above ground
-  const bottomBoundary = this.scale.height - groundHeight * 2;
+  // MODIFIED: Added 100px to show more of the ground area
+  const bottomBoundary = this.scale.height - groundHeight * 2 + 20;
 
   // Set world bounds with limited vertical movement
+  // MODIFIED: Adjusted the bounds to match new boundary
   this.physics.world.setBounds(
     0,
     topBoundary,
     5000,
-    bottomBoundary - topBoundary + 100
+    bottomBoundary - topBoundary + 200
   );
 
   // Configure camera with default zoom (1.0)
@@ -5899,7 +5906,8 @@ function fixCameraBounds() {
   camera.setLerp(0.1, 0.1);
 
   // Use camera bounds to limit vertical movement
-  camera.setBounds(0, topBoundary, 5000, bottomBoundary - topBoundary);
+  // MODIFIED: Updated camera bounds to match new boundary
+  camera.setBounds(0, topBoundary, 5000, bottomBoundary - topBoundary + 100);
   camera.useBounds = true;
 
   // Override the update method to apply our custom constraints
