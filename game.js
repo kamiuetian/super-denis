@@ -923,6 +923,32 @@ function explodeTennisBall(ball) {
 // Updated createLevel1 function with new block layout
 function createLevel1(bgRepeat) {
   this.skillCount = 0;
+
+  // Define base dimensions that your level was designed for
+  const baseWidth = 1920; // Base design width
+  const baseHeight = 1080; // Base design height
+
+  // Get current dimensions
+  const currentWidth = this.scale.width;
+  const currentHeight = this.scale.height;
+
+  // Calculate scaling factors
+  const scaleX = currentWidth / baseWidth;
+  const scaleY = currentHeight / baseHeight;
+
+  // Use the smaller scale for consistent proportions
+  const objectScale = Math.min(scaleX, scaleY) * 3;
+
+  // Helper function to calculate X position
+  const getScaledX = (originalX) => {
+    return (originalX / baseWidth) * currentWidth;
+  };
+
+  // Helper function to calculate Y position from bottom
+  const getScaledYFromBottom = (distanceFromBottom) => {
+    return currentHeight - distanceFromBottom * scaleY;
+  };
+
   // 1. Create groups
   this.platforms = this.physics.add.staticGroup();
   this.mysteryBoxes = this.physics.add.staticGroup();
@@ -933,7 +959,7 @@ function createLevel1(bgRepeat) {
   });
 
   // 2. Set up the ground
-  const groundHeight = 40;
+  const groundHeight = 40 * scaleY;
   const blockWidth = groundHeight; // Make blocks square based on ground height
   const worldWidth = 5000;
   const worldHeight = 5000;
@@ -941,8 +967,8 @@ function createLevel1(bgRepeat) {
 
   for (let i = 0; i < numBlocks; i++) {
     const block = this.platforms.create(
-      i * (blockWidth - 7), // Subtract 1px to create overlap
-      this.scale.height - groundHeight / 2,
+      i * (blockWidth - 7 * scaleX), // Subtract scaled pixels to create overlap
+      currentHeight - groundHeight / 2,
       "block"
     );
 
@@ -950,10 +976,12 @@ function createLevel1(bgRepeat) {
     block.refreshBody();
     block.setData("isGround", true);
   }
+
+  // Second layer of ground
   for (let i = 0; i < numBlocks; i++) {
     const block = this.platforms.create(
-      i * (blockWidth - 7), // Same overlap as first layer
-      this.scale.height - groundHeight / 2 - (groundHeight - 7), // Position below first layer
+      i * (blockWidth - 7 * scaleX), // Same overlap as first layer
+      currentHeight - groundHeight / 2 - (groundHeight - 7 * scaleY), // Position below first layer
       "block"
     );
 
@@ -961,167 +989,124 @@ function createLevel1(bgRepeat) {
     block.refreshBody();
     block.setData("isGround", true);
   }
-  /*const ground = this.platforms.create(
-    2500,
-    this.scale.height - groundHeight,
-    null
-  );
-  ground.setDisplaySize(bgRepeat * this.scale.width, groundHeight);
-  ground.setVisible(true);
-  ground.refreshBody();*/
 
-  // 3. Create the main platform blocks
+  // 3. Create the main platform blocks - now using responsive positioning
   const brickBlocks = [
     // First set - two brick blocks with mystery boxes between them
-    { x: 500, y: this.scale.height - 270, width: 48, height: 48 },
-    { x: 596, y: this.scale.height - 270, width: 48, height: 48 },
+    { xOriginal: 500, yFromBottom: 270, width: 48, height: 48 },
+    { xOriginal: 596, yFromBottom: 270, width: 48, height: 48 },
 
-    // Second set - two brick blocks with mystery boxes between them
-    /* { x: 700, y: this.scale.height - 200, width: 48, height: 48 },
-    { x: 796, y: this.scale.height - 200, width: 48, height: 48 },
-*/
-    // Pipe block
-    /* {
-      x: 900,
-      y: this.scale.height - 160,
-      width: 80,
-      height: 200,
-      type: "pipe",
-    },*/
     // Additional platforms for gameplay
-    { x: 692, y: this.scale.height - 270, width: 48, height: 48 },
-    { x: 1300, y: this.scale.height - 300, width: 48, height: 48 },
-    { x: 1348, y: this.scale.height - 300, width: 48, height: 48 },
-    { x: 1396, y: this.scale.height - 300, width: 48, height: 48 },
-    { x: 1444, y: this.scale.height - 300, width: 48, height: 48 },
-    { x: 1650, y: this.scale.height - 500, width: 48, height: 48 },
-    { x: 1698, y: this.scale.height - 500, width: 48, height: 48 },
-    { x: 2150, y: this.scale.height - 400, width: 48, height: 48 },
-    { x: 2198, y: this.scale.height - 400, width: 48, height: 48 },
-    { x: 2246, y: this.scale.height - 400, width: 48, height: 48 },
-    { x: 2404, y: this.scale.height - 700, width: 48, height: 48 },
-
-    { x: 2452, y: this.scale.height - 700, width: 48, height: 48 },
-    { x: 2500, y: this.scale.height - 700, width: 48, height: 48 },
-    { x: 2548, y: this.scale.height - 700, width: 48, height: 48 },
-    { x: 2596, y: this.scale.height - 700, width: 48, height: 48 },
-    { x: 2692, y: this.scale.height - 700, width: 48, height: 48 },
-    { x: 2500, y: this.scale.height - 400, width: 48, height: 48 },
-    { x: 2548, y: this.scale.height - 400, width: 48, height: 48 },
-    { x: 2596, y: this.scale.height - 400, width: 48, height: 48 },
-    { x: 2644, y: this.scale.height - 400, width: 48, height: 48 },
+    { xOriginal: 692, yFromBottom: 270, width: 48, height: 48 },
+    { xOriginal: 1300, yFromBottom: 300, width: 48, height: 48 },
+    { xOriginal: 1348, yFromBottom: 300, width: 48, height: 48 },
+    { xOriginal: 1396, yFromBottom: 300, width: 48, height: 48 },
+    { xOriginal: 1444, yFromBottom: 300, width: 48, height: 48 },
+    { xOriginal: 1650, yFromBottom: 500, width: 48, height: 48 },
+    { xOriginal: 1698, yFromBottom: 500, width: 48, height: 48 },
+    { xOriginal: 2150, yFromBottom: 400, width: 48, height: 48 },
+    { xOriginal: 2198, yFromBottom: 400, width: 48, height: 48 },
+    { xOriginal: 2246, yFromBottom: 400, width: 48, height: 48 },
+    { xOriginal: 2404, yFromBottom: 700, width: 48, height: 48 },
+    { xOriginal: 2452, yFromBottom: 700, width: 48, height: 48 },
+    { xOriginal: 2500, yFromBottom: 700, width: 48, height: 48 },
+    { xOriginal: 2548, yFromBottom: 700, width: 48, height: 48 },
+    { xOriginal: 2596, yFromBottom: 700, width: 48, height: 48 },
+    { xOriginal: 2692, yFromBottom: 700, width: 48, height: 48 },
+    { xOriginal: 2500, yFromBottom: 400, width: 48, height: 48 },
+    { xOriginal: 2548, yFromBottom: 400, width: 48, height: 48 },
+    { xOriginal: 2596, yFromBottom: 400, width: 48, height: 48 },
+    { xOriginal: 2644, yFromBottom: 400, width: 48, height: 48 },
   ];
 
   // Create brick blocks
   for (const block of brickBlocks) {
-    // Determine which texture to use
-    let textureKey = "terrain";
-    let useScale = false;
-
-    // First two sets are from x=300 to x=396 and x=700 to x=796
-    if (
-      (block.x >= 500 && block.x <= 596) ||
-      (block.x >= 700 && block.x <= 796)
-    ) {
-      textureKey = "emptyBlock"; // Use emptyBlock for first two sets
-      useScale = true; // Use scale instead of setDisplaySize
-    } else if (block.type === "pipe") {
-      textureKey = "pipe"; // Keep pipe texture
-    }
+    // Calculate responsive positions
+    const x = getScaledX(block.xOriginal);
+    const y = getScaledYFromBottom(block.yFromBottom);
 
     // Create the platform with appropriate texture
-    const platform = this.platforms.create(block.x, block.y, "emptyBlock", 0);
+    const platform = this.platforms.create(x, y, "emptyBlock", 0);
 
-    // Apply either scale or display size based on block type
-    if (useScale) {
-      platform.setScale(3); // Set scale to 3 for emptyBlock
-    } else {
-      platform.setDisplaySize(block.width, block.height);
-    }
-
+    // Apply scale - use objectScale for consistent sizing
+    platform.setScale(objectScale);
     platform.refreshBody();
-
-    // Add green tint for pipe blocks
-    if (block.type === "pipe") {
-      platform.setTint(0x00ff00);
-    }
   }
-  const pipeX = 970;
-  const groundTop = this.scale.height - groundHeight * 2 + 4; // Position at top of ground layer
+
+  // Add pipes and flag with responsive positioning
+  const pipeX = getScaledX(970);
+  const pipe2X = getScaledX(1950);
+  const flagX = getScaledX(3000);
+
+  const groundTop = currentHeight - groundHeight * 2 + 4 * scaleY;
+
+  // Add first pipe
   const pipe = this.physics.add
     .staticImage(pipeX, groundTop, "pipe")
-    .setOrigin(0.5, 1); // Set origin to bottom center for proper positioning
-
-  // Scale the pipe to appropriate size without distortion
-  pipe.setScale(3); // Adjust this value as needed to match your sprite size
-
-  // Make sure pipe has collision
+    .setOrigin(0.5, 1);
+  pipe.setScale(objectScale);
   this.platforms.add(pipe);
   pipe.refreshBody();
   pipe.setData("isPipe", true);
-  const pipe2X = 1950;
+
+  // Add second pipe
   const pipe2 = this.physics.add
     .staticImage(pipe2X, groundTop, "pipe2")
-    .setOrigin(0.5, 1); // Set origin to bottom center for proper positioning
-
-  // Scale the pipe to appropriate size without distortion
-  pipe2.setScale(3); // Adjust this value as needed to match your sprite size
-
-  // Make sure pipe has collision
+    .setOrigin(0.5, 1);
+  pipe2.setScale(objectScale);
   this.platforms.add(pipe2);
   pipe2.refreshBody();
   pipe2.setData("isPipe", true);
-  this.platforms.add(pipe);
-  pipe.refreshBody();
-  pipe.setData("isPipe", true);
-  const flagx = 3000;
-  const flag = this.physics.add
-    .staticImage(flagx, groundTop, "flag")
-    .setOrigin(0.5, 1); // Set origin to bottom center for proper positioning
 
-  // Scale the pipe to appropriate size without distortion
-  flag.setScale(3); // Adjust this value as needed to match your sprite size
+  // Add flag
+  const flag = this.physics.add
+    .staticImage(flagX, groundTop, "flag")
+    .setOrigin(0.5, 1);
+  flag.setScale(objectScale);
+  this.platforms.add(flag);
+  flag.refreshBody();
+  flag.setData("isPipe", true);
+
+  // Add invisible barrier at the end
   const invisibleBarrier = this.physics.add.staticImage(
-    flagx + 5, // Position 5px after flag
-    this.scale.height / 2, // Middle of the screen height
+    flagX + 5 * scaleX, // Position after flag
+    currentHeight / 2, // Middle of the screen height
     null // No texture
   );
 
   // Make barrier tall and thin
-  invisibleBarrier.setDisplaySize(10, this.scale.height * 2);
+  invisibleBarrier.setDisplaySize(10 * scaleX, currentHeight * 2);
   invisibleBarrier.visible = false; // Make it invisible
   invisibleBarrier.refreshBody();
-
-  // Add to platforms group for collision with player
   this.platforms.add(invisibleBarrier);
 
-  // Make sure pipe has collision
-  this.platforms.add(flag);
-  flag.refreshBody();
-  flag.setData("isPipe", true);
-  // 4. Create mystery boxes according to specification
+  // 4. Create mystery boxes with responsive positioning
   const mysteryBoxPositions = [
-    // Two mystery boxes between brick blocks (positioned between the two sets)
-    { x: 548, y: this.scale.height - 270, index: 0 }, // Between first set of bricks
-    { x: 1370, y: this.scale.height - 470, index: 1 }, // Between second set of bricks
+    // Two mystery boxes between brick blocks
+    { xOriginal: 548, yFromBottom: 270, index: 0 },
+    { xOriginal: 1370, yFromBottom: 470, index: 1 },
 
     // One alone
-    { x: 644, y: this.scale.height - 270, index: 2 },
+    { xOriginal: 644, yFromBottom: 270, index: 2 },
 
     // One on top of pipe block
-    { x: 596, y: this.scale.height - 460, index: 3 },
+    { xOriginal: 596, yFromBottom: 460, index: 3 },
 
     // Two others placed elsewhere
-    { x: 2198, y: this.scale.height - 600, index: 4 },
-    { x: 2644, y: this.scale.height - 700, index: 5 },
+    { xOriginal: 2198, yFromBottom: 600, index: 4 },
+    { xOriginal: 2644, yFromBottom: 700, index: 5 },
   ];
 
   // Create mystery boxes
   for (const box of mysteryBoxPositions) {
+    // Calculate responsive positions
+    const x = getScaledX(box.xOriginal);
+    const y = getScaledYFromBottom(box.yFromBottom);
+
     const mysteryBox = this.mysteryBoxes
-      .create(box.x, box.y, "mysteryBlock")
+      .create(x, y, "mysteryBlock")
       .setOrigin(0.5, 0.5)
-      .setScale(3)
+      .setScale(objectScale)
       .setData("skillIndex", box.index)
       .setData("hit", false)
       .refreshBody();
@@ -1129,17 +1114,20 @@ function createLevel1(bgRepeat) {
     // Add glow effect
     const glow = this.add
       .sprite(mysteryBox.x, mysteryBox.y, "mysteryBlock")
-      .setScale(1.7)
+      .setScale(objectScale * 0.57) // Adjust relative to main box scale
       .setAlpha(0.3)
       .setTint(0xffff44);
 
     // Store reference to glow
     mysteryBox.setData("glow", glow);
 
+    // Scale the animation amounts relative to the screen size
+    const bounceAmount = 5 * scaleY;
+
     // Bounce animation for mystery box
     this.tweens.add({
       targets: mysteryBox,
-      y: mysteryBox.y - 5,
+      y: mysteryBox.y - bounceAmount,
       duration: 1200,
       yoyo: true,
       repeat: -1,
@@ -1149,7 +1137,7 @@ function createLevel1(bgRepeat) {
     // Glow animation
     this.tweens.add({
       targets: glow,
-      scale: { from: 1.7, to: 1.9 },
+      scale: { from: objectScale * 0.57, to: objectScale * 0.63 },
       alpha: { from: 0.3, to: 0.1 },
       yoyo: true,
       repeat: -1,
@@ -1157,41 +1145,28 @@ function createLevel1(bgRepeat) {
       ease: "Sine.easeInOut",
     });
   }
-  /**create staircase */
-  /*const stepWidth = 100;
-  const stepHeight = 30;
-  const baseY = this.scale.height - 100; // Position from bottom of screen
 
-  for (let i = 0; i < 5; i++) {
-    // Each step moves up and right by 100 units
-    const stepX = 3500 + i * stepWidth;
-    const stepY = baseY - i * stepWidth;
+  // Create a responsive trigger zone
+  const triggerX = getScaledX(3000);
+  const groundY = currentHeight - groundHeight;
+  const triggerHeight = currentHeight;
 
-    const step = this.platforms.create(stepX, stepY, "terrain");
-    step.setDisplaySize(stepWidth, stepHeight);
-    step.setData("isStep", true);
-    step.setData("stepNumber", i);
-    step.refreshBody();
-  }*/
-  // Add this code immediately after creating the staircase in createLevel1 function
-  // Create a trigger zone right after the last staircase step
-  const triggerX = 3000;
-  const groundY = this.scale.height - groundHeight; // Ground top position
-  const triggerHeight = this.scale.height; // Full screen height
   const triggerZone = this.add.zone(
     triggerX,
-    groundY - triggerHeight / 2, // Position centered from ground up
-    50, // Width
-    triggerHeight // Height covers entire screen
+    groundY - triggerHeight / 2,
+    50 * scaleX,
+    triggerHeight
   );
+
   this.physics.world.enable(triggerZone);
   triggerZone.body.setAllowGravity(false);
   triggerZone.body.immovable = true;
 
+  // Optional visual indicator for the trigger zone
   const zoneVisual = this.add.rectangle(
     triggerX,
-    groundY - triggerHeight / 2, // Match zone position
-    50,
+    groundY - triggerHeight / 2,
+    50 * scaleX,
     triggerHeight,
     0x00ff00,
     0.3
@@ -1212,14 +1187,14 @@ function createLevel1(bgRepeat) {
           console.log("Player crossed staircase - activating boss area!");
           const challengeMessage = this.add
             .text(
-              this.scale.width / 2,
-              100,
+              currentWidth / 2,
+              100 * scaleY,
               "You found a tennis racket! Johann challenges you to a duel!",
               {
-                fontSize: "18px",
+                fontSize: Math.max(18 * scaleY, 12) + "px", // Min font size of 12px
                 fill: "#ffffff",
                 stroke: "#000000",
-                strokeThickness: 3,
+                strokeThickness: 3 * scaleY,
                 align: "center",
               }
             )
@@ -1234,7 +1209,6 @@ function createLevel1(bgRepeat) {
             duration: 1000,
           });
 
-          // NOTE: We don't resume physics here since activateBossArea handles physics
           // Activate boss area with short delay to allow reading the dialogue
           this.time.delayedCall(3000, () => {
             activateBossArea.call(this);
@@ -1246,7 +1220,7 @@ function createLevel1(bgRepeat) {
             createSpeechBubble.call(
               this,
               this.player.x,
-              this.player.y - 60,
+              this.player.y - 60 * scaleY,
               `You need to find ${missingSkills} more skill${
                 missingSkills > 1 ? "s" : ""
               } before facing the boss!`,
@@ -1264,27 +1238,36 @@ function createLevel1(bgRepeat) {
     null,
     this
   );
-  // 5. Continue with existing code for UI, counters, etc.
+
+  // 5. UI elements - make these responsive to screen size
+  // Skills panel
+  const panelWidth = 200 * scaleX;
+  const panelHeight = 260 * scaleY;
+  const panelX = currentWidth - panelWidth - 20;
+  const panelY = 20;
+
   this.skillsPanel = this.add.graphics();
   this.skillsPanel.fillStyle(0x000000, 0.8);
-  this.skillsPanel.fillRect(this.scale.width - 220, 20, 200, 260);
-  this.skillsPanel.lineStyle(2, 0xffd700, 1);
-  this.skillsPanel.strokeRect(this.scale.width - 220, 20, 200, 260);
+  this.skillsPanel.fillRect(panelX, panelY, panelWidth, panelHeight);
+  this.skillsPanel.lineStyle(2 * scaleY, 0xffd700, 1);
+  this.skillsPanel.strokeRect(panelX, panelY, panelWidth, panelHeight);
   this.skillsPanel.setScrollFactor(0);
 
-  // Title
+  // Title - make font size responsive
+  const titleSize = Math.max(18 * scaleY, 14); // Min font size of 14px
   this.add
-    .text(this.scale.width - 190, 30, "MY SKILLS", {
-      fontSize: "18px",
+    .text(panelX + 30, panelY + 10, "MY SKILLS", {
+      fontSize: titleSize + "px",
       fill: "#FFD700",
       fontWeight: "bold",
     })
     .setScrollFactor(0);
 
   // Skills counter
+  const counterSize = Math.max(16 * scaleY, 12); // Min font size of 12px
   this.skillsCounter = this.add
-    .text(this.scale.width - 190, 260, "Skills: 0/6", {
-      fontSize: "16px",
+    .text(panelX + 30, panelY + panelHeight - 30, "Skills: 0/6", {
+      fontSize: counterSize + "px",
       fill: "#FFD700",
       fontWeight: "bold",
     })
@@ -1292,14 +1275,17 @@ function createLevel1(bgRepeat) {
 
   // Create skill text objects
   this.skillTexts = [];
+  const skillSize = Math.max(14 * scaleY, 11); // Min font size of 11px
+  const skillSpacing = Math.max(28 * scaleY, 20); // Min spacing of 20px
+
   for (let i = 0; i < skills.length; i++) {
     const skillText = this.add
       .text(
-        this.scale.width - 195,
-        60 + i * 28,
+        panelX + 25,
+        panelY + 40 + i * skillSpacing,
         skills[i].icon + " " + skills[i].name,
         {
-          fontSize: "14px",
+          fontSize: skillSize + "px",
           fill: "#FFFFFF",
           fontFamily: "Arial",
         }
@@ -1312,14 +1298,15 @@ function createLevel1(bgRepeat) {
   }
 
   // Small skills counter in bottom left
+  const smallCounterSize = Math.max(20 * scaleY, 16); // Min font size of 16px
   this.smallCounter = this.add
     .text(20, 20, "Skills: 0/6", {
-      fontSize: "20px",
+      fontSize: smallCounterSize + "px",
       fill: "#ffffff",
     })
     .setScrollFactor(0);
 
-  // 6. Add enemies
+  // 6. Add enemies (assuming addEnemies function is defined elsewhere)
   addEnemies.call(this);
 
   // 7. Add collisions
@@ -1334,26 +1321,31 @@ function createLevel1(bgRepeat) {
     null,
     this
   );
+
+  // Set world bounds
   this.physics.world.setBounds(0, 0, worldWidth, worldHeight);
 
   // Set up camera to follow player
   this.cameras.main.setBounds(0, 0, worldWidth, worldHeight);
   this.cameras.main.startFollow(this.player, true, 0.1, 0.1, 0, 0);
-  const deadZoneWidth = this.scale.width / 3;
-  const deadZoneHeight = this.scale.height / 3;
+
+  // Adjust deadzone based on screen size
+  const deadZoneWidth = currentWidth / 3;
+  const deadZoneHeight = currentHeight / 3;
   this.cameras.main.setDeadzone(deadZoneWidth, deadZoneHeight);
 
-  // Add instructions
+  // Add instructions with responsive text size
+  const instructionSize = Math.max(24 * scaleY, 18); // Min font size of 18px
   const instructionText = this.add
     .text(
-      this.scale.width / 2,
-      80,
+      currentWidth / 2,
+      80 * scaleY,
       "Hit mystery boxes from below to discover skills!",
       {
-        fontSize: "24px",
+        fontSize: instructionSize + "px",
         fill: "#ffffff",
         stroke: "#000000",
-        strokeThickness: 4,
+        strokeThickness: 4 * scaleY,
         fontStyle: "bold",
       }
     )
@@ -1368,7 +1360,33 @@ function createLevel1(bgRepeat) {
     duration: 1000,
     ease: "Power2",
   });
+
+  // Fix camera bounds with our custom function
   fixCameraBounds.call(this);
+
+  return this.platforms;
+}
+
+// Function to update level when window is resized
+function resizeLevel() {
+  // Clear existing game objects
+  this.platforms.clear(true, true);
+  this.mysteryBoxes.clear(true, true);
+
+  // Recreate the level with new dimensions
+  createLevel1.call(this, 3);
+
+  // Recalculate camera bounds
+  fixCameraBounds.call(this);
+
+  // Reposition player if needed
+  if (this.player) {
+    // Make sure player is above ground after resize
+    const groundHeight = 40 * (this.scale.height / 1080);
+    if (this.player.y > this.scale.height - groundHeight * 2) {
+      this.player.y = this.scale.height - groundHeight * 2 - 50;
+    }
+  }
 }
 // Add this function near the other game functions
 function activateBossArea() {
