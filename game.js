@@ -266,6 +266,16 @@ function create() {
     frameRate: 20,
     repeat: 0,
   });
+  this.anims.create({
+    key: "monster-run",
+    frames: this.anims.generateFrameNumbers("explosion", {
+      start: 0,
+      end: -1,
+      duration: 1000,
+    }),
+    frameRate: 10,
+    repeat: 1,
+  });
 }
 
 // Set up the background
@@ -2410,8 +2420,8 @@ function addEnemies() {
   for (const pos of enemyPositions) {
     // Create enemy with basic properties
     const enemy = this.enemies
-      .create(pos.x, pos.y, "enemy")
-      .setScale(0.2)
+      .create(pos.x, pos.y, "monster-run")
+      .setScale(3)
       .setTint(0xff0000)
       .setDepth(20);
 
@@ -2427,6 +2437,7 @@ function addEnemies() {
 
     // Add world bounds collision handler for backup direction change
     enemy.body.onWorldBounds = true;
+    enemy.anims.play("monster-running", true); // Play running animation
   }
 
   // Listen for world bounds collision as backup
