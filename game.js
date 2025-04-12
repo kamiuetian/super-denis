@@ -1512,7 +1512,7 @@ function activateBossArea() {
   } catch (e) {
     console.error("Failed to initialize localStorage for boss health:", e);
   }
-  this.boss.anims.play("monster-running", true);
+  this.boss.anims.play("monster-run", true);
   this.boss.direction = -1;
   this.boss.lastShotTime = this.time.now + 10000; // 10 second delay before first attack
   this.boss.setCollideWorldBounds(true);
@@ -1973,7 +1973,7 @@ function hitBoss(ball, boss) {
       .setVisible(true)
       .setAlpha(1)
       .setDepth(100);
-    this.boss.anims.play("monster-running", true);
+    this.boss.anims.play("monster-run", true);
 
     // Add a flash effect to make the respawn obvious
     this.boss.setTintFill(0xffff00); // FIXED: Use yellow tint to match original
@@ -2437,7 +2437,7 @@ function addEnemies() {
 
     // Add world bounds collision handler for backup direction change
     enemy.body.onWorldBounds = true;
-    enemy.anims.play("monster-running", true); // Play running animation
+    enemy.anims.play("monster-run", true); // Play running animation
   }
 
   // Listen for world bounds collision as backup
@@ -2796,7 +2796,7 @@ function createLevel2(bgRepeat) {
   this.boss.setBounce(1);
   this.boss.setImmovable(true);
   this.boss.lastShotTime = 0;
-  this.boss.anims.play("monster-running", true);
+  this.boss.anims.play("monster-run", true);
   // Put boss on a special cloud
   const bossCloud = this.platforms.create(
     //this.scale.width * bgRepeat * 0.85,
