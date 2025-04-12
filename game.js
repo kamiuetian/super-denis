@@ -280,32 +280,72 @@ function create() {
 
 // Set up the background
 function setupBackground() {
-  const bgRepeat = 3; // Explicitly set to 3 for consistency
   const screenHeight = this.scale.height;
   const screenWidth = this.scale.width;
-  const worldWidth = 5000;
 
-  // Create plain white background rectangle that covers the entire world
-  const whiteBackground = this.add.rectangle(
-    0,
-    0,
-    worldWidth,
-    screenHeight,
-    0xffffff // White color
-  );
-  whiteBackground.setOrigin(0, 0);
-  whiteBackground.setDepth(-2); // Make sure it's behind everything
+  // Create a group to hold our repeating backgrounds
+  this.backgroundGroup = this.add.group();
 
-  // Store reference to background
-  this.background = whiteBackground;
+  // Define how far we want to pre-generate background tiles
+  // This value can be adjusted based on your game's performance needs
+  const initialWorldWidth = 10000; // Initial width to generate background for
 
-  // Set physics world bounds to match the background size
-  this.physics.world.setBounds(0, 0, worldWidth, screenHeight);
+  // Create background tiles with some overlap to avoid seeing edges
+  const tileWidth = screenWidth;
+  const numTiles = Math.ceil(initialWorldWidth / tileWidth) + 1; // +1 for overlap
+  this.cameras.main.setBackgroundColor(0xffffff);
+  // Create multiple background rectangles to simulate infinite background
+  for (let i = 0; i < numTiles; i++) {
+    const x = i * tileWidth;
+    const whiteBackground = this.add.rectangle(
+      x,
+      0,
+      tileWidth,
+      screenHeight,
+      0xffffff // White color
+    );
+    whiteBackground.setOrigin(0, 0);
+    whiteBackground.setDepth(-2); // Make sure it's behind everything
+    this.backgroundGroup.add(whiteBackground);
+  }
 
-  // Ensure the camera won't show beyond the world bounds
-  this.cameras.main.setBounds(0, 0, worldWidth, screenHeight);
+  // Set the world bounds to allow infinite movement in positive x direction
+  // and infinite movement in y direction (but player can't go below ground)
+  this.physics.world.setBounds(0, -100000, 200000, 200000);
 
-  return bgRepeat;
+  // Create a function to dynamically add more background tiles as the player moves
+  this.extendBackground = (playerX) => {
+    // Get the rightmost background tile
+    let rightmostX = 0;
+    this.backgroundGroup.getChildren().forEach((bg) => {
+      rightmostX = Math.max(rightmostX, bg.x + bg.width);
+    });
+
+    // If player is getting close to the edge, add more background tiles
+    const bufferDistance = screenWidth * 2; // Add new tiles when player is within 2 screens of edge
+    if (playerX > rightmostX - bufferDistance) {
+      // Add a new background tile
+      const newBg = this.add.rectangle(
+        rightmostX,
+        0,
+        tileWidth,
+        screenHeight,
+        0xffffff
+      );
+      newBg.setOrigin(0, 0);
+      newBg.setDepth(-2);
+      this.backgroundGroup.add(newBg);
+    }
+  };
+
+  // Add a scene update listener to extend background as needed
+  this.events.on("update", () => {
+    if (this.player && this.player.x) {
+      this.extendBackground(this.player.x);
+    }
+  });
+
+  return numTiles; // Return the number of initial background tiles
 }
 
 // Set up the player
@@ -5717,7 +5757,7 @@ function fixCameraBounds() {
   // Set world bounds that prevent going back past x=0
   // Player can move infinitely in positive x and y directions
   this.physics.world.setBounds(0, -100000, 200000, 200000);
-
+  camera.setBackgroundColor("#ffffff");
   // Configure camera to follow the player
   // boundToWorld: false is CRUCIAL to allow the camera to follow beyond default world bounds
   camera.startFollow(this.player, true, 0.1, 0.1, 0, 0);
