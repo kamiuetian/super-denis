@@ -282,70 +282,37 @@ function create() {
 function setupBackground() {
   const screenHeight = this.scale.height;
   const screenWidth = this.scale.width;
+  const worldWidth = 5000; // Fixed world width for all levels
+  const worldHeight = 5000; // Consistent with our vertical world size
 
-  // Create a group to hold our repeating backgrounds
-  this.backgroundGroup = this.add.group();
-
-  // Define how far we want to pre-generate background tiles
-  // This value can be adjusted based on your game's performance needs
-  const initialWorldWidth = 10000; // Initial width to generate background for
-
-  // Create background tiles with some overlap to avoid seeing edges
-  const tileWidth = screenWidth;
-  const numTiles = Math.ceil(initialWorldWidth / tileWidth) + 1; // +1 for overlap
+  // Set camera background color to white
   this.cameras.main.setBackgroundColor(0xffffff);
-  // Create multiple background rectangles to simulate infinite background
-  for (let i = 0; i < numTiles; i++) {
-    const x = i * tileWidth;
-    const whiteBackground = this.add.rectangle(
-      x,
-      0,
-      tileWidth,
-      screenHeight,
-      0xffffff // White color
-    );
-    whiteBackground.setOrigin(0, 0);
-    whiteBackground.setDepth(-2); // Make sure it's behind everything
-    this.backgroundGroup.add(whiteBackground);
-  }
 
-  // Set the world bounds to allow infinite movement in positive x direction
-  // and infinite movement in y direction (but player can't go below ground)
-  this.physics.world.setBounds(0, -100000, 200000, 200000);
+  // Create a single large background rectangle that covers the entire world
+  const whiteBackground = this.add.rectangle(
+    0,
+    0,
+    worldWidth,
+    worldHeight,
+    0xffffff // White color
+  );
+  whiteBackground.setOrigin(0, 0);
+  whiteBackground.setDepth(-2); // Make sure it's behind everything
 
-  // Create a function to dynamically add more background tiles as the player moves
-  this.extendBackground = (playerX) => {
-    // Get the rightmost background tile
-    let rightmostX = 0;
-    this.backgroundGroup.getChildren().forEach((bg) => {
-      rightmostX = Math.max(rightmostX, bg.x + bg.width);
-    });
+  // Store reference to background
+  this.background = whiteBackground;
 
-    // If player is getting close to the edge, add more background tiles
-    const bufferDistance = screenWidth * 2; // Add new tiles when player is within 2 screens of edge
-    if (playerX > rightmostX - bufferDistance) {
-      // Add a new background tile
-      const newBg = this.add.rectangle(
-        rightmostX,
-        0,
-        tileWidth,
-        screenHeight,
-        0xffffff
-      );
-      newBg.setOrigin(0, 0);
-      newBg.setDepth(-2);
-      this.backgroundGroup.add(newBg);
-    }
-  };
+  // Set the world bounds to fixed dimensions
+  this.physics.world.setBounds(0, 0, worldWidth, worldHeight);
 
-  // Add a scene update listener to extend background as needed
-  this.events.on("update", () => {
-    if (this.player && this.player.x) {
-      this.extendBackground(this.player.x);
-    }
-  });
+  // Set camera bounds to match world
+  this.cameras.main.setBounds(0, 0, worldWidth, worldHeight);
 
-  return numTiles; // Return the number of initial background tiles
+  // REMOVED: backgroundGroup creation
+  // REMOVED: extendBackground function
+  // REMOVED: update event listener for extending background
+
+  return 3; // Return default bgRepeat value for compatibility
 }
 
 // Set up the player
@@ -990,7 +957,7 @@ function createLevel1(bgRepeat) {
   for (let i = 0; i < numBlocks; i++) {
     const block = this.platforms.create(
       i * (blockWidth - 4), // Use exact width with no subtraction
-      currentHeight - groundHeight - groundHeight / 2, // FIXED: Position exactly at top of first layer
+      currentHeight - groundHeight - groundHeight / 2 + 6, // FIXED: Position exactly at top of first layer
       // Exactly half a block above first layer
       "block"
     );
@@ -1121,7 +1088,7 @@ function createLevel1(bgRepeat) {
     const mysteryBox = this.mysteryBoxes
       .create(x, y, "mysteryBlock")
       .setOrigin(0.5, 0.5)
-      .setScale(objectScale)
+      .setScale(objectScale*1.05)
       .setData("skillIndex", box.index)
       .setData("hit", false)
       .refreshBody();
