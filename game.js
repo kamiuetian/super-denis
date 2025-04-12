@@ -5860,7 +5860,7 @@ function fixCameraBounds() {
   camera.setZoom(1.0);
   camera.startFollow(this.player, true, 0.1, 0.1, 0, 0);
   camera.followOffset.set(0, 0);
-  camera.setLerp(0.1, 0.1);
+  //camera.setLerp(0.1, 0.1);
 
   // Use camera bounds to limit vertical movement
   // MODIFIED: Updated camera bounds to match new boundary
