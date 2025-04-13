@@ -4203,7 +4203,7 @@ function createLevel3(bgRepeat) {
   this.physics.world.setBounds(0, 0, 5000, 5000);
 
   // 4. Set up the ground with scaled dimensions
-  const groundHeight = 40 * scaleY;
+  /*const groundHeight = 40 * scaleY;
   const groundTop = currentHeight - groundHeight;
 
   // Create ground with proper scaling
@@ -4227,7 +4227,54 @@ function createLevel3(bgRepeat) {
   );
   groundVisual.setOrigin(0, 0);
   groundVisual.setDepth(5);
+*/
+  // In createLevel3 function, replace the existing ground code with this:
+  // 4. Set up the ground with exact same approach as Level 1
+  const groundHeight = 40 * scaleY; // Scale ground height
+  const groundTop = currentHeight - groundHeight;
+  const blockWidth = groundHeight; // Make blocks square based on ground height
+  const numBlocks = Math.ceil(5000 / blockWidth) + 1; // Add one extra block for overlap
 
+  // First ground layer with no gaps - exactly like Level 1
+  for (let i = 0; i < numBlocks; i++) {
+    const block = this.platforms.create(
+      i * (blockWidth - 2), // Use exact width with overlap
+      currentHeight - groundHeight / 2,
+      "block"
+    );
+
+    block.setDisplaySize(blockWidth + 4, groundHeight);
+    block.refreshBody();
+    block.setData("isGround", true);
+    block.setDepth(5);
+    block.setAlpha(1);
+  }
+
+  // Second ground layer with no gaps - exactly like Level 1
+  for (let i = 0; i < numBlocks; i++) {
+    const block = this.platforms.create(
+      i * (blockWidth - 4), // Use exact width with different overlap
+      currentHeight - groundHeight - groundHeight / 2 + 6, // Position exactly at top of first layer
+      "block"
+    );
+
+    block.setDisplaySize(blockWidth + 4, groundHeight);
+    block.refreshBody();
+    block.setData("isGround", true);
+    block.setDepth(5);
+    block.setAlpha(1);
+  }
+
+  // Create visible ground tileSprite matching the actual collision ground
+  const groundVisual = this.add.tileSprite(
+    0,
+    groundTop - groundHeight + 6, // Position to match the top layer
+    5000,
+    groundHeight * 2,
+    "block"
+  );
+  groundVisual.setOrigin(0, 0);
+  groundVisual.setDepth(4); // Below the actual block depth
   // 5. Set white background (consistent with other levels)
   const skyBackground = this.add.rectangle(0, 0, 5000, 5000, 0xffffff);
   skyBackground.setOrigin(0, 0);
@@ -4351,18 +4398,18 @@ function createLevel3(bgRepeat) {
 
   // 13. Create platforms with responsive positioning
   const platformPositions = [
-    { xRatio: 250 / baseWidth, yFromBottom: 100 },
-    { xRatio: 500 / baseWidth, yFromBottom: 210 },
-    { xRatio: 750 / baseWidth, yFromBottom: 190 },
-    { xRatio: 1000 / baseWidth, yFromBottom: 300 },
-    { xRatio: 1250 / baseWidth, yFromBottom: 250 },
-    { xRatio: 1500 / baseWidth, yFromBottom: 350 },
-    { xRatio: 1750 / baseWidth, yFromBottom: 200 },
-    { xRatio: 2000 / baseWidth, yFromBottom: 300 },
-    { xRatio: 2300 / baseWidth, yFromBottom: 200 },
-    { xRatio: 2600 / baseWidth, yFromBottom: 320 },
-    { xRatio: 2850 / baseWidth, yFromBottom: 250 },
-    { xRatio: 3100 / baseWidth, yFromBottom: 300 },
+    { xRatio: 250 / baseWidth, yFromBottom: 200 },
+    { xRatio: 500 / baseWidth, yFromBottom: 310 },
+    { xRatio: 750 / baseWidth, yFromBottom: 290 },
+    { xRatio: 1000 / baseWidth, yFromBottom: 390 },
+    { xRatio: 1250 / baseWidth, yFromBottom: 310 },
+    { xRatio: 1500 / baseWidth, yFromBottom: 450 },
+    { xRatio: 1750 / baseWidth, yFromBottom: 600 },
+    { xRatio: 2000 / baseWidth, yFromBottom: 720 },
+    { xRatio: 2300 / baseWidth, yFromBottom: 550 },
+    { xRatio: 2600 / baseWidth, yFromBottom: 400 },
+    { xRatio: 2850 / baseWidth, yFromBottom: 600 },
+    { xRatio: 3100 / baseWidth, yFromBottom: 750 },
   ];
 
   // 14. Create platforms and skill items with responsive scaling
