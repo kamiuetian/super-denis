@@ -284,7 +284,16 @@ function create() {
   this.physics.world.defaults.debugBodyColor = 0xff00ff; // Bright pink
   this.physics.world.defaults.debugShowBody = true;
   this.physics.world.defaults.debugShowStaticBody = true;
-
+  this.anims.create({
+    key: "monster-run",
+    frames: this.anims.generateFrameNumbers("explosion", {
+      start: 0,
+      end: -1,
+      duration: 1000,
+    }),
+    frameRate: 10,
+    repeat: 1,
+  });
   // Create level based on selection
   createLevel.call(this);
 
@@ -297,16 +306,6 @@ function create() {
     frames: this.anims.generateFrameNumbers("explosion", { start: 0, end: 5 }),
     frameRate: 20,
     repeat: 0,
-  });
-  this.anims.create({
-    key: "monster-run",
-    frames: this.anims.generateFrameNumbers("explosion", {
-      start: 0,
-      end: -1,
-      duration: 1000,
-    }),
-    frameRate: 10,
-    repeat: 1,
   });
 }
 
