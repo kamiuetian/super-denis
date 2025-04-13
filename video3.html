@@ -1,21 +1,442 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Super Bro Denis</title>
-        <link rel="stylesheet" href="styles.css">
-        <script src="index.js"></script>
-    </head>
-    <body>
-        <div id="video" class="bg">
-            <img src="assets/enemy.png" />
-            <p>This is the description of the third video</p>
-        </div>
 
-        <!-- Phaser Library -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.70.0/phaser.min.js"></script>
-        
-        <!-- Your game script -->
-        <script src="game.js"></script>
-    </body>
+<head>
+    <meta charset="UTF-8">
+    <title>Super Bro Denis</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #002e3c;
+            /* Match index.html background */
+            color: white;
+            font-family: Arial, sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Bottom border styling */
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background-color: #fed200;
+            /* Yellow border */
+            z-index: 100;
+        }
+
+        /* Logo container */
+        .logo-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 999;
+        }
+
+        .logo-container img {
+            height: 60px;
+            width: auto;
+        }
+
+        #game-container {
+            width: 100vw;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            display: none;
+        }
+
+        #video {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100vw;
+            height: 100vh;
+            text-align: center;
+        }
+
+        #video img {
+            max-width: 50%;
+            height: auto;
+            margin-bottom: 20px;
+        }
+
+        #video p {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .next-button {
+            padding: 12px 30px;
+            background-color: #fed200;
+            /* Match yellow theme */
+            color: #002e3c;
+            /* Dark text on yellow button */
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: bold;
+            border: none;
+        }
+
+        .next-button:hover {
+            background-color: #ffea80;
+        }
+
+        body.game-active::after {
+            display: none !important;
+            /* Hide the bottom border when game is active */
+        }
+
+        .game-active .logo-container {
+            display: none !important;
+            /* Hide logo when game is active */
+        }
+    </style>
+
+</head>
+
+<body>
+    <!-- Added logo at top right -->
+    <div class="logo-container">
+        <img src="assets/logo.png" alt="Super Denis Logo">
+    </div>
+
+
+
+    <!-- Game container div -->
+    <div id="game-container"></div>
+
+    <!-- Phaser Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.70.0/phaser.min.js"></script>
+
+    <!-- Your game script -->
+    <script src="game.js"></script>
+
+    // Add this script to replace the existing dialogue script in video3.html
+    - Update the dialogue script in video3.html -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Start Level 4 dialogue automatically
+            startLevel4();
+        });
+
+        function startLevel4() {
+            // Show the game container but don't start the game yet
+            const gameContainer = document.getElementById('game-container');
+            gameContainer.style.display = 'block';
+            gameContainer.style.width = '100vw';
+            gameContainer.style.height = '100vh';
+
+            // Set the level globally
+            selectedLevel = 4;
+
+            // Show the dialogue with Johann
+            showFinalDialogue();
+        }
+
+        function showFinalDialogue() {
+            // Create container for dialogue scene
+            const dialogueContainer = document.createElement("div");
+            dialogueContainer.id = "final-dialogue-container";
+            dialogueContainer.style.position = "fixed";
+            dialogueContainer.style.top = "0";
+            dialogueContainer.style.left = "0";
+            dialogueContainer.style.width = "100%";
+            dialogueContainer.style.height = "100%";
+            dialogueContainer.style.backgroundColor = "#002e3c";
+            dialogueContainer.style.zIndex = "1000";
+
+            // Calculate positions that respect the bottom border
+            const borderHeight = 10; // Bottom border height
+            const bottomPosition = 10 + borderHeight + "px"; // Position characters above border
+
+            // Add Denis character that will animate from left side to position
+            const denis = document.createElement("canvas");
+            denis.id = "denis-character";
+            denis.width = 32 * 3;
+            denis.height = 32 * 3;
+            denis.style.position = "absolute";
+            denis.style.bottom = bottomPosition;
+            denis.style.left = "-50px"; // Start off-screen to the left
+            denis.style.transition = "left 3s ease-in-out"; // Smooth movement animation
+            denis.style.zIndex = "1001";
+
+            // Add Johann character on the right side (25% from right edge)
+            const johann = document.createElement("img");
+            johann.id = "johann-character";
+            johann.src = "assets/enemy.png";
+            johann.style.position = "absolute";
+            johann.style.bottom = bottomPosition;
+            johann.style.right = "25%";
+            johann.style.transform = "translateX(50%)";
+            johann.style.width = "100px";
+            johann.style.height = "auto";
+            johann.style.zIndex = "1001";
+
+            // Set up Denis animation
+            const denisCtx = denis.getContext("2d");
+            denisCtx.imageSmoothingEnabled = false;
+
+            // Load both running and standing sprites
+            const runningSprite = new Image();
+            runningSprite.src = "assets/denis/NavySuitRunning.png";
+
+            const standingSprite = new Image();
+            standingSprite.src = "assets/denis/NavySuit.png";
+
+            // Animation variables
+            let frameIndex = 0;
+            const frameCount = 8; // Running animation has 8 frames
+            const frameWidth = 32;
+            const frameHeight = 32;
+            let lastFrameTime = 0;
+            const frameDelay = 100; // 100ms between frames (10fps)
+            let isRunning = true; // Start with running animation
+
+            // Dialogue content - from Level 3 end dialogue
+            const dialogues = [
+                { speaker: "denis", text: "Level complete... but this isn't the end, is it?" },
+                { speaker: "johann", text: "No, Denis. This is where the real journey begins." },
+                { speaker: "denis", text: "I have learned a ton and explored different passions — and somewhere along the way, I found out that this program is definitely my path." },
+                { speaker: "johann", text: "Well...you've shown more than skill, you've shown real purpose. And that drive for innovation in banking? That's exactly what we're looking for." },
+                { speaker: "denis", text: "Then... am I in?" }
+            ];
+
+            // Add elements to container
+            dialogueContainer.appendChild(denis);
+            dialogueContainer.appendChild(johann);
+            document.body.appendChild(dialogueContainer);
+
+            // Animation function for Denis
+            function animateDenis(timestamp) {
+                if (!lastFrameTime) lastFrameTime = timestamp;
+
+                if (timestamp - lastFrameTime > frameDelay) {
+                    // Clear canvas
+                    denisCtx.clearRect(0, 0, denis.width, denis.height);
+
+                    if (isRunning) {
+                        // Draw running animation frame
+                        denisCtx.drawImage(
+                            runningSprite,
+                            frameIndex * frameWidth, 0,
+                            frameWidth, frameHeight,
+                            0, 0,
+                            denis.width, denis.height
+                        );
+
+                        // Update frame index for animation
+                        frameIndex = (frameIndex + 1) % frameCount;
+                    } else {
+                        // Draw standing image when not running
+                        denisCtx.drawImage(
+                            standingSprite,
+                            0, 0,
+                            standingSprite.width, standingSprite.height,
+                            0, 0,
+                            denis.width, denis.height
+                        );
+                    }
+
+                    lastFrameTime = timestamp;
+                }
+
+                requestAnimationFrame(animateDenis);
+            }
+
+            // Start animation when sprites load
+            Promise.all([
+                new Promise(resolve => { runningSprite.onload = resolve; }),
+                new Promise(resolve => { standingSprite.onload = resolve; })
+            ]).then(() => {
+                // Start character animation
+                requestAnimationFrame(animateDenis);
+
+                // Start movement animation after a short delay
+                setTimeout(() => {
+                    // Move Denis to 35% position
+                    denis.style.left = "35%";
+
+                    // After movement completes, switch to standing pose and start dialogue
+                    setTimeout(() => {
+                        isRunning = false;  // Switch to standing pose
+
+                        // Start dialogue sequence after a short pause
+                        setTimeout(() => {
+                            startDialogueSequence(dialogues, 0, dialogueContainer);
+                        }, 500);
+                    }, 3000); // Match the transition duration
+                }, 500);
+            });
+        }
+
+        function startDialogueSequence(dialogues, index, container) {
+            if (index >= dialogues.length) {
+                // End of dialogue - show Resume button instead of starting game
+                const resumeButton = document.createElement("a");
+                resumeButton.href = "resume.html";
+                resumeButton.className = "next-button";
+                resumeButton.innerText = "Go to Resume";
+                resumeButton.style.position = "absolute";
+                // Position in center of screen both horizontally and vertically
+                resumeButton.style.top = "50%";  // Center vertically
+                resumeButton.style.left = "50%"; // Center horizontally
+                resumeButton.style.transform = "translate(-50%, -50%)"; // Perfect centering
+                resumeButton.style.zIndex = "1002";
+
+                // Add the button to container with fade-in animation
+                resumeButton.style.opacity = "0";
+                resumeButton.style.transition = "opacity 1s";
+                container.appendChild(resumeButton);
+
+                setTimeout(() => {
+                    resumeButton.style.opacity = "1";
+                }, 100);
+
+                return;
+            }
+
+            const currentDialogue = dialogues[index];
+            const speaker = currentDialogue.speaker;
+            const text = currentDialogue.text;
+
+            // Get character elements for positioning
+            const denisElement = document.getElementById("denis-character");
+            const johannElement = document.getElementById("johann-character");
+
+            // Calculate position for speech bubbles directly above characters
+            let bubbleX, bubbleY;
+            if (speaker === "denis") {
+                const denisRect = denisElement.getBoundingClientRect();
+                bubbleX = denisRect.left + (denisRect.width / 2);
+                bubbleY = denisRect.top - 20; // Position above character head
+            } else {
+                const johannRect = johannElement.getBoundingClientRect();
+                bubbleX = johannRect.left + (johannRect.width / 2);
+                bubbleY = johannRect.top - 20; // Position above character head
+            }
+
+            // Create speech bubble for current speaker
+            const speechBubble = document.createElement("div");
+            speechBubble.style.position = "absolute";
+            speechBubble.style.width = "40%";
+            speechBubble.style.padding = "20px";
+            speechBubble.style.backgroundColor = "#FFFFFF";
+            speechBubble.style.border = "3px solid #333333";
+            speechBubble.style.borderRadius = "20px";
+            speechBubble.style.color = "#000000";
+            speechBubble.style.fontFamily = "Comic Sans MS, Arial, sans-serif";
+            speechBubble.style.fontSize = "18px";
+            speechBubble.style.boxShadow = "0 4px 8px rgba(0,0,0,0.2)";
+            speechBubble.style.zIndex = "1002";
+
+            // Position bubble directly above corresponding character
+            if (speaker === "denis") {
+                speechBubble.style.left = "48%";
+                speechBubble.style.bottom = "150px";
+                speechBubble.style.transform = "translateX(-50%)";
+            } else {
+                speechBubble.style.right = "35%";
+                speechBubble.style.bottom = "150px";
+                speechBubble.style.transform = "translateX(50%)";
+            }
+
+            // Speaker name
+            const speakerName = document.createElement("div");
+            speakerName.textContent = speaker === "denis" ? "DENIS" : "JOHANN";
+            speakerName.style.color = speaker === "denis" ? "#002e3c" : "#A52A2A";
+            speakerName.style.fontWeight = "bold";
+            speakerName.style.fontSize = "22px";
+            speakerName.style.marginBottom = "10px";
+            speakerName.style.textTransform = "uppercase";
+
+            // Speech text
+            const speechText = document.createElement("div");
+            speechText.style.lineHeight = "1.6";
+
+            // Add to bubble
+            speechBubble.appendChild(speakerName);
+            speechBubble.appendChild(speechText);
+
+            // Add bubble tail/pointer
+            const tail = document.createElement("div");
+            tail.style.position = "absolute";
+            tail.style.bottom = "-20px";
+            tail.style.width = "0";
+            tail.style.height = "0";
+            tail.style.borderLeft = "15px solid transparent";
+            tail.style.borderRight = "15px solid transparent";
+            tail.style.borderTop = "20px solid #FFFFFF";
+
+            // Position tail based on speaker
+            if (speaker === "denis") {
+                tail.style.left = "25%";
+            } else {
+                tail.style.right = "25%";
+            }
+
+            // Add tail border
+            const tailBorder = document.createElement("div");
+            tailBorder.style.position = "absolute";
+            tailBorder.style.bottom = "-24px";
+            tailBorder.style.width = "0";
+            tailBorder.style.height = "0";
+            tailBorder.style.borderLeft = "18px solid transparent";
+            tailBorder.style.borderRight = "18px solid transparent";
+            tailBorder.style.borderTop = "24px solid #333333";
+
+            // Position tail border based on speaker
+            if (speaker === "denis") {
+                tailBorder.style.left = "24%";
+            } else {
+                tailBorder.style.right = "24%";
+            }
+
+            // Add tails to bubble
+            speechBubble.appendChild(tailBorder);
+            speechBubble.appendChild(tail);
+
+            // Add bubble to container
+            container.appendChild(speechBubble);
+
+            // Typing animation
+            speechBubble.style.opacity = "0";
+            setTimeout(() => {
+                speechBubble.style.transition = "opacity 0.3s";
+                speechBubble.style.opacity = "1";
+
+                // Type out text
+                let i = 0;
+                const typeInterval = setInterval(() => {
+                    if (i < text.length) {
+                        speechText.textContent += text.charAt(i);
+                        i++;
+                    } else {
+                        clearInterval(typeInterval);
+
+                        // Move to next dialogue after delay
+                        setTimeout(() => {
+                            speechBubble.style.opacity = "0";
+                            setTimeout(() => {
+                                speechBubble.remove();
+                                startDialogueSequence(dialogues, index + 1, container);
+                            }, 300);
+                        }, 4000); // 4 seconds to read each dialogue
+                    }
+                }, 30);
+            }, 300);
+        }
+    </script>
+</body>
+
 </html>
