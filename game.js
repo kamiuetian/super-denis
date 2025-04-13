@@ -4511,7 +4511,7 @@ function createLevel3(bgRepeat) {
   riverGraphics.setDepth(10); // Higher depth to ensure visibility
   riverArea.add(riverGraphics);
 
-  const towerX = this.bridgeX + this.gapWidth / 2;
+  const towerX = this.bridgeX + this.gapWidth;
   const towerY = currentHeight - groundHeight;
   this.bridgeTower = this.add
     .sprite(towerX, towerY, "drawbridge", 0)
@@ -4546,7 +4546,7 @@ function createLevel3(bgRepeat) {
       currentHeight - 50 * scaleY,
       "enemy"
     )
-    .setScale(0.2 * objectScale)
+    .setScale(0.4 * objectScale)
     .setDepth(20);
 
   // Make Johann static
