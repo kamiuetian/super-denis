@@ -438,18 +438,6 @@ function update(time, delta) {
 
   // LEVEL 3 FIX: Special handling for Level 3 movement
   if (selectedLevel === 3) {
-    // Debug player input state occasionally
-    if (time % 300 === 0) {
-      console.log("Player active:", this.player.active);
-      console.log("Left key:", this.cursors.left.isDown);
-      console.log("Right key:", this.cursors.right.isDown);
-      console.log("Up key:", this.cursors.up.isDown);
-      console.log(
-        "Player velocity:",
-        this.player.body ? this.player.body.velocity.x : "No body"
-      );
-    }
-
     // Force enable player physics if somehow disabled
     if (this.player && !this.player.body.enable) {
       console.log("Re-enabling player physics!");
@@ -457,14 +445,7 @@ function update(time, delta) {
     }
   }
 
-  // Log input state for debugging
-  if (time % 300 === 0 && selectedLevel === 3) {
-    console.log("Player active:", this.player.active);
-    console.log("Left key:", this.cursors.left.isDown);
-    console.log("Right key:", this.cursors.right.isDown);
-    console.log("Up key:", this.cursors.up.isDown);
-  }
-
+  
   // Allow movement even during dialogue in level 3
   if (selectedLevel === 2 && this.boss) {
     updateBoss.call(this, time);
@@ -4664,25 +4645,11 @@ function showLevel3StartDialogue() {
     this,
     this.player.x,
     this.player.y - 60,
-    "Alright, Level 3. Time to get a bit personal. I've always been curious about how tech shapes the world—and how finance can steer that change.",
-    6000
+    "Lets Go !",
+    1000
   );
-
+  this.dialogueActive = false;
   // Show second part after delay
-  this.time.delayedCall(6000, () => {
-    const startText2 = createSpeechBubble.call(
-      this,
-      this.player.x,
-      this.player.y - 60,
-      "IDDP feels like the place where I can actually explore both and grow through each of them. Let's go!",
-      5000
-    );
-
-    // Release player after dialogue completes
-    this.time.delayedCall(5000, () => {
-      this.dialogueActive = false;
-    });
-  });
 }
 
 // Add this function to your game.js file if it's not already present:
