@@ -6,6 +6,42 @@
     <title>Super Bro Denis</title>
     <link rel="stylesheet" href="styles.css">
     <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #002e3c;
+            /* Match index.html background */
+            color: white;
+            font-family: Arial, sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Bottom border styling */
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background-color: #fed200;
+            /* Yellow border */
+            z-index: 100;
+        }
+
+        /* Logo container */
+        .logo-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 999;
+        }
+
+        .logo-container img {
+            height: 60px;
+            width: auto;
+        }
+
         #game-container {
             width: 100vw;
             height: 100vh;
@@ -34,26 +70,37 @@
         #video p {
             font-size: 1.5rem;
             margin-bottom: 20px;
+            color: white;
         }
 
         .next-button {
             padding: 12px 30px;
-            background-color: #4CAF50;
-            color: white;
+            background-color: #fed200;
+            /* Match yellow theme */
+            color: #002e3c;
+            /* Dark text on yellow button */
             text-decoration: none;
             border-radius: 4px;
             font-size: 1.2rem;
             cursor: pointer;
             transition: background-color 0.3s;
+            font-weight: bold;
+            border: none;
         }
 
         .next-button:hover {
-            background-color: #45a049;
+            background-color: #ffea80;
         }
     </style>
+    <scrpt src="game.js"></scrpt>
 </head>
 
 <body>
+    <!-- Added logo at top right -->
+    <div class="logo-container">
+        <img src="assets/logo.png" alt="Super Denis Logo">
+    </div>
+
     <div id="video" class="bg">
         <img src="assets/enemy.png" />
         <p>This is the description of the second video</p>
@@ -85,10 +132,239 @@
             selectedLevel = 3;
 
             // First show the Level 3 intro dialogue
-            showLevel3Intro(() => {
-                // This callback will run after the dialogue finishes
+            // Replace the current showLevel3Intro function with this updated version:
+            function showLevel3Intro(callback) {
+                // Create a container that preserves the existing blue background
+                const introContainer = document.createElement("div");
+                introContainer.id = "level3-intro-container";
+                introContainer.style.position = "fixed";
+                introContainer.style.top = "0";
+                introContainer.style.left = "0";
+                introContainer.style.width = "100%";
+                introContainer.style.height = "100%";
+                introContainer.style.backgroundColor = "transparent"; // CHANGED: transparent to keep existing blue background
+                introContainer.style.zIndex = "1000";
 
-                // Start the game
+                // Create canvas for character animation
+                const character = document.createElement("canvas");
+                character.id = "intro-character";
+                character.width = 32 * 3; // Each frame is 32px wide, scale by 3
+                character.height = 32 * 3; // Each frame is 32px high, scale by 3
+                character.style.position = "absolute";
+                character.style.bottom = "10px"; // Position at bottom of screen
+                character.style.left = "50px"; // Start from left side
+                character.style.transition = "left 4s ease-in-out";
+                character.style.zIndex = "1000";
+
+                // Add the character animation logic
+                const ctx = character.getContext("2d");
+                ctx.imageSmoothingEnabled = false; // Disable anti-aliasing
+
+                const spriteSheet = new Image();
+                spriteSheet.src = "assets/denis/NavySuitRunning.png"; // Use running animation
+
+                // Add static image for when character stops
+                const staticImage = new Image();
+                staticImage.src = "assets/denis/NavySuit.png";
+
+                // Set up animation variables
+                let frameIndex = 0;
+                const frameCount = 8; // NavySuitRunning.png has 8 frames
+                const frameWidth = 32;
+                const frameHeight = 32;
+                let lastFrameTime = 0;
+                const frameDelay = 100; // 100ms between frames (10fps)
+                let useStaticImage = false; // Flag for static vs animated
+
+                // Animation function
+                function animateCharacter(timestamp) {
+                    if (!lastFrameTime) lastFrameTime = timestamp;
+
+                    if (timestamp - lastFrameTime > frameDelay) {
+                        // Clear canvas
+                        ctx.clearRect(0, 0, character.width, character.height);
+
+                        // Draw the appropriate image based on state
+                        if (useStaticImage) {
+                            // Draw static image when stopped
+                            ctx.drawImage(
+                                staticImage,
+                                0, 0,
+                                staticImage.width, staticImage.height,
+                                0, 0,
+                                character.width, character.height
+                            );
+                        } else {
+                            // Draw running animation frame
+                            ctx.drawImage(
+                                spriteSheet,
+                                frameIndex * frameWidth, 0,
+                                frameWidth, frameHeight,
+                                0, 0,
+                                character.width, character.height
+                            );
+
+                            // Update frame index
+                            frameIndex = (frameIndex + 1) % frameCount;
+                        }
+                        lastFrameTime = timestamp;
+                    }
+                    requestAnimationFrame(animateCharacter);
+                }
+
+                // Create dialog box as a speech bubble
+                const dialogBox = document.createElement("div");
+                dialogBox.id = "intro-dialog";
+                dialogBox.style.position = "absolute";
+                dialogBox.style.width = "70%";
+                dialogBox.style.maxWidth = "800px";
+                dialogBox.style.padding = "20px";
+                dialogBox.style.backgroundColor = "#FFFFFF"; // White background 
+                dialogBox.style.border = "2px solid #333333"; // Dark border
+                dialogBox.style.color = "#000000"; // Black text
+                dialogBox.style.fontFamily = "Comic Sans MS, Arial, sans-serif";
+                dialogBox.style.fontSize = "18px";
+                dialogBox.style.textAlign = "left";
+                dialogBox.style.bottom = "150px"; // Position above character
+                dialogBox.style.left = "50%"; // Will be centered later
+                dialogBox.style.transform = "translateX(-50%)"; // Center horizontally
+                dialogBox.style.display = "none";
+                dialogBox.style.opacity = "0";
+                dialogBox.style.transition = "opacity 0.5s ease-in-out";
+                dialogBox.style.borderRadius = "20px"; // Rounded corners
+                dialogBox.style.boxShadow = "0 4px 8px rgba(0,0,0,0.2)"; // Shadow
+
+                // Create speech bubble tail
+                const speechTail = document.createElement("div");
+                speechTail.style.position = "absolute";
+                speechTail.style.bottom = "-20px";
+                speechTail.style.left = "50%";
+                speechTail.style.transform = "translateX(-50%)";
+                speechTail.style.width = "0";
+                speechTail.style.height = "0";
+                speechTail.style.borderLeft = "15px solid transparent";
+                speechTail.style.borderRight = "15px solid transparent";
+                speechTail.style.borderTop = "20px solid #FFFFFF";
+                speechTail.style.zIndex = "1";
+
+                // Speech tail border
+                const speechTailBorder = document.createElement("div");
+                speechTailBorder.style.position = "absolute";
+                speechTailBorder.style.bottom = "-23px";
+                speechTailBorder.style.left = "50%";
+                speechTailBorder.style.transform = "translateX(-50%)";
+                speechTailBorder.style.width = "0";
+                speechTailBorder.style.height = "0";
+                speechTailBorder.style.borderLeft = "17px solid transparent";
+                speechTailBorder.style.borderRight = "17px solid transparent";
+                speechTailBorder.style.borderTop = "23px solid #333333";
+                speechTailBorder.style.zIndex = "0";
+
+                // Character name element
+                const characterName = document.createElement("div");
+                characterName.textContent = "DENIS";
+                characterName.style.color = "#002e3c";
+                characterName.style.fontWeight = "bold";
+                characterName.style.fontSize = "22px";
+                characterName.style.marginBottom = "10px";
+                characterName.style.textTransform = "uppercase";
+                dialogBox.appendChild(characterName);
+
+                // Dialog text element
+                const dialogText = document.createElement("div");
+                dialogText.id = "dialog-text";
+                dialogText.style.lineHeight = "1.5";
+                dialogText.style.marginBottom = "15px";
+                dialogBox.appendChild(dialogText);
+
+                // Counter text for auto-start
+                const counterText = document.createElement("div");
+                counterText.id = "counter-text";
+                counterText.style.textAlign = "center";
+                counterText.style.marginTop = "20px";
+                counterText.style.color = "#888";
+                counterText.style.fontSize = "16px";
+                counterText.style.visibility = "hidden";
+                dialogBox.appendChild(counterText);
+
+                // Add the speech tail elements to the dialog box
+                dialogBox.appendChild(speechTailBorder);
+                dialogBox.appendChild(speechTail);
+
+                // Add elements to container
+                introContainer.appendChild(character);
+                introContainer.appendChild(dialogBox);
+                document.body.appendChild(introContainer);
+
+                // Start animation when image loads
+                spriteSheet.onload = () => {
+                    requestAnimationFrame(animateCharacter);
+                };
+
+                // Dialogue content 
+                const dialogContent = "Welcome to Level 3! Here you'll discover my leadership skills and financial expertise. Collect all skills to unlock the final stage. Let me show you what makes me a perfect candidate for the IDDP program!";
+
+                // Start animation sequence - MATCHING THE INDEX.HTML FLOW
+                setTimeout(() => {
+                    character.style.left = "calc(50% - 40px)"; // Move to center
+
+                    setTimeout(() => {
+                        useStaticImage = true; // Switch to standing image
+                        dialogBox.style.display = "block";
+
+                        setTimeout(() => {
+                            dialogBox.style.opacity = "1";
+
+                            // Type out text character by character
+                            let i = 0;
+                            const typeInterval = setInterval(() => {
+                                if (i < dialogContent.length) {
+                                    dialogText.textContent += dialogContent.charAt(i);
+                                    i++;
+                                } else {
+                                    clearInterval(typeInterval);
+
+                                    // Show countdown instead of button
+                                    counterText.style.visibility = "visible";
+                                    let secondsLeft = 3;
+
+                                    // Update counter text
+                                    const updateCounter = () => {
+                                        counterText.textContent = `Starting in ${secondsLeft} second${secondsLeft !== 1 ? "s" : ""
+                                            }...`;
+                                    };
+
+                                    // Initial counter display
+                                    updateCounter();
+
+                                    // Start countdown
+                                    const countdownInterval = setInterval(() => {
+                                        secondsLeft--;
+
+                                        if (secondsLeft <= 0) {
+                                            clearInterval(countdownInterval);
+                                            introContainer.style.opacity = "0";
+
+                                            setTimeout(() => {
+                                                introContainer.remove();
+                                                if (callback) callback();
+                                            }, 500);
+                                        } else {
+                                            updateCounter();
+                                        }
+                                    }, 1000);
+                                }
+                            }, 30);
+                        }, 100);
+                    }, 4100); // Wait for character to reach center
+                }, 500); // Small delay before starting
+
+                return introContainer;
+            }
+
+            // Call the function after defining it
+            showLevel3Intro(() => {
+                // Initialize the game after the intro completes
                 if (!game) {
                     game = new Phaser.Game(config);
                     gameStarted = true;
@@ -96,15 +372,6 @@
                     // If game already exists, restart with new level
                     game.scene.scenes[0].scene.restart();
                 }
-
-                // Add window resize handler
-                window.addEventListener("resize", function () {
-                    if (game) {
-                        game.scale.resize(window.innerWidth, window.innerHeight);
-                    }
-                });
-
-                console.log("Starting game with level:", selectedLevel);
             });
         }
     </script>
