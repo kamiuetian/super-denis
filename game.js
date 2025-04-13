@@ -2873,7 +2873,7 @@ function createLevel2(bgRepeat) {
 
     // Create cloud platform with responsive scale
     const cloud = this.platforms.create(x, y, "cloud");
-    cloud.setScale(0.1 * objectScale); // Scale based on screen size
+    cloud.setScale(0.2 * objectScale); // Scale based on screen size
     cloud.body.setSize(cloud.width * 0.7, cloud.height * 0.4);
     cloud.body.setOffset(cloud.width * 0.15, 0); // Position at the top of the cloud
 
