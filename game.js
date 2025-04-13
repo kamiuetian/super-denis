@@ -555,7 +555,7 @@ function update(time, delta) {
       const baseJumpVelocity = -750;
 
       // Apply scaled jump velocity
-      const scaledJumpVelocity = baseJumpVelocity * (scaleFactor * 1.1);
+      const scaledJumpVelocity = baseJumpVelocity * (scaleFactor * 1.2);
 
       // Set jump velocity with scaling
       this.player.setVelocityY(scaledJumpVelocity);
