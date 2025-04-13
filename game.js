@@ -2859,6 +2859,9 @@ function createLevel2(bgRepeat) {
     // Create cloud platform with responsive scale
     const cloud = this.platforms.create(x, y, "cloud");
     cloud.setScale(0.1 * objectScale); // Scale based on screen size
+    cloud.body.setSize(cloud.width * 0.7, cloud.height * 0.4);
+    cloud.body.setOffset(cloud.width * 0.15, 0); // Position at the top of the cloud
+
     cloud.refreshBody();
     cloud.setData("touched", false);
     cloud.setData("skillIndex", i);
@@ -2884,8 +2887,17 @@ function createLevel2(bgRepeat) {
       // Store reference to cloud and skill
       cloud.setData("skillItem", skill);
       skill.setData("cloud", cloud);
-    } else {
-      cloud.setData("isPlatform", true); // Set as platform for the boss
+    }
+    if (i === cloudPositions.length - 1) {
+      cloud.setData("isPlatform", true);
+      cloud.setScale(0.12 * objectScale);
+      cloud.setTint(0xffffff);
+      // Ensure it has a solid collision body
+      cloud.body.setSize(cloud.width * 0.9, cloud.height * 0.5);
+      cloud.body.checkCollision.down = false; // Only collide from top
+      cloud.body.checkCollision.left = false;
+      cloud.body.checkCollision.right = false;
+      cloud.refreshBody();
     }
   }
 
@@ -2930,7 +2942,7 @@ function createLevel2(bgRepeat) {
       (cloudPositions[12]
         ? currentHeight - cloudPositions[12].yFromBottom * scaleY
         : currentHeight - cloudPositions[0].yFromBottom * scaleY) -
-      80 * scaleY;
+      300 * scaleY;
 
     // Reset player velocity
     this.player.setVelocity(0, 0);
