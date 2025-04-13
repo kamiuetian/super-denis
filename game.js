@@ -4666,19 +4666,28 @@ function hitCloud(player, cloud) {
 }
 
 // Function to trigger the final dialogue when player meets Johann
+// Modify the triggerFinalDialogue function to fade out and redirect instead of showing dialogue
 function triggerFinalDialogue(player, johann) {
   // Don't trigger if already triggered or bridge not created
   if (this.endOfGame || !this.bridgeCreated) return;
 
-  // Stop player movement temporarily during dialogue
+  // Set flag to prevent multiple triggers
+  this.endOfGame = true;
+
+  // Stop player movement
   player.setVelocityX(0);
   player.anims.play("stand");
 
-  // Start the level 3 end dialogue
-  showLevel3EndDialogue.call(this);
+  // Pause physics to prevent any further movement
+  this.physics.pause();
 
-  // Prevent triggering dialogue multiple times
-  this.endOfGame = true;
+  // Create fade out effect
+  this.cameras.main.fadeOut(1500, 0, 0, 0);
+
+  // When fade out completes, redirect to video3.html
+  this.cameras.main.once("camerafadeoutcomplete", () => {
+    window.location.href = "video3.html";
+  });
 }
 
 // Function to show Level 3 start dialogue

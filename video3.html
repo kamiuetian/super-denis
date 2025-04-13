@@ -101,11 +101,48 @@
             display: none !important;
             /* Hide logo when game is active */
         }
+
+        #fade-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000000;
+            opacity: 1;
+            z-index: 10000;
+            pointer-events: none;
+            transition: opacity 1500ms ease-in-out;
+        }
+
+        #fade-overlay.fade-out {
+            opacity: 0;
+        }
     </style>
 
 </head>
 
 <body>
+    <script>
+        // Wait for the page to fully load
+        document.addEventListener('DOMContentLoaded', function () {
+            // Small delay to ensure proper transition
+            setTimeout(function () {
+                // Add the fade-out class to trigger the opacity transition
+                document.getElementById('fade-overlay').classList.add('fade-out');
+
+                // Remove the overlay completely after the transition is done
+                setTimeout(function () {
+                    const overlay = document.getElementById('fade-overlay');
+                    if (overlay && overlay.parentNode) {
+                        overlay.parentNode.removeChild(overlay);
+                    }
+                }, 1600);
+            }, 100);
+        });
+    </script>
+    <div id="fade-overlay"></div>
+
     <!-- Added logo at top right -->
     <div class="logo-container">
         <img src="assets/logo.png" alt="Super Denis Logo">
