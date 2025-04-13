@@ -555,7 +555,7 @@ function update(time, delta) {
       const baseJumpVelocity = -750;
 
       // Apply scaled jump velocity
-      const scaledJumpVelocity = baseJumpVelocity * scaleFactor;
+      const scaledJumpVelocity = baseJumpVelocity * (scaleFactor * 1.1);
 
       // Set jump velocity with scaling
       this.player.setVelocityY(scaledJumpVelocity);
@@ -2477,7 +2477,7 @@ function resetSkillPanel() {
 function addEnemies() {
   // Calculate responsive scaling
   const scaleFactor = getResponsiveScaleFactor();
-  const enemyBaseScale = 6; // Your original enemy scale
+  const enemyBaseScale = 5; // Your original enemy scale
   const responsiveEnemyScale = enemyBaseScale * scaleFactor;
 
   // Clear any existing enemies to avoid conflicts
@@ -2506,9 +2506,9 @@ function addEnemies() {
       .setScale(responsiveEnemyScale)
       .setDepth(20);
     const bodyWidth = enemy.width * 0.5;
-    const bodyHeight = enemy.height;
+    const bodyHeight = enemy.height * 0.4;
     const offsetX = (enemy.width - bodyWidth) / 2;
-    const offsetY = (enemy.height - bodyHeight) / 2;
+    const offsetY = enemy.height - bodyHeight;
     enemy.body.setSize(bodyWidth, bodyHeight);
     enemy.body.setOffset(offsetX, offsetY);
     // Store patrol information as custom properties
