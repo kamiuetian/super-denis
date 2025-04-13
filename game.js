@@ -348,7 +348,7 @@ function setupBackground() {
 function setupPlayer() {
   // Calculate responsive scaling
   const scaleFactor = getResponsiveScaleFactor();
-  const playerBaseScale = 4; // Your original player scale
+  const playerBaseScale = 3; // Your original player scale
   const responsivePlayerScale = playerBaseScale * scaleFactor;
 
   // Create player using the idle animation's first frame
