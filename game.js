@@ -222,11 +222,6 @@ function preload() {
   this.load.audio("shootSound", "assets/shoot.mp3");
   this.load.audio("squashSound", "assets/squash.mp3");
   this.load.audio("hitSound", "assets/hit.mp3");
-
-  // If you have a specific goompa image, load it here
-  // this.load.image("goompa", "assets/goompa.png");
-
-  // Otherwise, just make sure your enemy sprite is properly loaded
   this.load.image("enemy", "assets/enemy.png");
 
   // Load tennis-themed images
@@ -308,10 +303,6 @@ function setupBackground() {
   // Set camera bounds to match world
   this.cameras.main.setBounds(0, 0, worldWidth, worldHeight);
 
-  // REMOVED: backgroundGroup creation
-  // REMOVED: extendBackground function
-  // REMOVED: update event listener for extending background
-
   return 3; // Return default bgRepeat value for compatibility
 }
 
@@ -320,7 +311,7 @@ function setupBackground() {
 function setupPlayer() {
   // Calculate responsive scaling
   const scaleFactor = getResponsiveScaleFactor();
-  const playerBaseScale = 2; // Your original player scale
+  const playerBaseScale = 4; // Your original player scale
   const responsivePlayerScale = playerBaseScale * scaleFactor;
 
   // Create player using the idle animation's first frame
@@ -2698,8 +2689,8 @@ function createLevel2(bgRepeat) {
   this.coinCount = 0;
 
   // 5. Create skills panel with responsive positioning and sizing
-  const panelWidth = 200 * scaleX;
-  const panelHeight = 360 * scaleY;
+  const panelWidth = 400 * scaleX;
+  const panelHeight = 500 * scaleY;
   const panelX = currentWidth - panelWidth - 20 * scaleX;
   const panelY = 20 * scaleY;
 
@@ -2711,7 +2702,7 @@ function createLevel2(bgRepeat) {
   this.skillsPanel.setScrollFactor(0);
 
   // Title with responsive font
-  const titleSize = Math.max(18 * scaleY, 14); // Minimum size of 14px
+  const titleSize = Math.max(20 * scaleY, 18); // Minimum size of 14px
   this.add
     .text(panelX + 30 * scaleX, panelY + 30 * scaleY, "MY SKILLS", {
       fontSize: `${titleSize}px`,
@@ -2721,7 +2712,7 @@ function createLevel2(bgRepeat) {
     .setScrollFactor(0);
 
   // Skills counter with responsive font
-  const counterSize = Math.max(16 * scaleY, 12); // Minimum size of 12px
+  const counterSize = Math.max(16 * scaleY, 14); // Minimum size of 12px
   this.skillsCounter = this.add
     .text(panelX + 30 * scaleX, panelY + 350 * scaleY, "Skills: 0/12", {
       fontSize: `${counterSize}px`,
@@ -5765,7 +5756,7 @@ function fixCameraBounds() {
   const worldHeight = 5000;
 
   // 1. Create a large deadzone (most of the screen) so camera only moves when player nears edges
-  const deadZoneWidth = gameWidth * 0.6; // 60% of screen width
+  const deadZoneWidth = gameWidth * 0.3; // 60% of screen width
   const deadZoneHeight = gameHeight * 0.6; // 60% of screen height
 
   // Calculate deadzone position (centered)
@@ -5782,7 +5773,7 @@ function fixCameraBounds() {
     true, // Round pixels
     0.05, // Very slow X lerp (was 0.1)
     0.05, // Very slow Y lerp (was 0.1)
-    -deadZoneX, // X offset to center player in deadzone
+    0, // X offset to center player in deadzone
     0 // No Y offset
   );
 
@@ -5796,8 +5787,13 @@ function fixCameraBounds() {
     // Call original update method
     originalUpdate.apply(this, arguments);
 
-    // Enforce constraints:
+     const playerX = this.scene.player.x - this.scrollX;
 
+     // ADDED: Make sure player stays visible when moving left
+     // If player is too close to left edge, adjust camera
+     if (playerX < 100) {
+       this.scrollX = this.scene.player.x - 100;
+     }
     // Never show below ground
     if (this.scrollY + gameHeight > groundY + 20) {
       this.scrollY = groundY + 20 - gameHeight;
