@@ -14,15 +14,7 @@ function showLevels() {
 
 function goBackMainMenu() {
   console.log("Going back to main menu");
-  const menuButtons = document.getElementsByClassName("level-option");
-  for (let button of menuButtons) {
-    button.style.display = "none";
-  }
-
-  const levelButtons = document.getElementsByClassName("menu-option");
-  for (let button of levelButtons) {
-    button.style.display = "block";
-  }
+  window.location.href = "resume.html";
 }
 
 // New intro sequence functionality
