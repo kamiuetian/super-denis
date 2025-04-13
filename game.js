@@ -2848,19 +2848,19 @@ function createLevel2(bgRepeat) {
 
   // 7. Create cloud platforms with responsive positioning
   const cloudPositions = [
-    { xRatio: 250 / baseWidth, yFromBottom: 100 },
-    { xRatio: 500 / baseWidth, yFromBottom: 210 },
-    { xRatio: 750 / baseWidth, yFromBottom: 190 },
-    { xRatio: 1000 / baseWidth, yFromBottom: 300 },
-    { xRatio: 1250 / baseWidth, yFromBottom: 250 },
-    { xRatio: 1500 / baseWidth, yFromBottom: 350 },
-    { xRatio: 1750 / baseWidth, yFromBottom: 200 },
-    { xRatio: 2000 / baseWidth, yFromBottom: 300 },
-    { xRatio: 2300 / baseWidth, yFromBottom: 200 },
-    { xRatio: 2600 / baseWidth, yFromBottom: 320 },
-    { xRatio: 2850 / baseWidth, yFromBottom: 250 },
-    { xRatio: 3100 / baseWidth, yFromBottom: 300 },
-    { xRatio: 100 / baseWidth, yFromBottom: 400 },
+    { xRatio: 250 / baseWidth, yFromBottom: 300 },
+    { xRatio: 500 / baseWidth, yFromBottom: 510 },
+    { xRatio: 750 / baseWidth, yFromBottom: 490 },
+    { xRatio: 1000 / baseWidth, yFromBottom: 600 },
+    { xRatio: 1250 / baseWidth, yFromBottom: 550 },
+    { xRatio: 1500 / baseWidth, yFromBottom: 650 },
+    { xRatio: 1750 / baseWidth, yFromBottom: 500 },
+    { xRatio: 2000 / baseWidth, yFromBottom: 600 },
+    { xRatio: 2300 / baseWidth, yFromBottom: 500 },
+    { xRatio: 2600 / baseWidth, yFromBottom: 620 },
+    { xRatio: 2850 / baseWidth, yFromBottom: 550 },
+    { xRatio: 3100 / baseWidth, yFromBottom: 600 },
+    { xRatio: 100 / baseWidth, yFromBottom: 500 },
   ];
 
   // Create clouds and add skills
