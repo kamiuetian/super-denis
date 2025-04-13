@@ -2464,7 +2464,7 @@ function resetSkillPanel() {
 function addEnemies() {
   // Calculate responsive scaling
   const scaleFactor = getResponsiveScaleFactor();
-  const enemyBaseScale = 4; // Your original enemy scale
+  const enemyBaseScale = 8; // Your original enemy scale
   const responsiveEnemyScale = enemyBaseScale * scaleFactor;
 
   // Clear any existing enemies to avoid conflicts
@@ -2491,7 +2491,6 @@ function addEnemies() {
     const enemy = this.enemies
       .create(pos.x, pos.y, "monster-run")
       .setScale(responsiveEnemyScale)
-      .setTint(0xff0000)
       .setDepth(20);
     const bodyWidth = enemy.width * 0.5;
     const bodyHeight = enemy.height;
