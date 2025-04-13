@@ -103,6 +103,9 @@ function initializeGame() {
 // Preload assets
 function preload() {
   if (!gameStarted) return;
+  this.load.image("levelBackground", "assets/denis/bg.jpg");
+  
+  
   this.load.spritesheet("drawbridge", "assets/denis/WoodenGateAndTower.png", {
     frameWidth: 64, // Adjust based on actual sprite dimensions
     frameHeight: 128, // Adjust based on actual sprite dimensions
@@ -319,7 +322,14 @@ function setupBackground() {
   const screenWidth = this.scale.width;
   const worldWidth = 5000; // Fixed world width for all levels
   const worldHeight = 5000; // Consistent with our vertical world size
-
+if(selectedLevel===3){
+    const background = this.add.tileSprite(0, 0, worldWidth, screenHeight, "levelBackground");
+    background.setOrigin(0, 0);
+    background.setScrollFactor(0.2, 0); // X scrolls slowly, Y doesn't scroll
+    background.setDepth(-2);
+    this.background = background;
+  
+}else{
   // Set camera background color to white
   this.cameras.main.setBackgroundColor(0xffffff);
 
@@ -336,7 +346,7 @@ function setupBackground() {
 
   // Store reference to background
   this.background = whiteBackground;
-
+}
   // Set the world bounds to fixed dimensions
   this.physics.world.setBounds(0, 0, worldWidth, worldHeight);
 
@@ -4292,9 +4302,20 @@ function createLevel3(bgRepeat) {
   groundVisual.setOrigin(0, 0);
   groundVisual.setDepth(4); // Below the actual block depth
   // 5. Set white background (consistent with other levels)
-  const skyBackground = this.add.rectangle(0, 0, 5000, 5000, 0xffffff);
-  skyBackground.setOrigin(0, 0);
-  skyBackground.setDepth(-2);
+  const bgWidth = 5000; // World width
+  const bgHeight = this.scale.height;
+
+  // Create a tiled background image that covers the entire level width
+  const levelBg = this.add.tileSprite(
+    0,
+    0,
+    bgWidth,
+    bgHeight,
+    "levelBackground"
+  );
+  levelBg.setOrigin(0, 0);
+  levelBg.setScrollFactor(0.2, 0); // X scrolls at 0.2 speed for parallax effect, Y doesn't scroll
+  levelBg.setDepth(-2); // Keep it behind everything else
 
   // 6. Initialize skill counter
   this.coinCount = 0;
