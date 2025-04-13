@@ -349,7 +349,10 @@ function setupPlayer() {
 
   // Create player using the idle animation's first frame
   this.player = this.physics.add.sprite(100, 300, "player-idle");
-  this.player.body.setGravityY(800);
+  // Scale gravity based on screen size
+  const baseGravity = 800;
+  const scaledGravity = baseGravity * scaleFactor;
+  this.player.body.setGravityY(scaledGravity);
 
   // Apply responsive scaling
   this.player.setScale(responsivePlayerScale);
@@ -538,14 +541,24 @@ function update(time, delta) {
     }
   }
 
-  // Handle jumping
+  // Handle jumping with responsive scaling
   if (this.player && this.player.body && this.player.active) {
     if (!this.player.body.touching.down) {
       this.player.anims.play("jump");
     }
 
     if (this.cursors.up.isDown && this.player.body.touching.down) {
-      this.player.setVelocityY(-750);
+      // Get the scaling factor
+      const scaleFactor = getResponsiveScaleFactor();
+
+      // Base jump velocity (what would be used at 1920x1080)
+      const baseJumpVelocity = -750;
+
+      // Apply scaled jump velocity
+      const scaledJumpVelocity = baseJumpVelocity * scaleFactor;
+
+      // Set jump velocity with scaling
+      this.player.setVelocityY(scaledJumpVelocity);
     }
   }
   // ADDED: Handle tennis ball shooting
@@ -2464,7 +2477,7 @@ function resetSkillPanel() {
 function addEnemies() {
   // Calculate responsive scaling
   const scaleFactor = getResponsiveScaleFactor();
-  const enemyBaseScale = 8; // Your original enemy scale
+  const enemyBaseScale = 6; // Your original enemy scale
   const responsiveEnemyScale = enemyBaseScale * scaleFactor;
 
   // Clear any existing enemies to avoid conflicts
