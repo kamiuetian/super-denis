@@ -106,7 +106,7 @@ function preload() {
   this.load.image("levelBackground", "assets/denis/bg.jpg");
   this.load.image("level1Background", "assets/denis/level1bg.png");
 
-this.load.image("level2Background", "assets/denis/levle2bg.png");
+  this.load.image("level2Background", "assets/denis/levle2bg.png");
   this.load.spritesheet("drawbridge", "assets/denis/WoodenGateAndTower.png", {
     frameWidth: 64, // Adjust based on actual sprite dimensions
     frameHeight: 128, // Adjust based on actual sprite dimensions
@@ -324,14 +324,24 @@ function setupBackground() {
   const worldWidth = 5000; // Fixed world width for all levels
   const worldHeight = 5000; // Consistent with our vertical world size
   if (selectedLevel === 1) {
-    // Use level1bg.png for Level 1
-    const background = this.add.tileSprite(0, 0, worldWidth, screenHeight, "level1Background");
-    background.setOrigin(0, 0);
-    background.setScrollFactor(0.2, 0); // X scrolls slowly, Y doesn't scroll
-    background.setDepth(-2);
+    const background = this.add
+      .image(screenWidth / 2, screenHeight / 2, "level1Background")
+      .setOrigin(0.5, 0.5) // Center the image
+      .setScrollFactor(0) // Fixed to camera (no scrolling)
+      .setDepth(-2);
+
+    // Scale to cover the entire screen width
+    const bgWidth = background.width;
+    const bgHeight = background.height;
+
+    // Use scaleX to ensure full width coverage, even if it crops some height
+    const scaleX = screenWidth / bgWidth;
+    const scaleY = screenHeight / bgHeight;
+    const scale = Math.max(scaleX, scaleY); // Use MAXIMUM scale to ensure full coverage
+    
+    background.setScale(scale);
     this.background = background;
-  }
-  else if (selectedLevel === 3) {
+  } else if (selectedLevel === 3) {
     const background = this.add.tileSprite(
       0,
       0,
@@ -2742,7 +2752,6 @@ function createLevel2(bgRepeat) {
   );
   skyBackground.setOrigin(0, 0);
   skyBackground.setDepth(-2);
-  setupBackground.call
 
   // 4. Initialize skill counter
   this.coinCount = 0;
