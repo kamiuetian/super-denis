@@ -103,6 +103,10 @@ function initializeGame() {
 // Preload assets
 function preload() {
   if (!gameStarted) return;
+  this.load.spritesheet("drawbridge", "assets/denis/WoodenGateAndTower.png", {
+    frameWidth: 64, // Adjust based on actual sprite dimensions
+    frameHeight: 128, // Adjust based on actual sprite dimensions
+  });
   this.load.spritesheet("monster-run", "assets/denis/MonsterRunning.png", {
     frameWidth: 32,
     frameHeight: 32,
@@ -3492,27 +3496,40 @@ function collectItem(player, item) {
 // Function to handle bridge animation
 function lowerBridge() {
   if (!this.bridgeGraphics) {
-    // Create a visual placeholder for the bridge (initially raised)
+    // Create a container for the bridge (containers support rotation with pivot points)
+    this.bridgeContainer = this.add.container(
+      this.bridgeX - this.gapWidth / 2,
+      this.bridgeY - 10
+    );
+
+    // Create a visual placeholder for the bridge
     this.bridgeGraphics = this.add.graphics();
     this.bridgeGraphics.fillStyle(0x8b4513); // Brown wood color
-    this.bridgeGraphics.fillRect(-this.gapWidth / 2, -10, this.gapWidth, 20);
+    this.bridgeGraphics.fillRect(0, -10, this.gapWidth, 20); // Bridge rectangle
     this.bridgeGraphics.lineStyle(2, 0x663300, 1);
-    this.bridgeGraphics.strokeRect(-this.gapWidth / 2, -10, this.gapWidth, 20);
-    this.bridgeGraphics.setPosition(this.bridgeX, this.bridgeY - 200); // Start raised
+    this.bridgeGraphics.strokeRect(0, -10, this.gapWidth, 20);
+    this.bridgeGraphics.setDepth(15); // Set depth for visibility
+    // Add the graphics to the container
+    this.bridgeContainer.add(this.bridgeGraphics);
+
+    // Start rotated 90 degrees (vertical)
+    this.bridgeContainer.rotation = -Math.PI / 2; // -90 degrees in radians
 
     // Mark bridge as created
     this.bridgeCreated = true;
   }
-  // Play bridge lowering animation
+
+  // Disable river collision if it exists
   if (this.riverCollider) {
     this.riverCollider.active = false;
   }
-  // Play bridge lowering animation with corrected ending position
+
+  // Play bridge rotation animation
   this.tweens.add({
-    targets: this.bridgeGraphics,
-    y: this.scale.height - 30, // Position exactly at ground level
-    duration: 1500,
-    ease: "Bounce.easeOut",
+    targets: this.bridgeContainer,
+    rotation: 0, // Rotate to 0 degrees (horizontal)
+    duration: 3500,
+    ease: "easeIn",
     onComplete: () => {
       // Create actual collision bridge after animation
       const bridgeX = this.bridgeX;
@@ -4494,9 +4511,35 @@ function createLevel3(bgRepeat) {
   riverGraphics.setDepth(10); // Higher depth to ensure visibility
   riverArea.add(riverGraphics);
 
-  // Make sure the visual ground tileSprite doesn't cover the river
+  const towerX = this.bridgeX + this.gapWidth / 2;
+  const towerY = currentHeight - groundHeight;
+  this.bridgeTower = this.add
+    .sprite(towerX, towerY, "drawbridge", 0)
+    .setOrigin(0.5, 1)
+    .setScale(3 * objectScale)
+    .setDepth(50)
+    .setFlipX(true); // ADDED: Flip horizontally
 
+  // Mark that bridge needs to be created
+  this.bridgeCreated = false;
+
+  // Left barrier - at the left edge of the river
+  const leftBarrier = this.physics.add.staticImage(
+    this.bridgeX - this.gapWidth / 4, // Position at left edge of river
+    this.scale.height / 3, // Position in middle of visible screen
+    null // No texture
+  );
+  // Make it thin but very tall
+  leftBarrier.setDisplaySize(10, this.scale.height / 1.1);
+  leftBarrier.setVisible(false); // Invisible barrier
+  leftBarrier.refreshBody();
+  leftBarrier.setData("isRiverBarrier", true);
+  this.platforms.add(leftBarrier);
+
+  // Store references to both barriers so we can disable them when the bridge is created
+  this.riverBarriers = [leftBarrier];
   // Add Johann as doorman with responsive positioning
+
   this.johann = this.physics.add
     .sprite(
       this.bridgeX + this.gapWidth / 2 + 300 * scaleX,
@@ -4573,64 +4616,6 @@ function createLevel3(bgRepeat) {
   return this.platforms;
 }
 
-// Function to create bridge when all skills are collected
-function createBridge() {
-  // Prevent creating bridge multiple times
-  if (this.bridgeCreated) return;
-  this.bridgeCreated = true;
-
-  // Create a visual placeholder for the bridge (initially raised)
-  this.bridgeGraphics = this.add.graphics();
-  this.bridgeGraphics.fillStyle(0x8b4513); // Brown wood color
-  this.bridgeGraphics.fillRect(-this.gapWidth / 2, -10, this.gapWidth, 20);
-  this.bridgeGraphics.lineStyle(2, 0x663300, 1);
-  this.bridgeGraphics.strokeRect(-this.gapWidth / 2, -10, this.gapWidth, 20);
-  this.bridgeGraphics.setPosition(this.bridgeX, this.bridgeY - 200); // Start raised
-
-  // Show notification about bridge
-  const bridgeText = this.add
-    .text(
-      this.scale.width / 2,
-      120,
-      "Bridge lowering! Make your way to Commerzbank!",
-      {
-        fontSize: "20px",
-        fill: "#ffffff",
-        stroke: "#000000",
-        strokeThickness: 3,
-      }
-    )
-    .setOrigin(0.5, 0.5)
-    .setScrollFactor(0);
-
-  // Fade out notification
-  this.tweens.add({
-    targets: bridgeText,
-    alpha: { from: 1, to: 0 },
-    delay: 3000,
-    duration: 1000,
-  });
-
-  // Animate bridge lowering
-  this.tweens.add({
-    targets: this.bridgeGraphics,
-    y: this.bridgeY,
-    duration: 2000,
-    ease: "Bounce.Out",
-    onComplete: () => {
-      // Create physical bridge collision object after animation
-      const bridge = this.platforms.create(this.bridgeX, this.bridgeY, null);
-      bridge.setDisplaySize(this.gapWidth, 20);
-      bridge.setVisible(false); // Invisible but collidable
-      bridge.refreshBody();
-      bridge.setData("isBridge", true);
-
-      // Play a bridge completion sound if available
-      // if (this.sound.get('bridgeSound')) this.sound.play('bridgeSound');
-    },
-  });
-}
-
 // Modify hitCloud function to create bridge when all skills collected
 function hitCloud(player, cloud) {
   // Skip ground collisions
@@ -4668,9 +4653,7 @@ function hitCloud(player, cloud) {
     // Check if all skills are collected - CREATE BRIDGE instead of dialogue
     if (this.coinCount >= 12 && selectedLevel === 3) {
       // Create bridge after delay
-      this.time.delayedCall(1000, () => {
-        createBridge.call(this);
-      });
+      this.time.delayedCall(1000, () => {});
     }
     // For level 2, keep the original end dialogue
     else if (this.coinCount >= 12 && selectedLevel === 2) {
