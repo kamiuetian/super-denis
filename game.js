@@ -286,7 +286,7 @@ function create() {
   this.physics.world.defaults.debugShowStaticBody = true;
   this.anims.create({
     key: "monster-run",
-    frames: this.anims.generateFrameNumbers("explosion", {
+    frames: this.anims.generateFrameNumbers("monster-run", {
       start: 0,
       end: -1,
       duration: 1000,
@@ -339,11 +339,8 @@ function setupBackground() {
   // Set camera bounds to match world
   this.cameras.main.setBounds(0, 0, worldWidth, worldHeight);
 
-  return 3; // Return default bgRepeat value for compatibility
+  return 3;
 }
-
-// Set up the player
-// Modify setupPlayer function to make player size responsive
 function setupPlayer() {
   // Calculate responsive scaling
   const scaleFactor = getResponsiveScaleFactor();
@@ -2496,7 +2493,12 @@ function addEnemies() {
       .setScale(responsiveEnemyScale)
       .setTint(0xff0000)
       .setDepth(20);
-
+    const bodyWidth = enemy.width * 0.5;
+    const bodyHeight = enemy.height;
+    const offsetX = (enemy.width - bodyWidth) / 2;
+    const offsetY = (enemy.height - bodyHeight) / 2;
+    enemy.body.setSize(bodyWidth, bodyHeight);
+    enemy.body.setOffset(offsetX, offsetY);
     // Store patrol information as custom properties
     enemy.startX = pos.x;
     enemy.leftBound = pos.x - pos.range / 2;
