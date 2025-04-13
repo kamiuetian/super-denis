@@ -104,8 +104,9 @@ function initializeGame() {
 function preload() {
   if (!gameStarted) return;
   this.load.image("levelBackground", "assets/denis/bg.jpg");
-  
-  
+  this.load.image("level1Background", "assets/denis/level1bg.png");
+
+this.load.image("level2Background", "assets/denis/levle2bg.png");
   this.load.spritesheet("drawbridge", "assets/denis/WoodenGateAndTower.png", {
     frameWidth: 64, // Adjust based on actual sprite dimensions
     frameHeight: 128, // Adjust based on actual sprite dimensions
@@ -322,31 +323,44 @@ function setupBackground() {
   const screenWidth = this.scale.width;
   const worldWidth = 5000; // Fixed world width for all levels
   const worldHeight = 5000; // Consistent with our vertical world size
-if(selectedLevel===3){
-    const background = this.add.tileSprite(0, 0, worldWidth, screenHeight, "levelBackground");
+  if (selectedLevel === 1) {
+    // Use level1bg.png for Level 1
+    const background = this.add.tileSprite(0, 0, worldWidth, screenHeight, "level1Background");
     background.setOrigin(0, 0);
     background.setScrollFactor(0.2, 0); // X scrolls slowly, Y doesn't scroll
     background.setDepth(-2);
     this.background = background;
-  
-}else{
-  // Set camera background color to white
-  this.cameras.main.setBackgroundColor(0xffffff);
+  }
+  else if (selectedLevel === 3) {
+    const background = this.add.tileSprite(
+      0,
+      0,
+      worldWidth,
+      screenHeight,
+      "levelBackground"
+    );
+    background.setOrigin(0, 0);
+    background.setScrollFactor(0.2, 0); // X scrolls slowly, Y doesn't scroll
+    background.setDepth(-2);
+    this.background = background;
+  } else {
+    // Set camera background color to white
+    this.cameras.main.setBackgroundColor(0xffffff);
 
-  // Create a single large background rectangle that covers the entire world
-  const whiteBackground = this.add.rectangle(
-    0,
-    0,
-    worldWidth,
-    worldHeight,
-    0xffffff // White color
-  );
-  whiteBackground.setOrigin(0, 0);
-  whiteBackground.setDepth(-2); // Make sure it's behind everything
+    // Create a single large background rectangle that covers the entire world
+    const whiteBackground = this.add.rectangle(
+      0,
+      0,
+      worldWidth,
+      worldHeight,
+      0xffffff // White color
+    );
+    whiteBackground.setOrigin(0, 0);
+    whiteBackground.setDepth(-2); // Make sure it's behind everything
 
-  // Store reference to background
-  this.background = whiteBackground;
-}
+    // Store reference to background
+    this.background = whiteBackground;
+  }
   // Set the world bounds to fixed dimensions
   this.physics.world.setBounds(0, 0, worldWidth, worldHeight);
 
@@ -2728,6 +2742,7 @@ function createLevel2(bgRepeat) {
   );
   skyBackground.setOrigin(0, 0);
   skyBackground.setDepth(-2);
+  setupBackground.call
 
   // 4. Initialize skill counter
   this.coinCount = 0;
