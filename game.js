@@ -338,7 +338,7 @@ function setupBackground() {
     const scaleX = screenWidth / bgWidth;
     const scaleY = screenHeight / bgHeight;
     const scale = Math.max(scaleX, scaleY); // Use MAXIMUM scale to ensure full coverage
-    
+
     background.setScale(scale);
     this.background = background;
   } else if (selectedLevel === 3) {
@@ -1041,9 +1041,6 @@ function createLevel1(bgRepeat) {
     { xOriginal: 2150, yFromBottom: 400, width: 48, height: 48 },
     { xOriginal: 2198, yFromBottom: 400, width: 48, height: 48 },
     { xOriginal: 2246, yFromBottom: 400, width: 48, height: 48 },
-    { xOriginal: 2404, yFromBottom: 700, width: 48, height: 48 },
-    { xOriginal: 2452, yFromBottom: 700, width: 48, height: 48 },
-    { xOriginal: 2500, yFromBottom: 700, width: 48, height: 48 },
     { xOriginal: 2548, yFromBottom: 700, width: 48, height: 48 },
     { xOriginal: 2596, yFromBottom: 700, width: 48, height: 48 },
     { xOriginal: 2692, yFromBottom: 700, width: 48, height: 48 },
