@@ -91,6 +91,15 @@
         .next-button:hover {
             background-color: #ffea80;
         }
+        body.game-active::after {
+    display: none !important;
+    /* Hide the bottom border when game is active */
+}
+
+.game-active .logo-container {
+    display: none !important;
+    /* Hide logo when game is active */
+}
     </style>
 </head>
 
@@ -120,6 +129,7 @@
         function startLevel2() {
             // Hide the video content
             document.getElementById('video').style.display = 'none';
+            document.body.classList.add('game-active');
 
             // Show and configure the game container
             const gameContainer = document.getElementById('game-container');
