@@ -91,8 +91,33 @@
         .next-button:hover {
             background-color: #ffea80;
         }
+
+        body.game-active::after {
+            display: none !important;
+            /* Hide the bottom border when game is active */
+        }
+
+        .game-active .logo-container {
+            display: none !important;
+            /* Hide logo when game is active */
+        }
     </style>
     <scrpt src="game.js"></scrpt>
+    <script>
+        // Check URL parameters when page loads
+        document.addEventListener('DOMContentLoaded', function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('skip_button') === 'true') {
+                console.log('Skip button parameter detected - starting dialogue directly');
+
+                // Hide the video content
+                document.getElementById('video').style.display = 'none';
+
+                // Start Level 3 directly
+                startLevel3();
+            }
+        });
+    </script>
 </head>
 
 <body>
@@ -344,6 +369,9 @@
                                         if (secondsLeft <= 0) {
                                             clearInterval(countdownInterval);
                                             introContainer.style.opacity = "0";
+
+                                            // ADDED: Add class to hide logo and border when game starts
+                                            document.body.classList.add('game-active');
 
                                             setTimeout(() => {
                                                 introContainer.remove();

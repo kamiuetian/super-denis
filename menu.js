@@ -717,3 +717,28 @@ function showConfirmationModal(message, confirmText, cancelText, onConfirm) {
 
 // Run initialization when the script loads
 document.addEventListener("DOMContentLoaded", initMenu);
+// Add this function to menu.js (or modify your existing level selection handler)
+function selectLevel(level) {
+  console.log("Selected level:", level);
+
+  // For Level 3, redirect to video2.html to ensure the intro dialogue plays
+  if (level === 3) {
+    window.location.href = "video2.html?skip_button=true"; // Add skip_intro parameter to URL
+    return; // Stop execution here for level 3
+  }
+
+  // Existing code for other levels
+  const gameMenu = document.getElementById("game-menu");
+  gameMenu.classList.add("hidden");
+
+  selectedLevel = level;
+  console.log("Setting level to:", selectedLevel);
+
+  // Initialize the game with the selected level
+  if (!game) {
+    game = new Phaser.Game(config);
+    gameStarted = true;
+  } else {
+    game.scene.scenes[0].scene.restart();
+  }
+}
