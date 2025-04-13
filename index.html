@@ -78,6 +78,32 @@
     <!-- Menu functionality -->
     <script src="menu.js"></script>
     <script src="index.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Check if we should skip intro (coming back from game)
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('skip_intro') === 'true') {
+                // Hide intro elements
+                const introElements = document.querySelectorAll('.intro-screen, #intro-container');
+                introElements.forEach(el => {
+                    if (el) el.style.display = 'none';
+                });
+
+                // Show level select menu directly
+                const levelMenu = document.querySelector('#level-menu, .level-menu');
+                if (levelMenu) levelMenu.style.display = 'flex';
+
+                // If you have any animations or transitions on the menu, trigger them
+                const menuButtons = document.querySelectorAll('.level-button');
+                menuButtons.forEach((button, index) => {
+                    setTimeout(() => {
+                        button.classList.add('visible');
+                    }, index * 100);
+                });
+            }
+        });
+    </script>
 </body>
 
 </html>

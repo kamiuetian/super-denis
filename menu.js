@@ -544,25 +544,62 @@ function showNextIntroDialog(isAutoAdvance = false) {
 function initMenu() {
   console.log("Initializing menu...");
 
-  // Hide game menu initially
+  // Get the game menu element
   const gameMenu = document.getElementById("game-menu");
 
-  // Add background image to game menu
-  // gameMenu.style.backgroundImage = "url('assets/titlepage.png')";
+  // Set up game menu styling
   gameMenu.style.backgroundColor = "#002e3c";
   gameMenu.style.borderBottom = "10px solid #fed200";
 
-  // Add logo to top right of game menu
+  // Add logo to game menu
   createLogo(gameMenu);
-
-  // Hide level options initially
-  const levelButtons = document.getElementsByClassName("level-option");
-  for (let button of levelButtons) {
-    button.style.display = "none";
-  }
   addBottomBorder(gameMenu);
-  // Start with the start screen instead of intro
-  createStartScreen();
+
+  // Check URL parameters FIRST before creating any screens
+  const urlParams = new URLSearchParams(window.location.search);
+  console.log("URL Parameters:", urlParams.toString());
+  if (urlParams.get("skip_intro") === "true") {
+    // Skip intro and start screen, directly show level menu
+    console.log("Skip intro param detected - showing level menu directly");
+
+    // Remove the 'hidden' class to make menu visible
+    gameMenu.classList.remove("hidden");
+
+    // Hide main menu options (if any)
+    const menuButtons = document.getElementsByClassName("menu-option");
+    for (let button of menuButtons) {
+      button.style.display = "none";
+    }
+
+    // Show level options
+    const levelButtons = document.getElementsByClassName("level-option");
+    for (let button of levelButtons) {
+      button.style.display = "block";
+    }
+
+    // Add any animations if needed
+    document.querySelectorAll(".level-button").forEach((button, index) => {
+      setTimeout(() => {
+        button.classList.add("visible");
+      }, index * 100);
+    });
+
+    // Clear any intro elements that might exist
+    const introContainer = document.getElementById("intro-container");
+    if (introContainer) introContainer.remove();
+
+    const startContainer = document.getElementById("start-container");
+    if (startContainer) startContainer.remove();
+  } else {
+    // Normal flow - hide level options initially
+    const levelButtons = document.getElementsByClassName("level-option");
+    for (let button of levelButtons) {
+      button.style.display = "none";
+    }
+
+    // Start with the standard start screen
+    createStartScreen();
+  }
 }
 
 // Add this function at the appropriate place in your file

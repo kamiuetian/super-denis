@@ -244,6 +244,43 @@ function create() {
 
   // Setup player
   setupPlayer.call(this);
+  // ADD BACK BUTTON - Insert this code here
+  // Create back button in top left corner
+  const backButton = this.add
+    .text(20, 20, "← Back", {
+      fontSize: "18px",
+      fontFamily: "Arial",
+      color: "#ffffff",
+      backgroundColor: "#444444",
+      padding: { x: 10, y: 8 },
+      stroke: "#000000",
+      strokeThickness: 2,
+    })
+    .setScrollFactor(0) // Keep fixed to camera
+    .setOrigin(0, 0) // Align to top left
+    .setDepth(1000) // Make sure it's on top of everything
+    .setInteractive({ useHandCursor: true }); // Make it clickable with hand cursor
+
+  // Add hover effects
+  backButton.on("pointerover", () => {
+    backButton.setStyle({
+      backgroundColor: "#666666",
+      color: "#ffff00",
+    });
+  });
+
+  backButton.on("pointerout", () => {
+    backButton.setStyle({
+      backgroundColor: "#444444",
+      color: "#ffffff",
+    });
+  });
+
+  // Add click handler to return to menu
+  backButton.on("pointerdown", () => {
+    // Navigate back to index.html with a parameter to skip intro
+    window.location.href = "index.html?skip_intro=true";
+  });
   this.physics.world.defaults.debugBodyColor = 0xff00ff; // Bright pink
   this.physics.world.defaults.debugShowBody = true;
   this.physics.world.defaults.debugShowStaticBody = true;
@@ -2431,7 +2468,7 @@ function resetSkillPanel() {
 function addEnemies() {
   // Calculate responsive scaling
   const scaleFactor = getResponsiveScaleFactor();
-  const enemyBaseScale = 2; // Your original enemy scale
+  const enemyBaseScale = 4; // Your original enemy scale
   const responsiveEnemyScale = enemyBaseScale * scaleFactor;
 
   // Clear any existing enemies to avoid conflicts
@@ -2795,6 +2832,7 @@ function createLevel2(bgRepeat) {
     { xRatio: 2600 / baseWidth, yFromBottom: 320 },
     { xRatio: 2850 / baseWidth, yFromBottom: 250 },
     { xRatio: 3100 / baseWidth, yFromBottom: 300 },
+    { xRatio: 100 / baseWidth, yFromBottom: 400 },
   ];
 
   // Create clouds and add skills
@@ -2833,6 +2871,8 @@ function createLevel2(bgRepeat) {
       // Store reference to cloud and skill
       cloud.setData("skillItem", skill);
       skill.setData("cloud", cloud);
+    } else {
+      cloud.setData("isPlatform", true); // Set as platform for the boss
     }
   }
 
@@ -5787,13 +5827,13 @@ function fixCameraBounds() {
     // Call original update method
     originalUpdate.apply(this, arguments);
 
-     const playerX = this.scene.player.x - this.scrollX;
+    const playerX = this.scene.player.x - this.scrollX;
 
-     // ADDED: Make sure player stays visible when moving left
-     // If player is too close to left edge, adjust camera
-     if (playerX < 100) {
-       this.scrollX = this.scene.player.x - 100;
-     }
+    // ADDED: Make sure player stays visible when moving left
+    // If player is too close to left edge, adjust camera
+    if (playerX < 100) {
+      this.scrollX = this.scene.player.x - 100;
+    }
     // Never show below ground
     if (this.scrollY + gameHeight > groundY + 20) {
       this.scrollY = groundY + 20 - gameHeight;
