@@ -5476,7 +5476,7 @@ function playerHitCloud(player, cloud) {
     cloud.x,
     cloud.y,
     `${level2Skills[skillIndex].icon} ${level2Skills[skillIndex].name}`,
-    { fontSize: "32px" }
+    { fontSize: "24px" }
   );
 
   // Animate the symbol falling from the cloud
