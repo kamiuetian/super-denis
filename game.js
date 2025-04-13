@@ -445,7 +445,6 @@ function update(time, delta) {
     }
   }
 
-  
   // Allow movement even during dialogue in level 3
   if (selectedLevel === 2 && this.boss) {
     updateBoss.call(this, time);
@@ -4477,16 +4476,25 @@ function createLevel3(bgRepeat) {
   this.bridgeY = currentHeight - groundHeight / 2;
   this.gapWidth = 300 * scaleX; // Scale gap width
 
-  // Create the gap/river with proper scaling
+  // First, remove any ground tiles in the river area
+  // Find and remove ground blocks that overlap with the river
+
+  // Create a more visually appealing water/river
+  const riverArea = this.add.group();
+
+  // Create the main river body
   const riverGraphics = this.add.graphics();
   riverGraphics.fillStyle(0x0077be); // Water blue
   riverGraphics.fillRect(
     this.bridgeX - this.gapWidth / 2,
-    groundTop,
+    groundTop - groundHeight + 6, // FIXED: Align exactly with ground visual surface
     this.gapWidth,
-    groundHeight
+    groundHeight * 2 // INCREASED: Make river deeper for better visibility
   );
-  riverGraphics.setDepth(1);
+  riverGraphics.setDepth(10); // Higher depth to ensure visibility
+  riverArea.add(riverGraphics);
+
+  // Make sure the visual ground tileSprite doesn't cover the river
 
   // Add Johann as doorman with responsive positioning
   this.johann = this.physics.add
@@ -4514,22 +4522,27 @@ function createLevel3(bgRepeat) {
   // Create deadly collision area for the river with responsive sizing
   this.deathZone = this.add.zone(
     this.bridgeX,
-    this.scale.height - 50 * scaleY,
+    groundTop - groundHeight, // Position at the top of the ground
     this.gapWidth,
-    100 * scaleY
+    groundHeight * 4 // Make it much taller to catch players at any height
   );
 
-  this.deathZone.y = groundTop + groundHeight / 2;
   this.physics.world.enable(this.deathZone);
   this.deathZone.body.setAllowGravity(false);
   this.deathZone.body.immovable = true;
 
-  // Add collision with the death zone
+  // Add collision with the death zone - use a proper process callback
   this.riverCollider = this.physics.add.overlap(
     this.player,
     this.deathZone,
     riverDeath,
-    null,
+    (player, zone) => {
+      // Additional check to ensure player is truly in the river area
+      return (
+        player.x > this.bridgeX - this.gapWidth / 2 &&
+        player.x < this.bridgeX + this.gapWidth / 2
+      );
+    },
     this
   );
 
