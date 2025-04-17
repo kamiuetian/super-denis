@@ -603,7 +603,7 @@ function update(time, delta) {
         const scaleFactor = getResponsiveScaleFactor();
 
         // Base jump velocity (what would be used at 1920x1080)
-        const baseJumpVelocity = -750;
+        const baseJumpVelocity = -780;
 
         // Apply scaled jump velocity
         const scaledJumpVelocity = baseJumpVelocity * (scaleFactor * 1.2);
@@ -2919,7 +2919,7 @@ function createLevel2(bgRepeat) {
   this.tweens.add({
     targets: instructionText,
     alpha: { from: 1, to: 0 },
-    delay: 3000,
+    delay: 5000,
     duration: 1000,
     ease: "Power2",
   });
