@@ -2603,13 +2603,14 @@ const level2Skills = [
   },
   {
     icon: "🔄",
-    name: "Digital Consultancy",
+    name: "Sales - Customer centric thinking",
     message: "Let me optimize your workflows!",
   },
+
   {
-    icon: "🤖",
-    name: "AI Business Implementation",
-    message: "AI solutions for business problems",
+    icon: "🗃️",
+    name: "IT Project Coordinator",
+    message: "Keeping projects on track",
   },
   {
     icon: "👥",
@@ -2617,16 +2618,15 @@ const level2Skills = [
     message: "I work well with others",
   },
   {
-    icon: "♟️",
-    name: "Strategic Thinking",
-    message: "Always thinking three steps ahead",
-  },
-  {
     icon: "☁️",
     name: "Cloud & Security",
     message: "Your data is safe with me",
   },
-  { icon: "💸", name: "Finance", message: "I understand the bottom line" },
+  {
+    icon: "💸",
+    name: "Economics & Finance studies",
+    message: "I understand the bottom line",
+  },
   {
     icon: "⚡",
     name: "Fast Learner",
@@ -2638,20 +2638,26 @@ const level2Skills = [
     message: "I don't wait for instructions",
   },
   {
-    icon: "🗃️",
-    name: "IT Project Coordinator",
-    message: "Keeping projects on track",
-  },
-  {
     icon: "🖧",
     name: "ICT Infrastructure",
     message: "Building solid foundations",
   },
   {
+    icon: "🤖",
+    name: "AI use case identification (Azure AI) (Copilot)",
+    message: "AI solutions for business problems",
+  },
+
+  {
+    icon: "♟️",
+    name: "Solution Oriented",
+    message: "Always thinking three steps ahead",
+  },
+
+  {
     icon: "🌍",
-    name: "Languages",
-    message: "I speak six languages!",
-    langs: ["English", "Urdu", "French", "German", "Spanish", "Arabic"],
+    name: "Digital Consulting",
+    message: "",
   },
 ];
 // Replace the existing createLevel2 function with this complete implementation
@@ -3011,65 +3017,7 @@ function hitCloud(player, cloud) {
 
     // Get the current skill
     const skillIndex = skill.getData("skillIndex");
-    const level2Skills = [
-      {
-        icon: "🎤",
-        name: "Public Speaking",
-        message: "I'm great at presentations!",
-      },
-      {
-        icon: "🔄",
-        name: "Digital Consultancy",
-        message: "Let me optimize your workflows!",
-      },
-      {
-        icon: "🤖",
-        name: "AI Business Implementation",
-        message: "AI solutions for business problems",
-      },
-      {
-        icon: "👥",
-        name: "Team Collaboration",
-        message: "I work well with others",
-      },
-      {
-        icon: "♟️",
-        name: "Strategic Thinking",
-        message: "Always thinking three steps ahead",
-      },
-      {
-        icon: "☁️",
-        name: "Cloud & Security",
-        message: "Your data is safe with me",
-      },
-      { icon: "💸", name: "Finance", message: "I understand the bottom line" },
-      {
-        icon: "⚡",
-        name: "Fast Learner",
-        message: "Quick to adapt to new challenges",
-      },
-      {
-        icon: "🚀",
-        name: "Initiative",
-        message: "I don't wait for instructions",
-      },
-      {
-        icon: "🗃️",
-        name: "IT Project Coordinator",
-        message: "Keeping projects on track",
-      },
-      {
-        icon: "🖧",
-        name: "ICT Infrastructure",
-        message: "Building solid foundations",
-      },
-      {
-        icon: "🌍",
-        name: "Languages",
-        message: "I speak six languages!",
-        langs: ["English", "Urdu"],
-      },
-    ];
+
     const currentSkill = level2Skills[skillIndex % level2Skills.length];
 
     // Show skill icon
@@ -3114,7 +3062,7 @@ function hitCloud(player, cloud) {
             });
 
             // SPECIAL CASE FOR LANGUAGES (index 11)
-            if (skillIndex === 11) {
+            /*if (skillIndex === 11) {
               console.log("Falling languages animation triggered");
               // Create language array if not already defined
               const languages = [
@@ -3176,7 +3124,7 @@ function hitCloud(player, cloud) {
                 });
                 return; // Skip the normal completion check
               }
-            }
+            }*/
           },
         });
       },
@@ -5507,7 +5455,7 @@ function playerHitCloud(player, cloud) {
       });
 
       // SPECIAL CASE FOR LANGUAGES (index 11)
-      if (skillIndex === 11) {
+      /*if (skillIndex === 11) {
         console.log("Falling languages animation triggered");
         // Create language array if not already defined
         const languages = [
@@ -5562,7 +5510,7 @@ function playerHitCloud(player, cloud) {
           });
           return; // Skip the normal completion check
         }
-      }
+      }*/
     },
   });
 
