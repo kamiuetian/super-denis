@@ -3311,21 +3311,21 @@ function levelComplete() {
   const dialog = this.add.graphics();
   dialog.fillStyle(0x000000, 0.8);
   dialog.fillRect(
-    this.scale.width / 2 - 200,
+    this.scale.width / 2 - 240, // Make box wider to better fit text
     this.scale.height / 2 - 150,
     480,
     300
   );
   dialog.lineStyle(2, 0x00ff00, 1);
   dialog.strokeRect(
-    this.scale.width / 2 - 200,
+    this.scale.width / 2 - 240,
     this.scale.height / 2 - 150,
     480,
     300
   );
   dialog.setScrollFactor(0);
 
-  // Add completion text
+  // Add completion text with proper centering
   this.add
     .text(
       this.scale.width / 2,
@@ -3335,13 +3335,15 @@ function levelComplete() {
         fontSize: "24px",
         fontStyle: "bold",
         fill: "#00ff00",
+        align: "center", // Add align property to text style
+        wordWrap: { width: 440 }, // Add word wrap with proper width
       }
     )
     .setScrollFactor(0)
-    .setAlign("center")
-    .setOrigin(0.5, 0);
+    .setAlign("center") // Apply center alignment
+    .setOrigin(0.5, 0); // Set origin to center horizontally
 
-  // Add congratulatory message
+  // Add congratulatory message with proper centering
   this.add
     .text(
       this.scale.width / 2,
@@ -3350,28 +3352,32 @@ function levelComplete() {
       {
         fontSize: "16px",
         fill: "#ffffff",
+        align: "center", // Add align property to text style
+        wordWrap: { width: 440 }, // Add word wrap with proper width
       }
     )
     .setScrollFactor(0)
-    .setAlign("center")
-    .setOrigin(0.5, 0);
+    .setAlign("center") // Apply center alignment
+    .setOrigin(0.5, 0); // Set origin to center horizontally
 
-  // Add progression text
+  // Add progression text with proper centering
   this.add
     .text(
       this.scale.width / 2,
       this.scale.height / 2,
-      "Moving to Level 3 where you will learn about \n my motivation to join IDDP.",
+      "Moving to Level 3 where you will learn about \nmy motivation to join IDDP.",
       {
         fontSize: "16px",
         fill: "#ffffff",
+        align: "center", // Add align property to text style
+        wordWrap: { width: 440 }, // Add word wrap with proper width
       }
     )
     .setScrollFactor(0)
-    .setAlign("center")
-    .setOrigin(0.5, 0);
+    .setAlign("center") // Apply center alignment
+    .setOrigin(0.5, 0); // Set origin to center horizontally
 
-  // Add progress indicator
+  // Add progress indicator with proper centering
   this.add
     .text(
       this.scale.width / 2,
@@ -3380,11 +3386,12 @@ function levelComplete() {
       {
         fontSize: "14px",
         fill: "#aaaaaa",
+        align: "center", // Add align property to text style
       }
     )
     .setScrollFactor(0)
-    .setAlign("center")
-    .setOrigin(0.5, 0);
+    .setAlign("center") // Apply center alignment
+    .setOrigin(0.5, 0); // Set origin to center horizontally
 
   // Move to next level after delay
   this.time.delayedCall(
