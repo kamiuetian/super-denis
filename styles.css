@@ -50,38 +50,72 @@ html {
     background-size: contain;
 }
 
+/* Updated menu layout styles */
 .menu-content {
     display: flex;
     flex-direction: column;
     align-items: center;
     max-width: 600px;
     margin: 0 auto;
+    position: relative; /* Added for positioning context */
 }
 
-.header-section {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
+/* Modify the levels table layout */
 .levels-table {
     border-collapse: separate;
     border-spacing: 0 20px;
-    /* Vertical space between table rows */
     margin: 0 auto;
-    margin-left:-80px;
+    position: relative; /* For positioning context */
 }
 
-.levels-table td {
-    padding: 0;
-    vertical-align: middle;
-}
-
+/* Remove the existing styling for first-child */
 .levels-table td:first-child {
-    padding-right: 20px;
+    padding-right: 0;
     text-align: right;
 }
 
-/* Make sure game menu is centered nicely */
+/* Style for level numbers - positioned outside */
+.level-number {
+    color: #FFCC00;
+    font-weight: bold;
+    font-size: 1.1rem;
+    white-space: nowrap;
+    position: absolute;
+    right: calc(100% + 15px); /* Position outside the table */
+    transform: translateY(-50%);
+    top: 50%;
+}
+
+/* Make sure level rows have positioning context */
+.levels-table tr {
+    position: relative;
+}
+
+/* Center the level options/buttons in the table */
+.level-option {
+    background-color: #FFCC00;
+    color: #000;
+    padding: 12px 20px;
+    border-radius: 5px;
+    text-align: center;
+    width: 250px;
+    text-decoration: none;
+    display: block;
+    font-weight: bold;
+    margin: 0 auto; /* Center in the column */
+}
+
+/* Make the Go back button smaller */
+#go-back {
+    width: 120px !important;
+    /* Smaller width */
+    padding: 8px 15px !important;
+    /* Smaller padding */
+    font-size: 0.95rem !important;
+    /* Slightly smaller font */
+    margin-top: 10px;
+}
+
 #game-menu {
     display: flex;
     flex-direction: column;
