@@ -603,7 +603,7 @@ function update(time, delta) {
         const scaleFactor = getResponsiveScaleFactor();
 
         // Base jump velocity (what would be used at 1920x1080)
-        const baseJumpVelocity = -780;
+        const baseJumpVelocity = -850;
 
         // Apply scaled jump velocity
         const scaledJumpVelocity = baseJumpVelocity * (scaleFactor * 1.2);
@@ -2926,7 +2926,7 @@ function createLevel2(bgRepeat) {
 
   // 7. Create cloud platforms with responsive positioning
   const cloudPositions = [
-    { xRatio: 250 / baseWidth, yFromBottom: 300 },
+    { xRatio: 250 / baseWidth, yFromBottom: 350 },
     { xRatio: 500 / baseWidth, yFromBottom: 510 },
     { xRatio: 750 / baseWidth, yFromBottom: 490 },
     { xRatio: 1000 / baseWidth, yFromBottom: 600 },
