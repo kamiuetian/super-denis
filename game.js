@@ -3346,7 +3346,7 @@ function levelComplete() {
     .text(
       this.scale.width / 2,
       this.scale.height / 2 - 60,
-      "You have showcased all your professional skills!",
+      "You have collected my professional skills!",
       {
         fontSize: "16px",
         fill: "#ffffff",
@@ -3361,7 +3361,7 @@ function levelComplete() {
     .text(
       this.scale.width / 2,
       this.scale.height / 2,
-      "Moving to Level 3 where you will\nface the final challenge!",
+      "Moving to Level 3 where you will learn about \nmy motivation to join IDDP.",
       {
         fontSize: "16px",
         fill: "#ffffff",
