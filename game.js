@@ -2644,7 +2644,7 @@ const level2Skills = [
   },
   {
     icon: "🤖",
-    name: "AI use case identification (Azure AI) (Copilot)",
+    name: "AI use case identification",
     message: "AI solutions for business problems",
   },
 
@@ -2769,7 +2769,7 @@ function createLevel2(bgRepeat) {
 
   // 5. Create skills panel with responsive positioning and sizing
   const panelWidth = 300 * scaleX;
-  const panelHeight = 400 * scaleY;
+  const panelHeight = 355 * scaleY;
   const panelX = currentWidth - panelWidth - 20 * scaleX;
   const panelY = 20 * scaleY;
 
@@ -2793,7 +2793,7 @@ function createLevel2(bgRepeat) {
   // Skills counter with responsive font
   const counterSize = Math.max(16 * scaleY, 14); // Minimum size of 12px
   this.skillsCounter = this.add
-    .text(panelX + 30 * scaleX, panelY + 350 * scaleY, "Skills: 0/12", {
+    .text(panelX + 30 * scaleX, panelY + 330 * scaleY, "Skills: 0/12", {
       fontSize: `${counterSize}px`,
       fill: "#FFD700",
       fontWeight: "bold",
