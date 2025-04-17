@@ -3382,7 +3382,7 @@ function levelComplete() {
     .text(
       this.scale.width / 2,
       this.scale.height / 2 + 100,
-      "Continuing in 5 seconds...",
+      "Continuing in 6 seconds...",
       {
         fontSize: "14px",
         fill: "#aaaaaa",
@@ -3395,7 +3395,7 @@ function levelComplete() {
 
   // Move to next level after delay
   this.time.delayedCall(
-    3000,
+    6000,
     () => {
       window.location.href = "video2.html"; // Adjust as needed
     },
@@ -5604,7 +5604,7 @@ function playerHitCloud(player, cloud) {
 
     this.time.delayedCall(1000, () => {
       this.physics.pause();
-levelComplete.call(this);
+      levelComplete.call(this);
     });
   }
 }
