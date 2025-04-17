@@ -3311,7 +3311,7 @@ function levelComplete() {
   const dialog = this.add.graphics();
   dialog.fillStyle(0x000000, 0.8);
   dialog.fillRect(
-    this.scale.width / 2 - 240, // Make box wider to better fit text
+    this.scale.width / 2 - 240,
     this.scale.height / 2 - 150,
     480,
     300
@@ -3325,79 +3325,111 @@ function levelComplete() {
   );
   dialog.setScrollFactor(0);
 
-  // Add completion text with proper centering
-  this.add
-    .text(
-      this.scale.width / 2,
-      this.scale.height / 2 - 120,
-      "LEVEL 2 COMPLETED!",
-      {
+  // Define all message texts
+  const messages = [
+    {
+      text: "LEVEL 2 COMPLETED!",
+      style: {
         fontSize: "24px",
         fontStyle: "bold",
         fill: "#00ff00",
-        align: "center", // Add align property to text style
-        wordWrap: { width: 440 }, // Add word wrap with proper width
-      }
-    )
-    .setScrollFactor(0)
-    .setAlign("center") // Apply center alignment
-    .setOrigin(0.5, 0); // Set origin to center horizontally
-
-  // Add congratulatory message with proper centering
-  this.add
-    .text(
-      this.scale.width / 2,
-      this.scale.height / 2 - 60,
-      "You have collected my professional skills!",
-      {
+        align: "center",
+        wordWrap: { width: 440 },
+      },
+      y: this.scale.height / 2 - 120,
+    },
+    {
+      text: "You have collected my professional skills!",
+      style: {
         fontSize: "16px",
         fill: "#ffffff",
-        align: "center", // Add align property to text style
-        wordWrap: { width: 440 }, // Add word wrap with proper width
-      }
-    )
-    .setScrollFactor(0)
-    .setAlign("center") // Apply center alignment
-    .setOrigin(0.5, 0); // Set origin to center horizontally
-
-  // Add progression text with proper centering
-  this.add
-    .text(
-      this.scale.width / 2,
-      this.scale.height / 2,
-      "Moving to Level 3 where you will learn about \nmy motivation to join IDDP.",
-      {
+        align: "center",
+        wordWrap: { width: 440 },
+      },
+      y: this.scale.height / 2 - 60,
+    },
+    {
+      text: "Moving to Level 3 where you will learn about\nmy motivation to join IDDP.",
+      style: {
         fontSize: "16px",
         fill: "#ffffff",
-        align: "center", // Add align property to text style
-        wordWrap: { width: 440 }, // Add word wrap with proper width
-      }
-    )
-    .setScrollFactor(0)
-    .setAlign("center") // Apply center alignment
-    .setOrigin(0.5, 0); // Set origin to center horizontally
+        align: "center",
+        wordWrap: { width: 440 },
+      },
+      y: this.scale.height / 2,
+    },
+    {
+      text: "",
+      style: { fontSize: "14px", fill: "#aaaaaa", align: "center" },
+      y: this.scale.height / 2 + 100,
+    },
+  ];
 
-  // Add progress indicator with proper centering
-  this.add
-    .text(
-      this.scale.width / 2,
-      this.scale.height / 2 + 100,
-      "Continuing in 6 seconds...",
-      {
-        fontSize: "14px",
-        fill: "#aaaaaa",
-        align: "center", // Add align property to text style
-      }
-    )
-    .setScrollFactor(0)
-    .setAlign("center") // Apply center alignment
-    .setOrigin(0.5, 0); // Set origin to center horizontally
+  // Create text objects with empty strings initially
+  const textObjects = messages.map((msg) => {
+    return this.add
+      .text(this.scale.width / 2, msg.y, "", msg.style)
+      .setScrollFactor(0)
+      .setAlign("center")
+      .setOrigin(0.5, 0);
+  });
 
-  // Move to next level after delay
+  // Function to create typing animation for a text object
+  const typeText = (textObj, fullText, onComplete, charDelay = 30) => {
+    let currentIndex = 0;
+    const length = fullText.length;
+
+    // Clear any existing typing timer
+    if (textObj.typingTimer) {
+      this.time.removeEvent(textObj.typingTimer);
+    }
+
+    // Create new typing timer
+    textObj.typingTimer = this.time.addEvent({
+      delay: charDelay,
+      callback: () => {
+        // Add next character
+        currentIndex++;
+        textObj.setText(fullText.substring(0, currentIndex));
+
+        // Check if typing complete
+        if (currentIndex >= length) {
+          this.time.removeEvent(textObj.typingTimer);
+          if (onComplete) onComplete();
+        }
+      },
+      repeat: length - 1,
+    });
+  };
+
+  // Start typing animations in sequence
+  const startTypingSequence = (index = 0) => {
+    if (index >= textObjects.length) return;
+
+    // Calculate delay based on message length (faster for shorter messages)
+    const charDelay = index === 0 ? 50 : 30; // First message is title - type slower
+
+    typeText(
+      textObjects[index],
+      messages[index].text,
+      () => {
+        // Small pause before starting next text
+        this.time.delayedCall(300, () => {
+          startTypingSequence(index + 1);
+        });
+      },
+      charDelay
+    );
+  };
+
+  // Start the typing sequence
+  startTypingSequence();
+
+  // Move to next level after delay (keep the 6 second timer)
   this.time.delayedCall(
-    6000,
+    8000,
     () => {
-      window.location.href = "video2.html"; // Adjust as needed
+      window.location.href = "video2.html";
     },
     [],
     this
