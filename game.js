@@ -3359,7 +3359,7 @@ function levelComplete() {
       y: this.scale.height / 2,
     },
     {
-      text: "",
+      text: "continuing in 5 seconds...",
       style: { fontSize: "14px", fill: "#aaaaaa", align: "center" },
       y: this.scale.height / 2 + 100,
     },
@@ -3379,20 +3379,16 @@ function levelComplete() {
     let currentIndex = 0;
     const length = fullText.length;
 
-    // Clear any existing typing timer
     if (textObj.typingTimer) {
       this.time.removeEvent(textObj.typingTimer);
     }
 
-    // Create new typing timer
     textObj.typingTimer = this.time.addEvent({
       delay: charDelay,
       callback: () => {
-        // Add next character
         currentIndex++;
         textObj.setText(fullText.substring(0, currentIndex));
 
-        // Check if typing complete
         if (currentIndex >= length) {
           this.time.removeEvent(textObj.typingTimer);
           if (onComplete) onComplete();
@@ -3404,16 +3400,25 @@ function levelComplete() {
 
   // Start typing animations in sequence
   const startTypingSequence = (index = 0) => {
-    if (index >= textObjects.length) return;
+    if (index >= textObjects.length) {
+      // All typing animations complete - NOW start the 5 second timer for redirect
+      this.time.delayedCall(
+        5000,
+        () => {
+          window.location.href = "video2.html";
+        },
+        [],
+        this
+      );
+      return;
+    }
 
-    // Calculate delay based on message length (faster for shorter messages)
-    const charDelay = index === 0 ? 50 : 30; // First message is title - type slower
+    const charDelay = index === 0 ? 50 : 30;
 
     typeText(
       textObjects[index],
       messages[index].text,
       () => {
-        // Small pause before starting next text
         this.time.delayedCall(300, () => {
           startTypingSequence(index + 1);
         });
@@ -3425,15 +3430,8 @@ function levelComplete() {
   // Start the typing sequence
   startTypingSequence();
 
-  // Move to next level after delay (keep the 6 second timer)
-  this.time.delayedCall(
-    8000,
-    () => {
-      window.location.href = "video2.html";
-    },
-    [],
-    this
-  );
+  // REMOVED: The previous timer that was independent of typing completion
+  // Now redirection happens exactly 5 seconds after all text has appeared
 }
 
 // Update function for boss tennis ball shooting
