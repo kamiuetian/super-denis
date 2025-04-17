@@ -5604,26 +5604,7 @@ function playerHitCloud(player, cloud) {
 
     this.time.delayedCall(1000, () => {
       this.physics.pause();
-
-      const completionText = this.add
-        .text(
-          this.scale.width / 2,
-          this.scale.height / 2 - 100,
-          "All skills collected!",
-          {
-            fontSize: "24px",
-            fill: "#ffffff",
-            stroke: "#000000",
-            strokeThickness: 4,
-          }
-        )
-        .setOrigin(0.5)
-        .setScrollFactor(0);
-
-      this.time.delayedCall(3000, () => {
-        // Progress to next section or level
-        levelComplete.call(this);
-      });
+levelComplete.call(this);
     });
   }
 }
