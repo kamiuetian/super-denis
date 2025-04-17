@@ -2740,15 +2740,23 @@ function createLevel2(bgRepeat) {
   );
 
   // 3. Set background - blue sky
-  const skyBackground = this.add.rectangle(
-    0,
-    0,
-    5000 * scaleX,
-    currentHeight,
-    0x87ceeb
-  );
-  skyBackground.setOrigin(0, 0);
-  skyBackground.setDepth(-2);
+  const background = this.add
+    .image(currentWidth / 2, currentHeight / 2, "level2Background")
+    .setOrigin(0.5, 0.5) // Center the image
+    .setScrollFactor(0) // Fixed to camera (no scrolling)
+    .setDepth(-2);
+
+  // Scale to cover the entire screen width
+  const bgWidth = background.width;
+  const bgHeight = background.height;
+
+  // Use scaleX to ensure full width coverage, even if it crops some height
+  const bgScaleX = currentWidth / bgWidth;
+  const bgScaleY = currentHeight / bgHeight;
+  const bgScale = Math.max(bgScaleX, bgScaleY); // Use MAXIMUM scale to ensure full coverage
+
+  background.setScale(bgScale);
+  this.background = background;
 
   // 4. Initialize skill counter
   this.coinCount = 0;
@@ -4323,21 +4331,23 @@ function createLevel3(bgRepeat) {
   groundVisual.setOrigin(0, 0);
   groundVisual.setDepth(4); // Below the actual block depth
   // 5. Set white background (consistent with other levels)
-  const bgWidth = 5000; // World width
-  const bgHeight = this.scale.height;
+  const background = this.add
+    .image(currentWidth / 2, currentHeight / 2, "levelBackground")
+    .setOrigin(0.5, 0.5) // Center the image
+    .setScrollFactor(0) // Fixed to camera (no scrolling)
+    .setDepth(-2);
 
-  // Create a tiled background image that covers the entire level width
-  const levelBg = this.add.tileSprite(
-    0,
-    0,
-    bgWidth,
-    bgHeight,
-    "levelBackground"
-  );
-  levelBg.setOrigin(0, 0);
-  levelBg.setScrollFactor(0.2, 0); // X scrolls at 0.2 speed for parallax effect, Y doesn't scroll
-  levelBg.setDepth(-2); // Keep it behind everything else
+  // Scale to cover the entire screen width
+  const bgWidth = background.width;
+  const bgHeight = background.height;
 
+  // Use scaleX to ensure full width coverage, even if it crops some height
+  const bgScaleX = currentWidth / bgWidth;
+  const bgScaleY = currentHeight / bgHeight;
+  const bgScale = Math.max(bgScaleX, bgScaleY); // Use MAXIMUM scale to ensure full coverage
+
+  background.setScale(bgScale);
+  this.background = background;
   // 6. Initialize skill counter
   this.coinCount = 0;
 

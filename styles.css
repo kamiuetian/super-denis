@@ -68,6 +68,7 @@ html {
     border-spacing: 0 20px;
     /* Vertical space between table rows */
     margin: 0 auto;
+    margin-left:-80px;
 }
 
 .levels-table td {
