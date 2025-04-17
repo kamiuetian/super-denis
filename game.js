@@ -105,11 +105,23 @@ function preload() {
   if (!gameStarted) return;
   this.load.image("levelBackground", "assets/denis/bg.jpg");
   this.load.image("level1Background", "assets/denis/level1bg.png");
-
+  this.load.spritesheet("secondCharacter", "assets/denis/SecondCharacter.png", {
+    frameWidth: 32,
+    frameHeight: 32,
+  });
   this.load.image("level2Background", "assets/denis/levle2bg.png");
   this.load.spritesheet("drawbridge", "assets/denis/WoodenGateAndTower.png", {
     frameWidth: 64, // Adjust based on actual sprite dimensions
     frameHeight: 128, // Adjust based on actual sprite dimensions
+  });
+  this.load.spritesheet("tennis-idle", "assets/denis/l2Player.png", {
+    frameWidth: 32,
+    frameHeight: 32,
+  });
+
+  this.load.spritesheet("tennis-run", "assets/denis/l2Playerrun.png", {
+    frameWidth: 32,
+    frameHeight: 32,
   });
   this.load.spritesheet("monster-run", "assets/denis/MonsterRunning.png", {
     frameWidth: 32,
@@ -292,6 +304,25 @@ function create() {
   this.physics.world.defaults.debugBodyColor = 0xff00ff; // Bright pink
   this.physics.world.defaults.debugShowBody = true;
   this.physics.world.defaults.debugShowStaticBody = true;
+  this.anims.create({
+    key: "tennis-stand",
+    frames: this.anims.generateFrameNumbers("tennis-idle", {
+      start: 0,
+      end: -1,
+    }),
+    frameRate: 13,
+    repeat: -1,
+  });
+
+  this.anims.create({
+    key: "tennis-right",
+    frames: this.anims.generateFrameNumbers("tennis-run", {
+      start: 0,
+      end: -1,
+    }),
+    frameRate: 10,
+    repeat: -1,
+  });
   this.anims.create({
     key: "monster-run",
     frames: this.anims.generateFrameNumbers("monster-run", {
@@ -543,40 +574,73 @@ function update(time, delta) {
     }
     return;
   }
-  // Handle movement
-  if (this.player && this.player.body && this.player.active) {
-    if (this.cursors.left.isDown) {
-      this.player.setVelocityX(-280);
-      this.player.setFlipX(true);
-      this.player.anims.play("right", true);
-    } else if (this.cursors.right.isDown) {
-      this.player.setVelocityX(280);
-      this.player.setFlipX(false);
-      this.player.anims.play("right", true);
-    } else {
-      this.player.setVelocityX(0);
-      this.player.anims.play("stand");
-    }
-  }
-
   // Handle jumping with responsive scaling
   if (this.player && this.player.body && this.player.active) {
-    if (!this.player.body.touching.down) {
-      this.player.anims.play("jump");
-    }
+    if (selectedLevel === 2) {
+      // Tennis player animations for Level 2
+      if (this.cursors.left.isDown) {
+        this.player.setVelocityX(-280);
+        this.player.setFlipX(true);
+        this.player.anims.play("tennis-right", true);
+      } else if (this.cursors.right.isDown) {
+        this.player.setVelocityX(280);
+        this.player.setFlipX(false);
+        this.player.anims.play("tennis-right", true);
+      } else {
+        this.player.setVelocityX(0);
+        this.player.anims.play("tennis-stand");
+      }
 
-    if (this.cursors.up.isDown && this.player.body.touching.down) {
-      // Get the scaling factor
-      const scaleFactor = getResponsiveScaleFactor();
+      // For jumping in Level 2
+      if (!this.player.body.touching.down) {
+        // Use first frame of idle animation for jumping
+        this.player.anims.play("tennis-stand");
+      }
 
-      // Base jump velocity (what would be used at 1920x1080)
-      const baseJumpVelocity = -750;
+      // ADD THIS SECTION - Missing jump control for Level 2
+      if (this.cursors.up.isDown && this.player.body.touching.down) {
+        // Get the scaling factor
+        const scaleFactor = getResponsiveScaleFactor();
 
-      // Apply scaled jump velocity
-      const scaledJumpVelocity = baseJumpVelocity * (scaleFactor * 1.2);
+        // Base jump velocity (what would be used at 1920x1080)
+        const baseJumpVelocity = -750;
 
-      // Set jump velocity with scaling
-      this.player.setVelocityY(scaledJumpVelocity);
+        // Apply scaled jump velocity
+        const scaledJumpVelocity = baseJumpVelocity * (scaleFactor * 1.2);
+
+        // Set jump velocity with scaling
+        this.player.setVelocityY(scaledJumpVelocity);
+      }
+    } else {
+      if (this.cursors.left.isDown) {
+        this.player.setVelocityX(-280);
+        this.player.setFlipX(true);
+        this.player.anims.play("right", true);
+      } else if (this.cursors.right.isDown) {
+        this.player.setVelocityX(280);
+        this.player.setFlipX(false);
+        this.player.anims.play("right", true);
+      } else {
+        this.player.setVelocityX(0);
+        this.player.anims.play("stand");
+      }
+      if (!this.player.body.touching.down) {
+        this.player.anims.play("jump");
+      }
+
+      if (this.cursors.up.isDown && this.player.body.touching.down) {
+        // Get the scaling factor
+        const scaleFactor = getResponsiveScaleFactor();
+
+        // Base jump velocity (what would be used at 1920x1080)
+        const baseJumpVelocity = -750;
+
+        // Apply scaled jump velocity
+        const scaledJumpVelocity = baseJumpVelocity * (scaleFactor * 1.2);
+
+        // Set jump velocity with scaling
+        this.player.setVelocityY(scaledJumpVelocity);
+      }
     }
   }
   // ADDED: Handle tennis ball shooting
@@ -2931,23 +2995,26 @@ function createLevel2(bgRepeat) {
   }
 
   // 8. Add Johann (boss) in the top right corner
-  this.boss = this.physics.add
-    .sprite(3300 * scaleX, currentHeight * 0.05, "monster-run")
+  const bossCloudX = 3300 * scaleX;
+  const bossCloudY = currentHeight * 0.13;
+  const bossCloud = this.platforms.create(bossCloudX, bossCloudY, "cloud");
+  bossCloud.setScale(0.25 * objectScale);
+  bossCloud.setData("isPlatform", true);
+  bossCloud.refreshBody();
+
+  // Then add Johann (boss) as a static image on top of the cloud
+  this.boss = this.add
+    .image(
+      bossCloudX, // Same X as cloud
+      bossCloudY - bossCloud.displayHeight * 0.2, // Position on top of cloud
+      "secondCharacter"
+    )
     .setScale(4 * objectScale)
     .setDepth(20);
 
-  this.boss.setCollideWorldBounds(true);
-  this.boss.setBounce(1);
-  this.boss.setImmovable(true);
-  this.boss.lastShotTime = 0;
-  this.boss.anims.play("monster-run", true);
+  // Keep lastShotTime at Infinity so he never shoots
+  this.boss.lastShotTime = Infinity;
 
-  // Put boss on a special cloud with scaled size
-  const bossCloud = this.platforms.create(
-    3300 * scaleX,
-    currentHeight * 0.05,
-    "cloud"
-  );
   bossCloud.setScale(0.25 * objectScale);
   bossCloud.setData("isPlatform", true);
   bossCloud.refreshBody();
@@ -2977,7 +3044,8 @@ function createLevel2(bgRepeat) {
     this.player.setVelocity(0, 0);
     this.player.clearTint();
     this.player.setAlpha(1);
-    this.player.anims.play("stand");
+    this.player.setTexture("tennis-idle");
+    this.player.anims.play("tennis-stand");
   }
 
   // Setup camera with proper bounds
