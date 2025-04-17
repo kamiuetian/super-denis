@@ -2762,8 +2762,8 @@ function createLevel2(bgRepeat) {
   this.coinCount = 0;
 
   // 5. Create skills panel with responsive positioning and sizing
-  const panelWidth = 400 * scaleX;
-  const panelHeight = 500 * scaleY;
+  const panelWidth = 200 * scaleX;
+  const panelHeight = 400 * scaleY;
   const panelX = currentWidth - panelWidth - 20 * scaleX;
   const panelY = 20 * scaleY;
 
