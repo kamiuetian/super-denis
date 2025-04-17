@@ -2782,7 +2782,7 @@ function createLevel2(bgRepeat) {
   groundRight.setData("isDeadlyGround", true);
 
   // Create visible ground tileSprite with scaling
-  const groundVisual = this.add.tileSprite(
+  /*const groundVisual = this.add.tileSprite(
     0,
     groundTop,
     5000 * scaleX,
@@ -2791,9 +2791,9 @@ function createLevel2(bgRepeat) {
   );
   groundVisual.setOrigin(0, 0);
   groundVisual.setDepth(5);
-
+*/
   // Danger zone with responsive dimensions
-  const dangerZone = this.add.graphics();
+  /*const dangerZone = this.add.graphics();
   dangerZone.fillStyle(0xff0000, 0.3);
   dangerZone.fillRect(
     0,
@@ -2807,7 +2807,7 @@ function createLevel2(bgRepeat) {
     currentHeight - groundHeight,
     5000 * scaleX,
     currentHeight - groundHeight
-  );
+  );*/
 
   // 3. Set background - blue sky
   const background = this.add
