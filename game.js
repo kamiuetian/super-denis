@@ -2847,7 +2847,7 @@ function createLevel2(bgRepeat) {
   // Title with responsive font
   const titleSize = Math.max(20 * scaleY, 18); // Minimum size of 14px
   this.add
-    .text(panelX + 10 * scaleX, panelY + 15 * scaleY, "MY SKILLS", {
+    .text(panelX + 30 * scaleX, panelY + 15 * scaleY, "MY SKILLS", {
       fontSize: `${titleSize}px`,
       fill: "#FFD700",
       fontWeight: "bold",
