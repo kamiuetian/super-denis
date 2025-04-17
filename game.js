@@ -1333,12 +1333,12 @@ function createLevel1(bgRepeat) {
 
   // Small skills counter in bottom left
   const smallCounterSize = Math.max(20 * scaleY, 16); // Min font size of 16px
-  this.smallCounter = this.add
+  /*this.smallCounter = this.add
     .text(20, 20, "Skills: 0/6", {
       fontSize: smallCounterSize + "px",
       fill: "#ffffff",
     })
-    .setScrollFactor(0);
+    .setScrollFactor(0);*/
 
   // 6. Add enemies (assuming addEnemies function is defined elsewhere)
   addEnemies.call(this);
@@ -2465,11 +2465,11 @@ function resetSkillPanel() {
       "Skills: 0/" + (selectedLevel === 1 ? "6" : "12")
     );
   }
-  if (this.smallCounter) {
+  /*if (this.smallCounter) {
     this.smallCounter.setText(
       "Skills: 0/" + (selectedLevel === 1 ? "6" : "12")
     );
-  }
+  }*/
   // NEW: Reset movement-related flags
   this.dialogueActive = false;
   this.playerImmune = false;
@@ -2820,12 +2820,12 @@ function createLevel2(bgRepeat) {
 
   // Small skills counter with responsive positioning and font
   const smallCounterSize = Math.max(20 * scaleY, 16); // Minimum size of 16px
-  this.smallCounter = this.add
+  /*this.smallCounter = this.add
     .text(20 * scaleX, 20 * scaleY, "Skills: 0/12", {
       fontSize: `${smallCounterSize}px`,
       fill: "#ffffff",
     })
-    .setScrollFactor(0);
+    .setScrollFactor(0);*/
 
   // 6. Add instructions with responsive text
   const instructionSize = Math.max(24 * scaleY, 18); // Minimum size of 18px
@@ -3007,7 +3007,7 @@ function hitCloud(player, cloud) {
     // Update counters
     this.coinCount += 1;
     this.skillsCounter.setText("Skills: " + this.coinCount + "/12");
-    this.smallCounter.setText("Skills: " + this.coinCount + "/12");
+    //this.smallCounter.setText("Skills: " + this.coinCount + "/12");
 
     // Get the current skill
     const skillIndex = skill.getData("skillIndex");
@@ -3504,7 +3504,7 @@ function collectItem(player, item) {
   // Update item count
   this.itemCount++;
   this.skillsCounter.setText(`Items: ${this.itemCount}/12`);
-  this.smallCounter.setText(`Items: ${this.itemCount}/12`);
+  //this.smallCounter.setText(`Items: ${this.itemCount}/12`);
 
   // Update skill panel
   const skillTextIndex = itemType === "tech" ? itemIndex : itemIndex;
@@ -3859,7 +3859,7 @@ function collectCoin(player, coin) {
   // Update counters
   this.coinCount += 1;
   this.skillsCounter.setText("Skills: " + this.coinCount + "/6");
-  this.smallCounter.setText("Skills: " + this.coinCount + "/6");
+  //this.smallCounter.setText("Skills: " + this.coinCount + "/6");
 
   // Show speech bubble with skill message
   const skillIndex = this.coinCount - 1; // 0-based index
@@ -4430,12 +4430,12 @@ function createLevel3(bgRepeat) {
 
   // 11. Small skills counter with responsive positioning and font
   const smallCounterSize = Math.max(20 * scaleY, 16); // Minimum size of 16px
-  this.smallCounter = this.add
+  /*this.smallCounter = this.add
     .text(20 * scaleX, 20 * scaleY, "Skills: 0/12", {
       fontSize: `${smallCounterSize}px`,
       fill: "#ffffff",
     })
-    .setScrollFactor(0);
+    .setScrollFactor(0);*/
 
   // 12. Add instructions with responsive text
   const instructionSize = Math.max(24 * scaleY, 18); // Minimum size of 18px
@@ -4698,7 +4698,7 @@ function hitCloud(player, cloud) {
     // Update counters
     this.coinCount += 1;
     this.skillsCounter.setText("Skills: " + this.coinCount + "/12");
-    this.smallCounter.setText("Skills: " + this.coinCount + "/12");
+    //this.smallCounter.setText("Skills: " + this.coinCount + "/12");
 
     // Regular skill reveal code...
 
@@ -5009,7 +5009,7 @@ function hitMysteryBox(player, box) {
   // Update counters
   this.coinCount = (this.coinCount || 0) + 1;
   this.skillsCounter.setText("Skills: " + this.coinCount + "/6");
-  this.smallCounter.setText("Skills: " + this.coinCount + "/6");
+  //this.smallCounter.setText("Skills: " + this.coinCount + "/6");
   this.skillCount = (this.skillCount || 0) + 1;
 
   // Show speech bubble with skill message
@@ -5389,7 +5389,7 @@ function collectSkill(player, skill) {
   // Update item count
   this.itemCount = (this.itemCount || 0) + 1;
   this.skillsCounter.setText(`Items: ${this.itemCount}/12`);
-  this.smallCounter.setText(`Items: ${this.itemCount}/12`);
+  //this.smallCounter.setText(`Items: ${this.itemCount}/12`);
 
   // Update skill panel
   if (itemIndex < this.skillTexts.length) {
@@ -5571,9 +5571,9 @@ function playerHitCloud(player, cloud) {
   this.skillsCounter.setText(
     `Skills: ${this.skillCount}/${level2Skills.length}`
   );
-  this.smallCounter.setText(
+  /*this.smallCounter.setText(
     `Skills: ${this.skillCount}/${level2Skills.length}`
-  );
+  );*/
 
   // 6. Check if all skills collected
   if (this.skillCount >= level2Skills.length) {
