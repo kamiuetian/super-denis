@@ -2769,7 +2769,7 @@ function createLevel2(bgRepeat) {
 
   // 5. Create skills panel with responsive positioning and sizing
   const panelWidth = 300 * scaleX;
-  const panelHeight = 355 * scaleY;
+  const panelHeight = 350 * scaleY;
   const panelX = currentWidth - panelWidth - 20 * scaleX;
   const panelY = 20 * scaleY;
 
@@ -2783,7 +2783,7 @@ function createLevel2(bgRepeat) {
   // Title with responsive font
   const titleSize = Math.max(20 * scaleY, 18); // Minimum size of 14px
   this.add
-    .text(panelX + 30 * scaleX, panelY + 30 * scaleY, "MY SKILLS", {
+    .text(panelX + 10 * scaleX, panelY + 15 * scaleY, "MY SKILLS", {
       fontSize: `${titleSize}px`,
       fill: "#FFD700",
       fontWeight: "bold",
@@ -2932,7 +2932,7 @@ function createLevel2(bgRepeat) {
 
   // 8. Add Johann (boss) in the top right corner
   this.boss = this.physics.add
-    .sprite(2600 * scaleX, currentHeight * 0.05, "monster-run")
+    .sprite(3300 * scaleX, currentHeight * 0.05, "monster-run")
     .setScale(4 * objectScale)
     .setDepth(20);
 
@@ -2944,7 +2944,7 @@ function createLevel2(bgRepeat) {
 
   // Put boss on a special cloud with scaled size
   const bossCloud = this.platforms.create(
-    2600 * scaleX,
+    3300 * scaleX,
     currentHeight * 0.05,
     "cloud"
   );
