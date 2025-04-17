@@ -2926,7 +2926,7 @@ function createLevel2(bgRepeat) {
 
   // 7. Create cloud platforms with responsive positioning
   const cloudPositions = [
-    { xRatio: 250 / baseWidth, yFromBottom: 350 },
+    { xRatio: 250 / baseWidth, yFromBottom: 380 },
     { xRatio: 500 / baseWidth, yFromBottom: 510 },
     { xRatio: 750 / baseWidth, yFromBottom: 490 },
     { xRatio: 1000 / baseWidth, yFromBottom: 600 },
@@ -3313,14 +3313,14 @@ function levelComplete() {
   dialog.fillRect(
     this.scale.width / 2 - 200,
     this.scale.height / 2 - 150,
-    400,
+    480,
     300
   );
   dialog.lineStyle(2, 0x00ff00, 1);
   dialog.strokeRect(
     this.scale.width / 2 - 200,
     this.scale.height / 2 - 150,
-    400,
+    480,
     300
   );
   dialog.setScrollFactor(0);
@@ -3361,7 +3361,7 @@ function levelComplete() {
     .text(
       this.scale.width / 2,
       this.scale.height / 2,
-      "Moving to Level 3 where you will learn about \nmy motivation to join IDDP.",
+      "Moving to Level 3 where you will learn about \n my motivation to join IDDP.",
       {
         fontSize: "16px",
         fill: "#ffffff",
@@ -3388,7 +3388,7 @@ function levelComplete() {
 
   // Move to next level after delay
   this.time.delayedCall(
-    5000,
+    3000,
     () => {
       window.location.href = "video2.html"; // Adjust as needed
     },
@@ -5595,7 +5595,7 @@ function playerHitCloud(player, cloud) {
   if (this.skillCount >= level2Skills.length) {
     this.levelCompleting = true;
 
-    this.time.delayedCall(8000, () => {
+    this.time.delayedCall(1000, () => {
       this.physics.pause();
 
       const completionText = this.add
@@ -5613,7 +5613,7 @@ function playerHitCloud(player, cloud) {
         .setOrigin(0.5)
         .setScrollFactor(0);
 
-      this.time.delayedCall(10000, () => {
+      this.time.delayedCall(3000, () => {
         // Progress to next section or level
         levelComplete.call(this);
       });
