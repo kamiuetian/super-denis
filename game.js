@@ -5602,7 +5602,7 @@ function playerHitCloud(player, cloud) {
   if (this.skillCount >= level2Skills.length) {
     this.levelCompleting = true;
 
-    this.time.delayedCall(1000, () => {
+    this.time.delayedCall(4000, () => {
       this.physics.pause();
       levelComplete.call(this);
     });
