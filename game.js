@@ -4897,8 +4897,6 @@ function createSpeechBubble(x, y, text, duration = 3000) {
   return container;
 }
 
-// Also add the simpler showSpeechBubble function that's used in Level 3:
-
 function showSpeechBubble(player, text, duration = 3000) {
   const bubble = createSpeechBubble.call(
     this,
@@ -5079,17 +5077,23 @@ function hitMysteryBox(player, box) {
         player.anims.play("stand");
 
         // Show speech bubble with the skill message
-        createSpeechBubble.call(
+        /* createSpeechBubble.call(
           this,
           player.x,
           player.y - 60,
           skill.message,
-          3000
+          5000
+        );*/
+        const speechDuration = calculateSpeechDuration(skill.message);
+        console.log("Speech duration:", speechDuration); // Log the calculated duration
+        animatedSpeechBubble.call(
+          this,
+          player.x,
+          player.y - 60,
+          skill.message,
+          speechDuration
         );
-        this.time.delayedCall(3000, () => {
-          this.dialogueActive = false;
-          this.physics.resume();
-        });
+
         // Check if all skills collected
         if (this.skillCount >= 6) {
           // Delay bridge animation slightly
@@ -5127,10 +5131,10 @@ function hitMysteryBox(player, box) {
   // ADDED: Resume physics and player control after dialogue finishes
   this.time.delayedCall(3000, () => {
     // Only resume if not entering boss battle (which handles physics itself)
-    if (!isGuitarSkill) {
+    /*if (!isGuitarSkill) {
       this.physics.resume();
       this.dialogueActive = false;
-    }
+    }*/
   });
 
   // Activate boss area immediately if it's the tennis racket skill
@@ -5987,7 +5991,6 @@ function fixCameraBounds() {
   camera.setRoundPixels(true);
 }
 function getResponsiveScaleFactor() {
-  // Base dimensions that your game was designed for
   const baseWidth = 1920;
   const baseHeight = 1080;
 
@@ -6001,4 +6004,167 @@ function getResponsiveScaleFactor() {
 
   // Use the smaller scale for consistent proportions
   return Math.min(scaleX, scaleY);
+}
+// Function to create speech bubbles with typing animation
+function animatedSpeechBubble(x, y, text, duration = 3000) {
+  // Calculate text width and height for proper bubble sizing
+  this.physics.pause();
+  this.dialogueActive = true;
+  const textObj = this.make.text({
+    x: 0,
+    y: 0,
+    text: text,
+    style: {
+      fontSize: "16px",
+      wordWrap: { width: 200, useAdvancedWrap: true },
+    },
+  });
+  const textWidth = textObj.width;
+  const textHeight = textObj.height;
+  textObj.destroy(); // We just needed this to measure
+
+  // Calculate total bubble height and width
+  const bubblePadding = 10;
+  const bubbleWidth = Math.min(textWidth + bubblePadding * 2, 220);
+  const bubbleHeight = textHeight + bubblePadding * 2;
+
+  // Position the bubble above the character with proper spacing
+  const bubbleX = x - bubbleWidth / 2;
+  const bubbleY = y - bubbleHeight - 20; // Position above character
+
+  // Create bubble graphics
+  const bubble = this.add.graphics();
+  bubble.x = bubbleX;
+  bubble.y = bubbleY;
+
+  // Bubble background - green color
+  bubble.fillStyle(0x00aa00, 0.8); // Green background
+  bubble.fillRoundedRect(0, 0, bubbleWidth, bubbleHeight, 10);
+
+  // Bubble border
+  bubble.lineStyle(2, 0x005500, 1); // Darker green border
+  bubble.strokeRoundedRect(0, 0, bubbleWidth, bubbleHeight, 10);
+
+  // Add text inside bubble - start with empty string for typing effect
+  const bubbleText = this.add.text(
+    bubbleX + bubblePadding,
+    bubbleY + bubblePadding,
+    "", // Start with empty string for typing effect
+    {
+      fontSize: "16px",
+      fill: "#FFFFFF", // White text on green background
+      wordWrap: {
+        width: bubbleWidth - bubblePadding * 2,
+        useAdvancedWrap: true,
+      },
+    }
+  );
+
+  // Create the tail/pointer correctly positioned at bottom of bubble
+  const tail = this.add.graphics();
+  tail.fillStyle(0x00aa00, 0.8); // Match green background
+  tail.lineStyle(2, 0x005500, 1); // Match green border
+
+  // Draw pointing DOWN triangle at the bottom center of the bubble
+  const tailX = bubbleX + bubbleWidth / 2;
+  const tailY = bubbleY + bubbleHeight; // Position at bottom of bubble
+
+  tail.beginPath();
+  tail.moveTo(tailX - 10, tailY); // Left point of triangle
+  tail.lineTo(tailX + 10, tailY); // Right point of triangle
+  tail.lineTo(tailX, tailY + 15); // Bottom point (pointing down)
+  tail.closePath();
+  tail.fillPath();
+  tail.strokePath();
+
+  // Group everything for easy manipulation
+  const container = this.add.container(0, 0, [bubble, bubbleText, tail]);
+  container.setDepth(1000); // Make sure it's on top of everything
+
+  // TYPING ANIMATION
+  // Calculate typing speed based on text length - between 30-80ms per character
+  const typingSpeed = Math.max(80, Math.min(150, 3000 / text.length));
+  let currentCharIndex = 0;
+
+  const typingTimer = this.time.addEvent({
+    delay: typingSpeed,
+    callback: () => {
+      if (currentCharIndex < text.length) {
+        // Add next character
+        bubbleText.text += text[currentCharIndex];
+        currentCharIndex++;
+
+        // Instead of scaling the entire text, create a subtle flash effect
+        // that doesn't disrupt positioning
+        const flashEffect = this.add.graphics();
+        flashEffect.fillStyle(0xffffff, 0.3);
+        flashEffect.fillCircle(
+          bubbleX + bubbleText.width + bubblePadding - 8,
+          bubbleY + bubbleText.height / 2 + bubblePadding,
+          8
+        );
+        flashEffect.setDepth(1001);
+
+        // Fade out the flash effect
+        this.tweens.add({
+          targets: flashEffect,
+          alpha: 0,
+          duration: 150,
+          ease: "Sine.easeOut",
+          onComplete: () => flashEffect.destroy(),
+        });
+      } else {
+        typingTimer.destroy();
+      }
+    },
+    callbackScope: this,
+    repeat: text.length - 1,
+  });
+
+  // Auto-destroy after duration (but after typing completes)
+  if (duration > 0) {
+    // Add extra time to account for typing animation
+    const totalDuration = duration + typingSpeed * text.length;
+
+    this.time.delayedCall(totalDuration, () => {
+      this.tweens.add({
+        targets: container,
+        alpha: 0,
+        duration: 300,
+        onComplete: () => {
+          // Resume physics EXACTLY when the speech bubble is fully removed
+          container.destroy();
+          this.physics.resume();
+          this.dialogueActive = false;
+        },
+      });
+    });
+  }
+
+  return container;
+}
+// Helper function to calculate appropriate speech bubble duration
+function calculateSpeechDuration(text) {
+  // Constants for reading speed adjustment
+  const WORDS_PER_MINUTE = 200; // Average reading speed
+  const MILLISECONDS_PER_WORD = 60000 / WORDS_PER_MINUTE;
+
+  // Calculate typing time
+  const typingSpeed = Math.max(80, Math.min(150, 3000 / text.length));
+  const typingTime = typingSpeed * text.length;
+
+  // Estimate word count (roughly 5 characters per word)
+  const estimatedWords = Math.max(1, Math.ceil(text.length / 5));
+
+  // Calculate reading time
+  const readingTime = estimatedWords * MILLISECONDS_PER_WORD;
+
+  // Total duration: typing time + reading time + a small buffer
+  const totalDuration = typingTime + readingTime + 500;
+
+  // Enforce minimum and maximum durations
+  const minDuration = 2000;
+  const maxDuration = 12000;
+
+  return Math.min(maxDuration, Math.max(minDuration, totalDuration));
 }
