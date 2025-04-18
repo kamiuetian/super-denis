@@ -1280,7 +1280,7 @@ function createLevel1(bgRepeat) {
       if (!this.bossTriggered) {
         // Check if all skills are collected
         console.log("Skills collected:", this.skillCount);
-        if (this.skillCount >= 0) {
+        if (this.skillCount >= 6) {
           this.bossTriggered = true;
           console.log("Player crossed staircase - activating boss area!");
           const challengeMessage = this.add
@@ -5240,72 +5240,6 @@ function hitMysteryBox(player, box) {
       duration: 1000,
     });
   }
-}
-
-function showLevel3EndDialogue() {
-  // Get direct references to both characters' positions
-  const playerX = this.player.x;
-  const playerY = this.player.y;
-  const johannX = this.johann
-    ? this.johann.x
-    : this.bridgeX + this.gapWidth / 2 + 300;
-  const johannY = this.johann ? this.johann.y : this.scale.height - 50;
-
-  // Player's first dialogue - positioned above player's head
-  const denisText = createSpeechBubble.call(
-    this,
-    playerX,
-    playerY - 60,
-    "Level complete... but this isn't the end, is it?",
-    4000
-  );
-
-  // Johann's response - positioned above Johann's head
-  this.time.delayedCall(4000, () => {
-    const johannText = createSpeechBubble.call(
-      this,
-      johannX,
-      johannY - 60,
-      "No, Denis. This is where the real journey begins.",
-      4000
-    );
-
-    // Continue dialogue sequence with correct positioning
-    this.time.delayedCall(4000, () => {
-      const denisText2 = createSpeechBubble.call(
-        this,
-        playerX,
-        playerY - 60,
-        "I have learned a ton and explored different passions — and somewhere along the way, I found out that this program is definitely my path.",
-        4000
-      );
-
-      this.time.delayedCall(4000, () => {
-        const johannText2 = createSpeechBubble.call(
-          this,
-          johannX,
-          johannY - 60,
-          "Well...you've shown more than skill, you've shown real purpose. And that drive for innovation in banking? That's exactly what we're looking for.",
-          4000
-        );
-
-        this.time.delayedCall(4000, () => {
-          const denisText3 = createSpeechBubble.call(
-            this,
-            playerX,
-            playerY - 60,
-            "Then... am I in?",
-            4000
-          );
-
-          // Complete level after dialogue
-          this.time.delayedCall(5000, () => {
-            levelComplete.call(this);
-          });
-        });
-      });
-    });
-  });
 }
 
 // Function to handle player falling into river
