@@ -1354,7 +1354,7 @@ function createLevel1(bgRepeat) {
   // Title - make font size responsive
   const titleSize = Math.max(18 * scaleY, 14); // Min font size of 14px
   this.add
-    .text(panelX + 30, panelY + 10, "MY SKILLS", {
+    .text(panelX + 30, panelY + 10, "My Character", {
       fontSize: titleSize + "px",
       fill: "#FFD700",
       fontWeight: "bold",
@@ -5939,84 +5939,85 @@ function getResponsiveScaleFactor() {
   // Use the smaller scale for consistent proportions
   return Math.min(scaleX, scaleY);
 }
-// Function to create speech bubbles with typing animation
 function animatedSpeechBubble(x, y, text, duration = 3000) {
-  // Calculate text width and height for proper bubble sizing
+  // Pause physics and activate dialogue state
   this.physics.pause();
   this.dialogueActive = true;
+
+  // Calculate text dimensions with wider word wrap to prevent overflow
   const textObj = this.make.text({
     x: 0,
     y: 0,
     text: text,
     style: {
       fontSize: "16px",
-      wordWrap: { width: 200, useAdvancedWrap: true },
+      wordWrap: { width: 240, useAdvancedWrap: true }, // Increased width
     },
   });
+
+  // Get actual text dimensions after wrapping
   const textWidth = textObj.width;
   const textHeight = textObj.height;
-  textObj.destroy(); // We just needed this to measure
+  textObj.destroy(); // Clean up measurement text
 
-  // Calculate total bubble height and width
-  const bubblePadding = 10;
-  const bubbleWidth = Math.min(textWidth + bubblePadding * 2, 220);
-  const bubbleHeight = textHeight + bubblePadding * 2;
+  // Calculate bubble dimensions with more padding
+  const bubblePadding = 15; // Increased padding
+  const bubbleWidth = Math.min(textWidth + bubblePadding * 3, 260); // Wider maximum width
+  const bubbleHeight = textHeight + bubblePadding * 2.5; // More vertical space
 
-  // Position the bubble above the character with proper spacing
+  // Position bubble above character
   const bubbleX = x - bubbleWidth / 2;
-  const bubbleY = y - bubbleHeight - 20; // Position above character
+  const bubbleY = y - bubbleHeight - 25; // Higher position for more space
 
-  // Create bubble graphics
+  // Create bubble graphics with WHITE background
   const bubble = this.add.graphics();
   bubble.x = bubbleX;
   bubble.y = bubbleY;
 
-  // Bubble background - green color
-  bubble.fillStyle(0x00aa00, 0.8); // Green background
+  // White background with slight transparency
+  bubble.fillStyle(0xffffff, 0.9);
   bubble.fillRoundedRect(0, 0, bubbleWidth, bubbleHeight, 10);
 
-  // Bubble border
-  bubble.lineStyle(2, 0x005500, 1); // Darker green border
+  // Black border
+  bubble.lineStyle(2, 0x000000, 1);
   bubble.strokeRoundedRect(0, 0, bubbleWidth, bubbleHeight, 10);
 
-  // Add text inside bubble - start with empty string for typing effect
+  // Empty text object for typing animation with BLACK text
   const bubbleText = this.add.text(
     bubbleX + bubblePadding,
     bubbleY + bubblePadding,
-    "", // Start with empty string for typing effect
+    "", // Start empty for typing effect
     {
       fontSize: "16px",
-      fill: "#FFFFFF", // White text on green background
+      fill: "#000000", // Black text on white background
       wordWrap: {
-        width: bubbleWidth - bubblePadding * 2,
+        width: bubbleWidth - bubblePadding * 2.5,
         useAdvancedWrap: true,
       },
     }
   );
 
-  // Create the tail/pointer correctly positioned at bottom of bubble
+  // Create tail with white background and black border
   const tail = this.add.graphics();
-  tail.fillStyle(0x00aa00, 0.8); // Match green background
-  tail.lineStyle(2, 0x005500, 1); // Match green border
+  tail.fillStyle(0xffffff, 0.9); // White to match bubble
+  tail.lineStyle(2, 0x000000, 1); // Black border
 
-  // Draw pointing DOWN triangle at the bottom center of the bubble
+  // Draw pointer triangle
   const tailX = bubbleX + bubbleWidth / 2;
-  const tailY = bubbleY + bubbleHeight; // Position at bottom of bubble
-
+  const tailY = bubbleY + bubbleHeight;
   tail.beginPath();
-  tail.moveTo(tailX - 10, tailY); // Left point of triangle
-  tail.lineTo(tailX + 10, tailY); // Right point of triangle
-  tail.lineTo(tailX, tailY + 15); // Bottom point (pointing down)
+  tail.moveTo(tailX - 10, tailY);
+  tail.lineTo(tailX + 10, tailY);
+  tail.lineTo(tailX, tailY + 15);
   tail.closePath();
   tail.fillPath();
   tail.strokePath();
 
-  // Group everything for easy manipulation
+  // Group elements
   const container = this.add.container(0, 0, [bubble, bubbleText, tail]);
-  container.setDepth(1000); // Make sure it's on top of everything
+  container.setDepth(1000);
 
-  // TYPING ANIMATION
-  // Calculate typing speed based on text length - between 30-80ms per character
+  // Typing animation
   const typingSpeed = Math.max(80, Math.min(150, 3000 / text.length));
   let currentCharIndex = 0;
 
@@ -6028,10 +6029,9 @@ function animatedSpeechBubble(x, y, text, duration = 3000) {
         bubbleText.text += text[currentCharIndex];
         currentCharIndex++;
 
-        // Instead of scaling the entire text, create a subtle flash effect
-        // that doesn't disrupt positioning
+        // Flash effect
         const flashEffect = this.add.graphics();
-        flashEffect.fillStyle(0xffffff, 0.3);
+        flashEffect.fillStyle(0x000000, 0.2); // Black flash for contrast
         flashEffect.fillCircle(
           bubbleX + bubbleText.width + bubblePadding - 8,
           bubbleY + bubbleText.height / 2 + bubblePadding,
@@ -6039,7 +6039,7 @@ function animatedSpeechBubble(x, y, text, duration = 3000) {
         );
         flashEffect.setDepth(1001);
 
-        // Fade out the flash effect
+        // Fade out flash
         this.tweens.add({
           targets: flashEffect,
           alpha: 0,
@@ -6055,9 +6055,8 @@ function animatedSpeechBubble(x, y, text, duration = 3000) {
     repeat: text.length - 1,
   });
 
-  // Auto-destroy after duration (but after typing completes)
+  // Auto-destroy after duration
   if (duration > 0) {
-    // Add extra time to account for typing animation
     const totalDuration = duration + typingSpeed * text.length;
 
     this.time.delayedCall(totalDuration, () => {
@@ -6066,7 +6065,6 @@ function animatedSpeechBubble(x, y, text, duration = 3000) {
         alpha: 0,
         duration: 300,
         onComplete: () => {
-          // Resume physics EXACTLY when the speech bubble is fully removed
           container.destroy();
           this.physics.resume();
           this.dialogueActive = false;
