@@ -365,7 +365,7 @@ function create() {
       start: 0,
       end: 5,
     }),
-    frameRate: 20,
+    frameRate: 10,
     repeat: -1,
   });
   this.anims.create({
