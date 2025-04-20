@@ -1295,7 +1295,7 @@ function createLevel1(bgRepeat) {
         }
         return;
       }
-      resetCheckpointData();
+
       // All skills collected, proceed to level 2
       // Prevent multiple triggers
       if (this.levelCompleting) return;
@@ -1312,6 +1312,7 @@ function createLevel1(bgRepeat) {
       this.cameras.main.once("camerafadeoutcomplete", () => {
         // Go directly to video1.html (transition to Level 2) after 3 seconds
         this.time.delayedCall(2000, () => {
+          resetCheckpointData();
           window.location.href = "video1.html";
         });
       });
