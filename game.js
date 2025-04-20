@@ -1112,6 +1112,7 @@ function createLevel1(bgRepeat) {
     { xOriginal: 2548, yFromBottom: 400, width: 48, height: 48 },
     { xOriginal: 2596, yFromBottom: 400, width: 48, height: 48 },
     { xOriginal: 2644, yFromBottom: 400, width: 48, height: 48 },
+    { xOriginal: 2692, yFromBottom: 400, width: 48, height: 48 },
   ];
 
   // Create the remaining individual blocks
