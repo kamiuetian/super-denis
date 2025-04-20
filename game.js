@@ -109,6 +109,8 @@ function preload() {
     frameWidth: 32,
     frameHeight: 32,
   });
+  this.load.image("NavyBoy", "assets/denis/NavySuit.png");
+
   this.load.image("level2Background", "assets/denis/levle2bg.png");
   this.load.spritesheet("drawbridge", "assets/denis/WoodenGateAndTower.png", {
     frameWidth: 64, // Adjust based on actual sprite dimensions
@@ -3405,32 +3407,6 @@ function createLevel3(bgRepeat) {
   // 3. Set world bounds consistently
   this.physics.world.setBounds(0, 0, 5000, 5000);
 
-  // 4. Set up the ground with scaled dimensions
-  /*const groundHeight = 40 * scaleY;
-  const groundTop = currentHeight - groundHeight;
-
-  // Create ground with proper scaling
-  const ground = this.platforms.create(
-    5000 / 2,
-    currentHeight - groundHeight / 2,
-    "block"
-  );
-  ground.setDisplaySize(5000, groundHeight);
-  ground.setVisible(true);
-  ground.refreshBody();
-  ground.setData("isGround", true);
-
-  // Create visible ground tileSprite with scaling
-  const groundVisual = this.add.tileSprite(
-    0,
-    groundTop,
-    5000,
-    groundHeight * 2,
-    "block"
-  );
-  groundVisual.setOrigin(0, 0);
-  groundVisual.setDepth(5);
-*/
   // In createLevel3 function, replace the existing ground code with this:
   // 4. Set up the ground with exact same approach as Level 1
   const groundHeight = 40 * scaleY; // Scale ground height
@@ -3582,12 +3558,6 @@ function createLevel3(bgRepeat) {
 
   // 11. Small skills counter with responsive positioning and font
   const smallCounterSize = Math.max(20 * scaleY, 16); // Minimum size of 16px
-  /*this.smallCounter = this.add
-    .text(20 * scaleX, 20 * scaleY, "Skills: 0/12", {
-      fontSize: `${smallCounterSize}px`,
-      fill: "#ffffff",
-    })
-    .setScrollFactor(0);*/
 
   // 12. Add instructions with responsive text
   const instructionSize = Math.max(24 * scaleY, 18); // Minimum size of 18px
@@ -3747,10 +3717,10 @@ function createLevel3(bgRepeat) {
   this.johann = this.physics.add
     .sprite(
       this.bridgeX + this.gapWidth / 2 + 300 * scaleX,
-      currentHeight - 50 * scaleY,
-      "enemy"
+      currentHeight - 100 * scaleY,
+      "NavyBoy"
     )
-    .setScale(0.4 * objectScale)
+    .setScale(3 * objectScale)
     .setDepth(20);
 
   // Make Johann static
