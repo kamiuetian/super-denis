@@ -1164,6 +1164,15 @@ function createLevel1(bgRepeat) {
   this.platforms.add(flag);
   flag.refreshBody();
   flag.setData("isPipe", true);
+  const bossX = flagX + 150 * scaleX; // Position boss 100px to the right of flag
+  this.boss = this.physics.add
+    .sprite(bossX, groundTop - 150 * scaleY, "secondCharacter") // Using the second character sprite
+    .setOrigin(0.5, 1)
+    .setScale(4 * objectScale);
+
+  // Make boss static and add animation if needed
+  this.boss.setImmovable(true);
+  this.boss.body.allowGravity = false;
 
   // Add invisible barrier at the end
   const invisibleBarrier = this.physics.add.staticImage(
@@ -1275,63 +1284,47 @@ function createLevel1(bgRepeat) {
   this.physics.add.overlap(
     this.player,
     triggerZone,
-    () => {
-      // Only trigger once
-      if (!this.bossTriggered) {
-        // Check if all skills are collected
-        console.log("Skills collected:", this.skillCount);
-        if (this.skillCount >= 6) {
-          this.bossTriggered = true;
-          console.log("Player crossed staircase - activating boss area!");
-          const challengeMessage = this.add
-            .text(
-              currentWidth / 2,
-              100 * scaleY,
-              "You found a tennis racket! Johann challenges you to a duel!",
-              {
-                fontSize: Math.max(18 * scaleY, 12) + "px", // Min font size of 12px
-                fill: "#ffffff",
-                stroke: "#000000",
-                strokeThickness: 3 * scaleY,
-                align: "center",
-              }
-            )
-            .setOrigin(0.5, 0.5)
-            .setScrollFactor(0);
+    (player, triggerZone) => {
+      // Check if all skills are collected (6 skills in level 1)
+      if (this.skillCount < 6) {
+        // Not all skills collected, show message
+        if (!this.flagMessageShown) {
+          createSpeechBubble.call(
+            this,
+            this.player.x,
+            this.player.y - 60,
+            "I need to find all 6 skills before moving to the next level!",
+            3000
+          );
+          this.flagMessageShown = true;
 
-          // Make message fade out
-          this.tweens.add({
-            targets: challengeMessage,
-            alpha: { from: 1, to: 0 },
-            delay: 3000,
-            duration: 1000,
-          });
-
-          // Activate boss area with short delay to allow reading the dialogue
+          // Reset flag message cooldown after 3 seconds
           this.time.delayedCall(3000, () => {
-            activateBossArea.call(this);
+            this.flagMessageShown = false;
           });
-        } else {
-          // Show message that player needs to collect all skills first
-          const missingSkills = 6 - (this.skillCount || 0);
-          if (!this.skillMessageCooldown) {
-            createSpeechBubble.call(
-              this,
-              this.player.x,
-              this.player.y - 60 * scaleY,
-              `You need to find ${missingSkills} more skill${
-                missingSkills > 1 ? "s" : ""
-              } before facing the boss!`,
-              3000
-            );
-            // Set cooldown and reset it after 3 seconds
-            this.skillMessageCooldown = true;
-            this.time.delayedCall(3000, () => {
-              this.skillMessageCooldown = false;
-            });
-          }
         }
+        return;
       }
+
+      // All skills collected, proceed to level 2
+      // Prevent multiple triggers
+      if (this.levelCompleting) return;
+      this.levelCompleting = true;
+
+      // Stop player movement and show standing animation
+      this.physics.pause();
+      player.setVelocityX(0);
+      player.anims.play("stand");
+
+      // Fade out and transition to Level 2
+      this.cameras.main.fadeOut(1000, 0, 0, 0);
+
+      this.cameras.main.once("camerafadeoutcomplete", () => {
+        // Go directly to video1.html (transition to Level 2) after 3 seconds
+        this.time.delayedCall(2000, () => {
+          window.location.href = "video1.html";
+        });
+      });
     },
     null,
     this
