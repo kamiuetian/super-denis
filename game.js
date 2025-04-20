@@ -5041,22 +5041,27 @@ function hitMysteryBox(player, box) {
 
   // Show skill icon popping out of the box
   const skillIcon = this.add
-    .text(boxX, boxY - 40, skill.icon + " " + skill.name, { fontSize: "32px" })
-    .setOrigin(0.5);
+    .text(boxX, boxY - 40, skill.icon + " " + skill.name, { fontSize: "28px" })
+    .setOrigin(0.5)
+    .setDepth(1002);
+  const speechHeight = 120; // Approximate height of speech bubble
+  const bounceHeight = speechHeight + 30; // Bounce higher than speech bubble
 
   // Animate skill icon bouncing up
   this.tweens.add({
     targets: skillIcon,
-    y: skillIcon.y - 60,
+    y: skillIcon.y - bounceHeight,
     duration: 800,
     ease: "Bounce",
     onComplete: () => {
       // Fade out and destroy after bounce animation
       this.tweens.add({
         targets: skillIcon,
-        alpha: { from: 1, to: 0 },
-        duration: 200,
-        onComplete: () => skillIcon.destroy(),
+        y: skillIcon.y - 5,
+        duration: 1000,
+        yoyo: true,
+        repeat: -1,
+        ease: "Sine.easeInOut",
       });
     },
   });
@@ -5089,13 +5094,15 @@ function hitMysteryBox(player, box) {
           5000
         );*/
         const speechDuration = calculateSpeechDuration(skill.message);
+
         console.log("Speech duration:", speechDuration); // Log the calculated duration
         animatedSpeechBubble.call(
           this,
           player.x,
           player.y - 60,
           skill.message,
-          speechDuration
+          speechDuration,
+          skillIcon
         );
 
         // Check if all skills collected
@@ -5943,7 +5950,7 @@ function getResponsiveScaleFactor() {
   // Use the smaller scale for consistent proportions
   return Math.min(scaleX, scaleY);
 }
-function animatedSpeechBubble(x, y, text, duration = 3000) {
+function animatedSpeechBubble(x, y, text, duration = 3000, skillIcon) {
   // Pause physics and activate dialogue state
   this.physics.pause();
   this.dialogueActive = true;
@@ -6064,6 +6071,16 @@ function animatedSpeechBubble(x, y, text, duration = 3000) {
     const totalDuration = duration + typingSpeed * text.length;
 
     this.time.delayedCall(totalDuration, () => {
+      this.tweens.killTweensOf(skillIcon);
+
+      // Now fade out and destroy
+      this.tweens.add({
+        targets: skillIcon,
+        alpha: { from: 1, to: 0 },
+        y: skillIcon.y - 20, // Slight upward drift while fading
+        duration: 300,
+        onComplete: () => skillIcon.destroy(),
+      });
       this.tweens.add({
         targets: container,
         alpha: 0,
