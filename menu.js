@@ -501,7 +501,7 @@ function typeText(text, isLastDialog = false) {
             "Stay Here",
             () => {
               // This function runs if they confirm
-              window.open("videos.html", "_blank");
+              window.open("resume.html", "_blank");
             }
           );
         };
