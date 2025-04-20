@@ -1258,7 +1258,8 @@ function createLevel1(bgRepeat) {
   this.boss = this.physics.add
     .sprite(bossX, groundTop, "secondCharacter") // Using the second character sprite
     .setOrigin(0.5, 1)
-    .setScale(2 * objectScale);
+    .setScale(2 * objectScale)
+    .setFlipX(true);
 
   // Make boss static and add animation if needed
   this.boss.setImmovable(true);
@@ -3823,7 +3824,8 @@ function createLevel3(bgRepeat) {
       "NavyBoy"
     )
     .setScale(3 * objectScale)
-    .setDepth(20);
+    .setDepth(20)
+    .setFlipX(true); // ADDED: Flip horizontally
 
   // Make Johann static
   this.johann.body.setImmovable(true);
