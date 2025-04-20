@@ -1368,7 +1368,7 @@ function createLevel1(bgRepeat) {
   // Skills counter
   const counterSize = Math.max(16 * scaleY, 12); // Min font size of 12px
   this.skillsCounter = this.add
-    .text(panelX + 30, panelY + panelHeight - 30, "Trades: 0/6", {
+    .text(panelX + 30, panelY + panelHeight - 30, "Traits: 0/6", {
       fontSize: counterSize + "px",
       fill: "#FFD700",
       fontWeight: "bold",
@@ -2530,7 +2530,7 @@ function resetSkillPanel() {
   // Reset counter displays
   if (this.skillsCounter) {
     this.skillsCounter.setText(
-      "Trades: 0/" + (selectedLevel === 1 ? "6" : "12")
+      "Traits: 0/" + (selectedLevel === 1 ? "6" : "12")
     );
   }
   /*if (this.smallCounter) {
@@ -3915,7 +3915,7 @@ function collectCoin(player, coin) {
 
   // Update counters
   this.coinCount += 1;
-  this.skillsCounter.setText("Trades: " + this.coinCount + "/6");
+  this.skillsCounter.setText("Traits: " + this.coinCount + "/6");
   //this.smallCounter.setText("Skills: " + this.coinCount + "/6");
 
   // Show speech bubble with skill message
@@ -5068,7 +5068,7 @@ function hitMysteryBox(player, box) {
 
   // Update counters
   this.coinCount = (this.coinCount || 0) + 1;
-  this.skillsCounter.setText("Trades: " + this.coinCount + "/6");
+  this.skillsCounter.setText("Traits: " + this.coinCount + "/6");
   //this.smallCounter.setText("Skills: " + this.coinCount + "/6");
   this.skillCount = (this.skillCount || 0) + 1;
 
