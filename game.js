@@ -5040,7 +5040,7 @@ function hitMysteryBox(player, box) {
   const isGuitarSkill = skill.name.toLowerCase().includes("racket");
 
   // Show skill icon popping out of the box
-  const skillIcon = this.add
+  /*const skillIcon = this.add
     .text(boxX, boxY - 40, skill.icon + " " + skill.name, { fontSize: "28px" })
     .setOrigin(0.5)
     .setDepth(1002);
@@ -5048,7 +5048,7 @@ function hitMysteryBox(player, box) {
   const bounceHeight = speechHeight + 30; // Bounce higher than speech bubble
 
   // Animate skill icon bouncing up
-  this.tweens.add({
+  /*this.tweens.add({
     targets: skillIcon,
     y: skillIcon.y - bounceHeight,
     duration: 800,
@@ -5064,7 +5064,7 @@ function hitMysteryBox(player, box) {
         ease: "Sine.easeInOut",
       });
     },
-  });
+  });*/
 
   // Update counters
   this.coinCount = (this.coinCount || 0) + 1;
@@ -5075,7 +5075,7 @@ function hitMysteryBox(player, box) {
   // Show speech bubble with skill message
   //const speechBubble = showSpeechBubble.call(this, player, skill.message, 3000);
   const landingCheck = this.time.addEvent({
-    delay: 100, // Check every 100ms
+    delay: 10, // Check every 100ms
     callback: () => {
       if (player.body.touching.down) {
         // Player has landed, show speech bubble
@@ -5085,14 +5085,6 @@ function hitMysteryBox(player, box) {
         player.setVelocity(0, 0);
         player.anims.play("stand");
 
-        // Show speech bubble with the skill message
-        /* createSpeechBubble.call(
-          this,
-          player.x,
-          player.y - 60,
-          skill.message,
-          5000
-        );*/
         const speechDuration = calculateSpeechDuration(skill.message);
 
         console.log("Speech duration:", speechDuration); // Log the calculated duration
@@ -5102,7 +5094,7 @@ function hitMysteryBox(player, box) {
           player.y - 60,
           skill.message,
           speechDuration,
-          skillIcon
+          skill
         );
 
         // Check if all skills collected
@@ -5950,7 +5942,7 @@ function getResponsiveScaleFactor() {
   // Use the smaller scale for consistent proportions
   return Math.min(scaleX, scaleY);
 }
-function animatedSpeechBubble(x, y, text, duration = 3000, skillIcon) {
+function animatedSpeechBubble(x, y, text, duration = 3000, skill) {
   // Pause physics and activate dialogue state
   this.physics.pause();
   this.dialogueActive = true;
@@ -5962,7 +5954,7 @@ function animatedSpeechBubble(x, y, text, duration = 3000, skillIcon) {
     text: text,
     style: {
       fontSize: "16px",
-      wordWrap: { width: 240, useAdvancedWrap: true }, // Increased width
+      wordWrap: { width: 240, useAdvancedWrap: true },
     },
   });
 
@@ -5972,13 +5964,52 @@ function animatedSpeechBubble(x, y, text, duration = 3000, skillIcon) {
   textObj.destroy(); // Clean up measurement text
 
   // Calculate bubble dimensions with more padding
-  const bubblePadding = 15; // Increased padding
-  const bubbleWidth = Math.min(textWidth + bubblePadding * 3, 260); // Wider maximum width
-  const bubbleHeight = textHeight + bubblePadding * 2.5; // More vertical space
+  const bubblePadding = 15;
+  const bubbleWidth = Math.min(textWidth + bubblePadding * 3, 260);
+  const bubbleHeight = textHeight + bubblePadding * 2.5;
 
   // Position bubble above character
   const bubbleX = x - bubbleWidth / 2;
-  const bubbleY = y - bubbleHeight - 25; // Higher position for more space
+  const bubbleY = y - bubbleHeight - 25;
+
+  // Create skill icon ABOVE the speech bubble with dynamic font size
+  const skillIconMaxWidth = bubbleWidth * 0.9; // 90% of bubble width
+
+  // Calculate font size based on text length and available width
+  const skillText = skill.icon + " " + skill.name;
+  const baseFontSize = 28;
+  const estimatedWidth = skillText.length * (baseFontSize / 2); // Rough estimate
+  const scaleFactor =
+    estimatedWidth > skillIconMaxWidth ? skillIconMaxWidth / estimatedWidth : 1;
+  const fontSize = Math.max(16, Math.floor(baseFontSize * scaleFactor)); // Min 16px
+
+  // Create skill icon just above where bubble will appear
+  const skillIcon = this.add
+    .text(x, bubbleY - 20, skillText, {
+      fontSize: `${fontSize}px`,
+      align: "center",
+    })
+    .setOrigin(0.5)
+    .setDepth(1002);
+
+  // Animate skill icon to hover above speech bubble
+  this.tweens.add({
+    targets: skillIcon,
+    y: bubbleY - 30, // Slight lift above speech bubble
+    duration: 800,
+    ease: "Bounce",
+    onComplete: () => {
+      // Add subtle floating animation
+      this.tweens.add({
+        targets: skillIcon,
+        y: skillIcon.y - 5,
+        duration: 1000,
+        yoyo: true,
+        repeat: -1,
+        ease: "Sine.easeInOut",
+      });
+    },
+  });
 
   // Create bubble graphics with WHITE background
   const bubble = this.add.graphics();
@@ -6010,8 +6041,8 @@ function animatedSpeechBubble(x, y, text, duration = 3000, skillIcon) {
 
   // Create tail with white background and black border
   const tail = this.add.graphics();
-  tail.fillStyle(0xffffff, 0.9); // White to match bubble
-  tail.lineStyle(2, 0x000000, 1); // Black border
+  tail.fillStyle(0xffffff, 0.9);
+  tail.lineStyle(2, 0x000000, 1);
 
   // Draw pointer triangle
   const tailX = bubbleX + bubbleWidth / 2;
@@ -6039,25 +6070,6 @@ function animatedSpeechBubble(x, y, text, duration = 3000, skillIcon) {
         // Add next character
         bubbleText.text += text[currentCharIndex];
         currentCharIndex++;
-
-        // Flash effect
-        /*const flashEffect = this.add.graphics();
-        flashEffect.fillStyle(0x000000, 0.2); // Black flash for contrast
-        flashEffect.fillCircle(
-          bubbleX + bubbleText.width + bubblePadding - 8,
-          bubbleY + bubbleText.height / 2 + bubblePadding,
-          8
-        );
-        flashEffect.setDepth(1001);
-        */
-        // Fade out flash
-        /* this.tweens.add({
-          targets: flashEffect,
-          alpha: 0,
-          duration: 150,
-          ease: "Sine.easeOut",
-          onComplete: () => flashEffect.destroy()
-        });*/
       } else {
         typingTimer.destroy();
       }
@@ -6071,21 +6083,14 @@ function animatedSpeechBubble(x, y, text, duration = 3000, skillIcon) {
     const totalDuration = duration + typingSpeed * text.length;
 
     this.time.delayedCall(totalDuration, () => {
-      this.tweens.killTweensOf(skillIcon);
-
-      // Now fade out and destroy
+      // Clean up both the speech bubble and skill icon
       this.tweens.add({
-        targets: skillIcon,
-        alpha: { from: 1, to: 0 },
-        y: skillIcon.y - 20, // Slight upward drift while fading
-        duration: 300,
-        onComplete: () => skillIcon.destroy(),
-      });
-      this.tweens.add({
-        targets: container,
+        targets: [skillIcon, container],
         alpha: 0,
+        y: "-=20", // Both float up slightly while fading
         duration: 300,
         onComplete: () => {
+          skillIcon.destroy();
           container.destroy();
           this.physics.resume();
           this.dialogueActive = false;
