@@ -1277,6 +1277,7 @@ function createLevel1(bgRepeat) {
       // Check if all skills are collected (6 skills in level 1)
       if (this.skillCount < 6) {
         // Not all skills collected, show message
+        resetCheckpointData();
         if (!this.flagMessageShown) {
           createSpeechBubble.call(
             this,
