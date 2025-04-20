@@ -5091,7 +5091,7 @@ function hitMysteryBox(player, box) {
         );
 
         // Check if all skills collected
-        if (this.skillCount >= 6) {
+        /*if (this.skillCount >= 6) {
           // Delay bridge animation slightly
           this.time.delayedCall(1000, () => {
             // Show completion message if all collected
@@ -5115,7 +5115,7 @@ function hitMysteryBox(player, box) {
               completionText.destroy();
             });
           });
-        }
+        }*/
       }
     },
     callbackScope: this,
@@ -5216,7 +5216,7 @@ function hitMysteryBox(player, box) {
   }
 
   // Handle additional tennis racket information if it's the last skill
-  if (this.coinCount == 6 && !isGuitarSkill) {
+  /*if (this.coinCount == 6 && !isGuitarSkill) {
     // Show a message about shooting tennis balls
     const shootText = this.add
       .text(this.scale.width / 2, 80, "Press SPACE to shoot tennis balls!", {
@@ -5235,7 +5235,7 @@ function hitMysteryBox(player, box) {
       delay: 5000,
       duration: 1000,
     });
-  }
+  }*/
 }
 
 // Function to handle player falling into river
