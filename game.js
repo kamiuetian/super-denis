@@ -1274,10 +1274,11 @@ function createLevel1(bgRepeat) {
     this.player,
     triggerZone,
     (player, triggerZone) => {
+      resetCheckpointData();
       // Check if all skills are collected (6 skills in level 1)
       if (this.skillCount < 6) {
         // Not all skills collected, show message
-        resetCheckpointData();
+
         if (!this.flagMessageShown) {
           createSpeechBubble.call(
             this,
@@ -5240,8 +5241,9 @@ function saveCheckpointData(boxIndex) {
 
 // Add a function to reset checkpoint data (for level restart or completion)
 function resetCheckpointData() {
+  console.log("Resetting checkpoint data");
   const level = selectedLevel || 1;
-  const levelKey = `level${level}Checkpoint`;
+  const levelKey = `level1Checkpoint`;
 
   try {
     localStorage.removeItem(levelKey);
