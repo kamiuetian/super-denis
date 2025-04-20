@@ -1269,16 +1269,6 @@ function createLevel1(bgRepeat) {
   triggerZone.body.setAllowGravity(false);
   triggerZone.body.immovable = true;
 
-  // Optional visual indicator for the trigger zone
-  const zoneVisual = this.add.rectangle(
-    triggerX,
-    groundY - triggerHeight / 2,
-    50 * scaleX,
-    triggerHeight,
-    0x00ff00,
-    0.3
-  );
-  zoneVisual.setDepth(100);
 
   // Add overlap detection
   this.physics.add.overlap(
