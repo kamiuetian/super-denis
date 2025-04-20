@@ -1924,7 +1924,7 @@ function createLevel2(bgRepeat) {
 
   // 5. Create skills panel with responsive positioning and sizing
   const minPanelWidth = 180; // Absolute minimum width in pixels
-  const minPanelHeight = 250; // Absolute minimum height in pixels
+  const minPanelHeight = 200; // Absolute minimum height in pixels
 
   const panelWidth = Math.max(300 * scaleX, minPanelWidth); // Use maximum of scaled or minimum
   const panelHeight = Math.max(300 * scaleY, minPanelHeight); // Use maximum of scaled or minimum
@@ -3508,7 +3508,7 @@ function createLevel3(bgRepeat) {
 
   const panelX = currentWidth - panelWidth - 20 * scaleX;
   const panelY = 20 * scaleY;
-//
+  //
   this.skillsPanel = this.add.graphics();
   this.skillsPanel.fillStyle(0x000000, 0.8);
   this.skillsPanel.fillRect(panelX, panelY, panelWidth, panelHeight);
