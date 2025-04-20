@@ -109,8 +109,19 @@ function preload() {
     frameWidth: 32,
     frameHeight: 32,
   });
-  this.load.image("NavyBoy", "assets/denis/NavySuit.png");
-
+  this.load.image("NavyBoy", "assets/denis/ElegentSecondCharacterStand.png");
+  this.load.spritesheet("l3playerStand", "assets/denis/NavySuitIdle.png", {
+    frameWidth: 32,
+    frameHeight: 32,
+  });
+  this.load.spritesheet("l3playerJump", "assets/denis/NavySuitJump.png", {
+    frameWidth: 32,
+    frameHeight: 32,
+  });
+  this.load.spritesheet("l3playerRun", "assets/denis/NavySuitRunning.png", {
+    frameWidth: 32,
+    frameHeight: 32,
+  });
   this.load.image("level2Background", "assets/denis/levle2bg.png");
   this.load.spritesheet("drawbridge", "assets/denis/WoodenGateAndTower.png", {
     frameWidth: 64, // Adjust based on actual sprite dimensions
@@ -345,6 +356,33 @@ function create() {
   this.anims.create({
     key: "explode",
     frames: this.anims.generateFrameNumbers("explosion", { start: 0, end: 5 }),
+    frameRate: 20,
+    repeat: 0,
+  });
+  this.anims.create({
+    key: "l3player-stand",
+    frames: this.anims.generateFrameNumbers("l3playerStand", {
+      start: 0,
+      end: 5,
+    }),
+    frameRate: 20,
+    repeat: -1,
+  });
+  this.anims.create({
+    key: "l3player-run",
+    frames: this.anims.generateFrameNumbers("l3playerRun", {
+      start: 0,
+      end: 5,
+    }),
+    frameRate: 20,
+    repeat: -1,
+  });
+  this.anims.create({
+    key: "l3player-jump",
+    frames: this.anims.generateFrameNumbers("l3playerJump", {
+      start: 0,
+      end: 5,
+    }),
     frameRate: 20,
     repeat: 0,
   });
@@ -613,6 +651,53 @@ function update(time, delta) {
 
         // Set jump velocity with scaling
         this.player.setVelocityY(scaledJumpVelocity);
+      }
+    } else if (selectedLevel === 3) {
+      // Get physics scale for consistent jump behavior
+      const physicsScale = getPhysicsScaleFactors();
+
+      // Apply horizontal movement
+      if (this.cursors.left.isDown) {
+        // Use horizontal scale factor for left/right movement
+        this.player.setVelocityX(-280 * physicsScale.horizontal);
+        this.player.setFlipX(true);
+        this.player.anims.play("l3player-run", true);
+      } else if (this.cursors.right.isDown) {
+        // Use horizontal scale factor for left/right movement
+        this.player.setVelocityX(280 * physicsScale.horizontal);
+        this.player.setFlipX(false);
+        this.player.anims.play("l3player-run", true);
+      } else {
+        this.player.setVelocityX(0);
+        this.player.anims.play("l3player-stand", true);
+      }
+
+      // Jump handling - add a debug message to see if touching.down is working
+      if (this.cursors.up.isDown) {
+        console.log(
+          "Up pressed, touching down:",
+          this.player.body.touching.down
+        );
+
+        if (this.player.body.touching.down) {
+          // Base jump velocity
+          const baseJumpVelocity = -850;
+
+          // Apply scaled jump velocity - use VERTICAL factor for jumping
+          const scaledJumpVelocity =
+            baseJumpVelocity * physicsScale.vertical * 1.2;
+
+          // Set jump velocity
+          this.player.setVelocityY(scaledJumpVelocity);
+          this.player.anims.play("l3player-jump", true);
+
+          console.log("Jump executed with velocity:", scaledJumpVelocity);
+        }
+      }
+
+      // Play jump animation only when in the air
+      if (!this.player.body.touching.down && this.player.body.velocity.y < 0) {
+        this.player.anims.play("l3player-jump", true);
       }
     } else {
       if (this.cursors.left.isDown) {
@@ -3380,6 +3465,23 @@ this.boss.update = function (time) {
 
 // Create Level 3 function by duplicating Level 2 function
 function createLevel3(bgRepeat) {
+  if (this.player) {
+    const bodyWidth = Math.floor(this.player.width * 0.6);
+    const bodyHeight = Math.floor(this.player.height * 0.9);
+    const offsetX = Math.floor((this.player.width - bodyWidth) / 2);
+    const offsetY = Math.floor(this.player.height * 0.1);
+
+    this.player.body.setSize(bodyWidth, bodyHeight);
+    this.player.body.setOffset(offsetX, offsetY);
+
+    // Make sure gravity is properly applied
+    const physicsScale = getPhysicsScaleFactors();
+    const baseGravity = 800;
+    const scaledGravity = baseGravity * physicsScale.vertical;
+    this.player.body.setGravityY(scaledGravity);
+
+    console.log("Level 3 player physics configured");
+  }
   // 1. Calculate responsive scaling factors (same as Level 1 and 2)
   const baseWidth = 1920;
   const baseHeight = 1080;
