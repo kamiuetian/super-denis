@@ -600,13 +600,14 @@ function update(time, delta) {
       // ADD THIS SECTION - Missing jump control for Level 2
       if (this.cursors.up.isDown && this.player.body.touching.down) {
         // Get the scaling factor
-        const scaleFactor = getResponsiveScaleFactor();
+        const physicsScale = getPhysicsScaleFactors();
 
         // Base jump velocity (what would be used at 1920x1080)
         const baseJumpVelocity = -850;
 
         // Apply scaled jump velocity
-        const scaledJumpVelocity = baseJumpVelocity * (scaleFactor * 1.2);
+        const scaledJumpVelocity =
+          baseJumpVelocity * physicsScale.blended * 1.2;
 
         // Set jump velocity with scaling
         this.player.setVelocityY(scaledJumpVelocity);
@@ -630,13 +631,14 @@ function update(time, delta) {
 
       if (this.cursors.up.isDown && this.player.body.touching.down) {
         // Get the scaling factor
-        const scaleFactor = getResponsiveScaleFactor();
+        const physicsScale = getPhysicsScaleFactors();
 
         // Base jump velocity (what would be used at 1920x1080)
         const baseJumpVelocity = -750;
 
         // Apply scaled jump velocity
-        const scaledJumpVelocity = baseJumpVelocity * (scaleFactor * 1.2);
+        const scaledJumpVelocity =
+          baseJumpVelocity * (physicsScale.blended * 1.2);
 
         // Set jump velocity with scaling
         this.player.setVelocityY(scaledJumpVelocity);
@@ -4987,6 +4989,30 @@ function fixCameraBounds() {
   // 6. For even more static feeling, we could snap camera to grid positions
   // Uncomment the following line if you want camera to move in "chunks"
   camera.setRoundPixels(true);
+}
+function getPhysicsScaleFactors() {
+  const baseWidth = 1920;
+  const baseHeight = 1080;
+
+  // Current dimensions
+  const currentWidth = window.innerWidth;
+  const currentHeight = window.innerHeight;
+
+  // Calculate raw scaling factors
+  const scaleX = currentWidth / baseWidth;
+  const scaleY = currentHeight / baseHeight;
+
+  // Calculate a blended scale factor for balanced physics
+  const blendedScale = Math.sqrt(scaleX * scaleY);
+
+  // Return all factors so we can choose the appropriate one for each physics property
+  return {
+    horizontal: scaleX,
+    vertical: scaleY,
+    blended: blendedScale,
+    // Keep the min scale for objects that need consistent proportions
+    uniform: Math.min(scaleX, scaleY),
+  };
 }
 function getResponsiveScaleFactor() {
   const baseWidth = 1920;
