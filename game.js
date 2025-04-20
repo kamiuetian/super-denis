@@ -5075,7 +5075,7 @@ function hitMysteryBox(player, box) {
   // Show speech bubble with skill message
   //const speechBubble = showSpeechBubble.call(this, player, skill.message, 3000);
   const landingCheck = this.time.addEvent({
-    delay: 10, // Check every 100ms
+    delay: 5, // Check every 100ms
     callback: () => {
       if (player.body.touching.down) {
         // Player has landed, show speech bubble
