@@ -3508,7 +3508,7 @@ function createLevel3(bgRepeat) {
 
   const panelX = currentWidth - panelWidth - 20 * scaleX;
   const panelY = 20 * scaleY;
-
+//
   this.skillsPanel = this.add.graphics();
   this.skillsPanel.fillStyle(0x000000, 0.8);
   this.skillsPanel.fillRect(panelX, panelY, panelWidth, panelHeight);
