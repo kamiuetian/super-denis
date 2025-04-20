@@ -1339,8 +1339,12 @@ function createLevel1(bgRepeat) {
 
   // 5. UI elements - make these responsive to screen size
   // Skills panel
-  const panelWidth = 200 * scaleX;
-  const panelHeight = 260 * scaleY;
+  const minPanelWidth = 150; // Absolute minimum width in pixels
+  const minPanelHeight = 200; // Absolute minimum height in pixels
+
+  const panelWidth = Math.max(200 * scaleX, minPanelWidth); // Use maximum of scaled or minimum
+  const panelHeight = Math.max(260 * scaleY, minPanelHeight); // Use maximum of scaled or minimum
+
   const panelX = currentWidth - panelWidth - 20;
   const panelY = 20;
 
@@ -6030,7 +6034,7 @@ function animatedSpeechBubble(x, y, text, duration = 3000) {
         currentCharIndex++;
 
         // Flash effect
-        const flashEffect = this.add.graphics();
+        /*const flashEffect = this.add.graphics();
         flashEffect.fillStyle(0x000000, 0.2); // Black flash for contrast
         flashEffect.fillCircle(
           bubbleX + bubbleText.width + bubblePadding - 8,
@@ -6038,15 +6042,15 @@ function animatedSpeechBubble(x, y, text, duration = 3000) {
           8
         );
         flashEffect.setDepth(1001);
-
+        */
         // Fade out flash
-        this.tweens.add({
+        /* this.tweens.add({
           targets: flashEffect,
           alpha: 0,
           duration: 150,
           ease: "Sine.easeOut",
-          onComplete: () => flashEffect.destroy(),
-        });
+          onComplete: () => flashEffect.destroy()
+        });*/
       } else {
         typingTimer.destroy();
       }
