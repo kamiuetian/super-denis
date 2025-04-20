@@ -1269,7 +1269,6 @@ function createLevel1(bgRepeat) {
   triggerZone.body.setAllowGravity(false);
   triggerZone.body.immovable = true;
 
-
   // Add overlap detection
   this.physics.add.overlap(
     this.player,
@@ -4173,7 +4172,8 @@ function hitMysteryBox(player, box) {
           player.x,
           player.y - 60,
           skill.message,
-          speechDuration,
+          3000,
+          //speechDuration,
           skill
         );
 
