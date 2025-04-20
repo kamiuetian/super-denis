@@ -1274,9 +1274,9 @@ function createLevel1(bgRepeat) {
     this.player,
     triggerZone,
     (player, triggerZone) => {
-      resetCheckpointData();
       // Check if all skills are collected (6 skills in level 1)
       if (this.skillCount < 6) {
+        resetCheckpointData();
         // Not all skills collected, show message
 
         if (!this.flagMessageShown) {
