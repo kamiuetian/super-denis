@@ -1738,27 +1738,28 @@ function addEnemies() {
   const enemyBaseScale = 5; // Your original enemy scale
   const responsiveEnemyScale = enemyBaseScale * scaleFactor;
 
-  // Clear any existing enemies to avoid conflicts
+  // Clear any existing enemies
   if (this.enemies) {
     this.enemies.clear(true, true);
   }
 
-  // Create new enemy group with proper physics settings
+  // Create new enemy group
   this.enemies = this.physics.add.group({
     bounceX: 0,
     collideWorldBounds: true,
   });
-  // Calculate ground top position the SAME way as in createLevel1
+
+  // Calculate ground top position THE EXACT SAME WAY as in createLevel1
   const scaleY = this.scale.height / 1080;
   const groundHeight = 40 * scaleY;
-  const groundTop = this.scale.height - groundHeight * 2 + 6; // Match ground top position
+  const groundTop = this.scale.height - groundHeight * 2 + 6; // Match ground top position exactly
 
-  // Define enemy positions with patrol ranges - scale positions if needed
+  // Define enemy positions with patrol ranges - using groundTop for positioning
   const enemyPositions = [
-    { x: 600, y: this.scale.height - 140, range: 300, speed: 60 },
-    { x: 1200, y: this.scale.height - 140, range: 300, speed: 80 },
-    { x: 1900, y: this.scale.height - 140, range: 300, speed: 70 },
-    { x: 2500, y: this.scale.height - 140, range: 300, speed: 90 },
+    { x: 600, y: groundTop - 20, range: 300, speed: 60 }, // Position relative to ground top
+    { x: 1200, y: groundTop - 20, range: 300, speed: 80 }, // Not relative to screen height
+    { x: 1900, y: groundTop - 20, range: 300, speed: 70 },
+    { x: 2500, y: groundTop - 20, range: 300, speed: 90 },
   ];
 
   // Create each enemy with responsive scaling
@@ -1770,9 +1771,9 @@ function addEnemies() {
 
     // Better collision body setup
     const bodyWidth = enemy.width * 0.5;
-    const bodyHeight = enemy.height * 0.6; // Increased height slightly
+    const bodyHeight = enemy.height * 0.6;
     const offsetX = (enemy.width - bodyWidth) / 2;
-    const offsetY = enemy.height - bodyHeight - 2; // Small adjustment to keep above ground
+    const offsetY = enemy.height - bodyHeight - 2; // Small offset to keep above ground
 
     enemy.body.setSize(bodyWidth, bodyHeight);
     enemy.body.setOffset(offsetX, offsetY);
