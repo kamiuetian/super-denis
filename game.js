@@ -526,7 +526,7 @@ function setupPlayer() {
   // Create player using the idle animation's first frame
   this.player = this.physics.add.sprite(100, 300, "player-idle");
   // Scale gravity based on screen size
-  const baseGravity = 700;
+  const baseGravity = 800;
   const scaledGravity = baseGravity * scaleFactor;
   this.player.body.setGravityY(scaledGravity);
 
@@ -710,7 +710,7 @@ function update(time, delta) {
         const physicsScale = getPhysicsScaleFactors();
 
         // Base jump velocity (what would be used at 1920x1080)
-        const baseJumpVelocity = -850;
+        const baseJumpVelocity = -750;
 
         // Apply scaled jump velocity
         const scaledJumpVelocity =
@@ -748,7 +748,7 @@ function update(time, delta) {
 
         if (this.player.body.touching.down) {
           // Base jump velocity
-          const baseJumpVelocity = -850;
+          const baseJumpVelocity = -750;
 
           // Apply scaled jump velocity - use VERTICAL factor for jumping
           const scaledJumpVelocity =
@@ -3562,7 +3562,7 @@ function createLevel3(bgRepeat) {
 
     // Make sure gravity is properly applied
     const physicsScale = getPhysicsScaleFactors();
-    const baseGravity = 700;
+    const baseGravity = 800;
     const scaledGravity = baseGravity * physicsScale.vertical;
     this.player.body.setGravityY(scaledGravity);
 
