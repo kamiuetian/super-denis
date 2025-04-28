@@ -11,76 +11,70 @@ let playerState = "small";
 let selectedLevel = 1;
 const level3Skills = [
   {
-    icon: "🎤",
-    name: "Public Speaking",
-    year: "2017",
-    desc: "testing the description",
+    icon: "🏛",
+    name: "Politics on Digital Education",
+    year: "2016",
+    desc: "Worked in politics focusing on digital education initiatives.",
   },
   {
-    icon: "🔄",
-    name: "Digital Consultancy",
-    year: "2017",
-    desc: "testing the description",
+    icon: "👨‍💻",
+    name: "First Coding Experience",
+    year: "2018",
+    desc: "Gained first hands-on coding experience with Python, Stata, and R.",
+  },
+  {
+    icon: "📈",
+    name: "Digital Project Management",
+    year: "2024",
+    desc: "Acquired experience in managing digital projects.",
+  },
+  {
+    icon: "☁",
+    name: "Cloud & Security Seminar",
+    year: "2024",
+    desc: "Delivered a seminar on cloud technologies and security topics.",
   },
   {
     icon: "🤖",
-    name: "AI Business Implementation",
-    year: "2017",
-    desc: "testing the description",
+    name: "AI Workshop",
+    year: "2025",
+    desc: "Conducted a workshop focused on Artificial Intelligence.",
   },
   {
-    icon: "👥",
-    name: "Team Collaboration",
-    year: "2017",
-    desc: "testing the description",
+    icon: "🎮",
+    name: "Game Development Project",
+    year: "2025",
+    desc: "Worked on a project involving game development.",
   },
   {
-    icon: "♟️",
-    name: "Strategic Thinking",
-    year: "2017",
-    desc: "testing the description",
+    icon: "💳",
+    name: "FinTech Tools and Investments",
+    year: "2021",
+    desc: "Gained experience with financial technology tools and investment strategies.",
   },
   {
-    icon: "☁️",
-    name: "Cloud & Security",
-    year: "2017",
-    desc: "testing the description",
+    icon: "🛒",
+    name: "Research on AR & VR in Commerce",
+    year: "2022",
+    desc: "Authored a research paper on the impact of Augmented and Virtual Reality on commerce.",
   },
   {
-    icon: "💸",
-    name: "Finance",
-    year: "2017",
-    desc: "testing the description",
+    icon: "🎓",
+    name: "Bachelor of Science",
+    year: "2024",
+    desc: "Completed Bachelor of Science in Wirtschaftswissenschaften.",
   },
   {
-    icon: "⚡",
-    name: "Fast Learner",
-    year: "2017",
-    desc: "testing the description",
+    icon: "🤝",
+    name: "Client Account Management",
+    year: "2024",
+    desc: "Handled client accounts and relationship management.",
   },
   {
-    icon: "🚀",
-    name: "Initiative",
-    year: "2017",
-    desc: "testing the description",
-  },
-  {
-    icon: "🗃️",
-    name: "IT Project Coordinator",
-    year: "2017",
-    desc: "testing the description",
-  },
-  {
-    icon: "🖧",
-    name: "ICT Infrastructure",
-    year: "2017",
-    desc: "testing the description",
-  },
-  {
-    icon: "🌍",
-    name: "Languages",
-    year: "2017",
-    desc: "testing the description",
+    icon: "🖥",
+    name: "First IT Solution Sale",
+    year: "2025",
+    desc: "Closed the first sale of an IT solution.",
   },
 ];
 // Game configuration
@@ -3716,8 +3710,6 @@ function createLevel3(bgRepeat) {
   const skillSize = Math.max(12 * scaleY, 10); // Minimum size of 10px
   const skillSpacing = 20 * scaleY;
 
-  
-
   for (let i = 0; i < level3Skills.length; i++) {
     const skillText = this.add
       .text(
@@ -4602,7 +4594,7 @@ function collectSkill(player, skill) {
   if (year || description) {
     // Create text objects with nice formatting
     const yearText = this.add
-      .text(skill.x, skill.y - 40, year ? `${year}` : "", {
+      .text(skill.x, skill.y - 60, year ? `${year}` : "", {
         fontSize: "18px",
         fontStyle: "bold",
         color: "#FFFFFF",
@@ -4612,7 +4604,7 @@ function collectSkill(player, skill) {
       .setOrigin(0.5);
 
     const descText = this.add
-      .text(skill.x, skill.y - 15, description, {
+      .text(skill.x, skill.y -10, description, {
         fontSize: "14px",
         color: "#FFFFFF",
         stroke: "#000000",
