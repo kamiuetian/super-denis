@@ -53,7 +53,7 @@ a {
 }
 
 .green-dot {
-    background-color: #22c55e;
+    background-color: #002e3c;
 }
 
 .blue-dot {
@@ -90,7 +90,7 @@ a {
 }
 
 .btn-primary {
-    background-color: #22c55e;
+    background-color: #002e3c;
     color: white;
 }
 
@@ -100,12 +100,12 @@ a {
 
 .btn-outline {
     background-color: transparent;
-    border: 1px solid #22c55e;
-    color: #22c55e;
+    border: 1px solid #002e3c;
+    color: #002e3c;
 }
 
 .btn-outline:hover {
-    background-color: #22c55e;
+    background-color: #002e3c;
     color: white;
 }
 
@@ -126,7 +126,7 @@ a {
     display: inline-block;
     padding: 0.25rem 0.75rem;
     background-color: #dcfce7;
-    color: #22c55e;
+    color: #002e3c;
     border-radius: 9999px;
     font-size: 0.875rem;
     font-weight: 500;
@@ -154,7 +154,7 @@ header {
 }
 
 .logo-m {
-    color: #22c55e;
+    color: #002e3c;
 }
 
 .main-nav {
@@ -169,7 +169,7 @@ header {
 
 .nav-link:hover,
 .nav-link.active {
-    color: #22c55e;
+    color: #002e3c;
 }
 
 .mobile-menu-btn {
@@ -226,7 +226,7 @@ header {
     left: 1rem;
     width: 100%;
     height: 100%;
-    background-color: #22c55e;
+    background-color: #002e3c;
     z-index: -1;
 }
 
@@ -251,7 +251,7 @@ header {
 .stat-number {
     font-size: 2.5rem;
     font-weight: 700;
-    color: #22c55e;
+    color: #002e3c;
     margin-bottom: 0.5rem;
 }
 
@@ -444,7 +444,7 @@ header {
 
 .form-control:focus {
     outline: none;
-    border-color: #22c55e;
+    border-color: #002e3c;
     box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
 }
 
@@ -461,7 +461,7 @@ header {
 }
 
 .contact-icon {
-    background-color: #22c55e;
+    background-color: #002e3c;
     color: white;
     width: 2.5rem;
     height: 2.5rem;
@@ -505,7 +505,7 @@ header {
 }
 
 .social-link {
-    background-color: #22c55e;
+    background-color: #002e3c;
     color: white;
     width: 2.5rem;
     height: 2.5rem;
@@ -616,7 +616,7 @@ header {
 .timeline-line {
     position: absolute;
     width: 4px;
-    background-color: #22c55e;
+    background-color: #002e3c;
     top: 0;
     bottom: 0;
     left: 50%;
@@ -645,7 +645,7 @@ header {
     position: absolute;
     width: 20px;
     height: 20px;
-    background-color: #22c55e;
+    background-color: #002e3c;
     border-radius: 50%;
     top: 15px;
 }
@@ -673,7 +673,7 @@ header {
 }
 
 .timeline-date {
-    color: #22c55e;
+    color: #002e3c;
     font-weight: 600;
     margin-bottom: 5px;
 }
