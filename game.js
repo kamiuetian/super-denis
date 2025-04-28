@@ -526,7 +526,7 @@ function setupPlayer() {
   // Create player using the idle animation's first frame
   this.player = this.physics.add.sprite(100, 300, "player-idle");
   // Scale gravity based on screen size
-  const baseGravity = 800;
+  const baseGravity = 700;
   const scaledGravity = baseGravity * scaleFactor;
   this.player.body.setGravityY(scaledGravity);
 
@@ -3562,7 +3562,7 @@ function createLevel3(bgRepeat) {
 
     // Make sure gravity is properly applied
     const physicsScale = getPhysicsScaleFactors();
-    const baseGravity = 800;
+    const baseGravity = 700;
     const scaledGravity = baseGravity * physicsScale.vertical;
     this.player.body.setGravityY(scaledGravity);
 
