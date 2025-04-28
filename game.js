@@ -710,7 +710,7 @@ function update(time, delta) {
         const physicsScale = getPhysicsScaleFactors();
 
         // Base jump velocity (what would be used at 1920x1080)
-        const baseJumpVelocity = -750;
+        const baseJumpVelocity = -710;
 
         // Apply scaled jump velocity
         const scaledJumpVelocity =
@@ -748,7 +748,7 @@ function update(time, delta) {
 
         if (this.player.body.touching.down) {
           // Base jump velocity
-          const baseJumpVelocity = -750;
+          const baseJumpVelocity = -710;
 
           // Apply scaled jump velocity - use VERTICAL factor for jumping
           const scaledJumpVelocity =
@@ -788,7 +788,7 @@ function update(time, delta) {
         const physicsScale = getPhysicsScaleFactors();
 
         // Base jump velocity (what would be used at 1920x1080)
-        const baseJumpVelocity = -750;
+        const baseJumpVelocity = -710;
 
         // Apply scaled jump velocity
         const scaledJumpVelocity =
