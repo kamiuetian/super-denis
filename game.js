@@ -1481,7 +1481,7 @@ function createLevel1(bgRepeat) {
 
   // 5. UI elements - make these responsive to screen size
   // Skills panel
-  const minPanelWidth = 180; // Absolute minimum width in pixels
+  const minPanelWidth = 220; // Absolute minimum width in pixels
   const minPanelHeight = 200; // Absolute minimum height in pixels
 
   const panelWidth = Math.max(200 * scaleX, minPanelWidth); // Use maximum of scaled or minimum
