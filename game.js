@@ -1734,71 +1734,73 @@ function resetSkillPanel() {
 // Completely revised addEnemies function - simplified for reliable movement
 function addEnemies() {
   // Calculate responsive scaling
-  const scaleY = this.scale.height / 1080;
-  const groundHeight = 60 * scaleY;
+ const scaleY = this.scale.height / 1080;
 
-  // This is key: we need to get the exact Y coordinate of the top surface of the ground
-  // In createLevel1, the top ground layer is positioned at:
-  const groundBlockY = this.scale.height - groundHeight - groundHeight / 2 + 6;
+ // First, get the ACTUAL positions of the ground blocks
+ const groundLayer2Y = this.scale.height - 40 * scaleY - (40 * scaleY) / 2 + 6;
 
-  // Calculate the VISIBLE top of the ground (where enemies should stand)
-  const groundTopY = groundBlockY - groundHeight / 2;
+ // The visual top of the ground is the top of the second layer
+ const groundVisualTop = groundLayer2Y - (40 * scaleY) / 2;
 
-  console.log("Ground top Y:", groundTopY);
+ console.log("Ground visual top:", groundVisualTop);
 
-  // Clear any existing enemies
-  if (this.enemies) {
-    this.enemies.clear(true, true);
-  }
+ // Clear any existing enemies
+ if (this.enemies) {
+   this.enemies.clear(true, true);
+ }
 
-  // Create enemy group with improved physics settings
-  this.enemies = this.physics.add.group({
-    bounceX: 0,
-    collideWorldBounds: true,
-    allowGravity: true,
-  });
+ // Create enemy group
+ this.enemies = this.physics.add.group({
+   bounceX: 0,
+   collideWorldBounds: true,
+   allowGravity: true,
+ });
 
-  // Define enemy positions - using precise groundTopY for positioning
-  const enemyPositions = [
-    { x: 600, y: groundTopY - 30, range: 300, speed: 60 },
-    { x: 1200, y: groundTopY - 30, range: 300, speed: 80 },
-    { x: 1900, y: groundTopY - 30, range: 300, speed: 70 },
-    { x: 2500, y: groundTopY - 30, range: 300, speed: 90 },
-  ];
+ // Define positions at a FIXED HEIGHT above the ground visual top
+ // This ensures consistent positioning regardless of screen size
+ const enemyYPosition = groundVisualTop - 45; // 45px above ground visual top
 
-  // Create each enemy with proper vertical positioning
-  for (const pos of enemyPositions) {
-    const enemy = this.enemies
-      .create(pos.x, pos.y, "monster-run")
-      .setScale(getResponsiveScaleFactor() * 5)
-      .setDepth(20);
+ const enemyPositions = [
+   { x: 600, y: enemyYPosition, range: 300, speed: 60 },
+   { x: 1200, y: enemyYPosition, range: 300, speed: 80 },
+   { x: 1900, y: enemyYPosition, range: 300, speed: 70 },
+   { x: 2500, y: enemyYPosition, range: 300, speed: 90 },
+ ];
 
-    console.log(`Created enemy at: ${pos.x}, ${pos.y}`);
+ // Create enemies
+ for (const pos of enemyPositions) {
+   const enemy = this.enemies
+     .create(pos.x, pos.y, "monster-run")
+     .setScale(getResponsiveScaleFactor() * 5)
+     .setDepth(20);
 
-    // More precise collision body with larger bottom part
-    const bodyWidth = enemy.width * 0.6; // Wider body
-    const bodyHeight = enemy.height * 0.7; // Taller body
-    const offsetX = (enemy.width - bodyWidth) / 2;
-    const offsetY = enemy.height - bodyHeight;
+   // Create better physics body - positioned at the BOTTOM of the sprite
+   const bodyWidth = enemy.width * 0.6;
+   const bodyHeight = enemy.height * 0.7;
 
-    enemy.body.setSize(bodyWidth, bodyHeight);
-    enemy.body.setOffset(offsetX, offsetY);
+   // Important: position body at BOTTOM of sprite with minimal offset
+   const offsetX = (enemy.width - bodyWidth) / 2;
+   const offsetY = enemy.height - bodyHeight - 2; // Only 2px offset from bottom
 
-    // Set a lower center of mass to prevent tipping
-    enemy.body.setMass(2);
+   enemy.body.setSize(bodyWidth, bodyHeight);
+   enemy.body.setOffset(offsetX, offsetY);
 
-    // Store patrol information
-    enemy.startX = pos.x;
-    enemy.leftBound = pos.x - pos.range / 2;
-    enemy.rightBound = pos.x + pos.range / 2;
-    enemy.speed = pos.speed;
-    enemy.direction = -1;
+   // Create visual indicator of position for debugging (remove in production)
+   /*const debugDot = this.add.circle(pos.x, pos.y, 5, 0xff0000);
+    debugDot.setDepth(100);*/
 
-    // Set initial velocity
-    enemy.setVelocityX(-pos.speed);
-    enemy.body.onWorldBounds = true;
-    enemy.anims.play("monster-run", true);
-  }
+   // Set patrol data
+   enemy.startX = pos.x;
+   enemy.leftBound = pos.x - pos.range / 2;
+   enemy.rightBound = pos.x + pos.range / 2;
+   enemy.speed = pos.speed;
+   enemy.direction = -1;
+
+   // Set initial velocity
+   enemy.setVelocityX(-pos.speed);
+   enemy.body.onWorldBounds = true;
+   enemy.anims.play("monster-run", true);
+ }
 
   // Rest of the function remains the same
   this.physics.world.on("worldbounds", (body) => {
