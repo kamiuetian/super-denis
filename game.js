@@ -1748,6 +1748,10 @@ function addEnemies() {
     bounceX: 0,
     collideWorldBounds: true,
   });
+  // Calculate ground top position the SAME way as in createLevel1
+  const scaleY = this.scale.height / 1080;
+  const groundHeight = 40 * scaleY;
+  const groundTop = this.scale.height - groundHeight * 2 + 6; // Match ground top position
 
   // Define enemy positions with patrol ranges - scale positions if needed
   const enemyPositions = [
@@ -1763,13 +1767,17 @@ function addEnemies() {
       .create(pos.x, pos.y, "monster-run")
       .setScale(responsiveEnemyScale)
       .setDepth(20);
+
+    // Better collision body setup
     const bodyWidth = enemy.width * 0.5;
-    const bodyHeight = enemy.height * 0.4;
+    const bodyHeight = enemy.height * 0.6; // Increased height slightly
     const offsetX = (enemy.width - bodyWidth) / 2;
-    const offsetY = enemy.height - bodyHeight;
+    const offsetY = enemy.height - bodyHeight - 2; // Small adjustment to keep above ground
+
     enemy.body.setSize(bodyWidth, bodyHeight);
     enemy.body.setOffset(offsetX, offsetY);
-    // Store patrol information as custom properties
+
+    // Store patrol information
     enemy.startX = pos.x;
     enemy.leftBound = pos.x - pos.range / 2;
     enemy.rightBound = pos.x + pos.range / 2;
@@ -1778,8 +1786,6 @@ function addEnemies() {
 
     // Set initial velocity
     enemy.setVelocityX(-pos.speed);
-
-    // Add world bounds collision handler
     enemy.body.onWorldBounds = true;
     enemy.anims.play("monster-run", true);
   }
