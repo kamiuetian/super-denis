@@ -1325,7 +1325,7 @@ function createLevel1(bgRepeat) {
   this.boss = this.physics.add
     .sprite(bossX, groundTop, "NavyBoy") // Using the second character sprite
     .setOrigin(0.5, 1)
-    .setScale(1.5 * objectScale)
+    .setScale(1 * objectScale)
     .setFlipX(true);
 
   // Make boss static and add animation if needed
