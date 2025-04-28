@@ -9,7 +9,80 @@ let game;
 let gameStarted = false;
 let playerState = "small";
 let selectedLevel = 1;
-
+const level3Skills = [
+  {
+    icon: "🎤",
+    name: "Public Speaking",
+    year: "2017",
+    desc: "testing the description",
+  },
+  {
+    icon: "🔄",
+    name: "Digital Consultancy",
+    year: "2017",
+    desc: "testing the description",
+  },
+  {
+    icon: "🤖",
+    name: "AI Business Implementation",
+    year: "2017",
+    desc: "testing the description",
+  },
+  {
+    icon: "👥",
+    name: "Team Collaboration",
+    year: "2017",
+    desc: "testing the description",
+  },
+  {
+    icon: "♟️",
+    name: "Strategic Thinking",
+    year: "2017",
+    desc: "testing the description",
+  },
+  {
+    icon: "☁️",
+    name: "Cloud & Security",
+    year: "2017",
+    desc: "testing the description",
+  },
+  {
+    icon: "💸",
+    name: "Finance",
+    year: "2017",
+    desc: "testing the description",
+  },
+  {
+    icon: "⚡",
+    name: "Fast Learner",
+    year: "2017",
+    desc: "testing the description",
+  },
+  {
+    icon: "🚀",
+    name: "Initiative",
+    year: "2017",
+    desc: "testing the description",
+  },
+  {
+    icon: "🗃️",
+    name: "IT Project Coordinator",
+    year: "2017",
+    desc: "testing the description",
+  },
+  {
+    icon: "🖧",
+    name: "ICT Infrastructure",
+    year: "2017",
+    desc: "testing the description",
+  },
+  {
+    icon: "🌍",
+    name: "Languages",
+    year: "2017",
+    desc: "testing the description",
+  },
+];
 // Game configuration
 const config = {
   type: Phaser.AUTO,
@@ -1734,73 +1807,73 @@ function resetSkillPanel() {
 // Completely revised addEnemies function - simplified for reliable movement
 function addEnemies() {
   // Calculate responsive scaling
- const scaleY = this.scale.height / 1080;
+  const scaleY = this.scale.height / 1080;
 
- // First, get the ACTUAL positions of the ground blocks
- const groundLayer2Y = this.scale.height - 40 * scaleY - (40 * scaleY) / 2 + 6;
+  // First, get the ACTUAL positions of the ground blocks
+  const groundLayer2Y = this.scale.height - 40 * scaleY - (40 * scaleY) / 2 + 6;
 
- // The visual top of the ground is the top of the second layer
- const groundVisualTop = groundLayer2Y - (40 * scaleY) / 2;
+  // The visual top of the ground is the top of the second layer
+  const groundVisualTop = groundLayer2Y - (40 * scaleY) / 2;
 
- console.log("Ground visual top:", groundVisualTop);
+  console.log("Ground visual top:", groundVisualTop);
 
- // Clear any existing enemies
- if (this.enemies) {
-   this.enemies.clear(true, true);
- }
+  // Clear any existing enemies
+  if (this.enemies) {
+    this.enemies.clear(true, true);
+  }
 
- // Create enemy group
- this.enemies = this.physics.add.group({
-   bounceX: 0,
-   collideWorldBounds: true,
-   allowGravity: true,
- });
+  // Create enemy group
+  this.enemies = this.physics.add.group({
+    bounceX: 0,
+    collideWorldBounds: true,
+    allowGravity: true,
+  });
 
- // Define positions at a FIXED HEIGHT above the ground visual top
- // This ensures consistent positioning regardless of screen size
- const enemyYPosition = groundVisualTop - 45; // 45px above ground visual top
+  // Define positions at a FIXED HEIGHT above the ground visual top
+  // This ensures consistent positioning regardless of screen size
+  const enemyYPosition = groundVisualTop - 45; // 45px above ground visual top
 
- const enemyPositions = [
-   { x: 600, y: enemyYPosition, range: 300, speed: 60 },
-   { x: 1200, y: enemyYPosition, range: 300, speed: 80 },
-   { x: 1900, y: enemyYPosition, range: 300, speed: 70 },
-   { x: 2500, y: enemyYPosition, range: 300, speed: 90 },
- ];
+  const enemyPositions = [
+    { x: 600, y: enemyYPosition, range: 300, speed: 60 },
+    { x: 1200, y: enemyYPosition, range: 300, speed: 80 },
+    { x: 1900, y: enemyYPosition, range: 300, speed: 70 },
+    { x: 2500, y: enemyYPosition, range: 300, speed: 90 },
+  ];
 
- // Create enemies
- for (const pos of enemyPositions) {
-   const enemy = this.enemies
-     .create(pos.x, pos.y, "monster-run")
-     .setScale(getResponsiveScaleFactor() * 5)
-     .setDepth(20);
+  // Create enemies
+  for (const pos of enemyPositions) {
+    const enemy = this.enemies
+      .create(pos.x, pos.y, "monster-run")
+      .setScale(getResponsiveScaleFactor() * 5)
+      .setDepth(20);
 
-   // Create better physics body - positioned at the BOTTOM of the sprite
-   const bodyWidth = enemy.width * 0.6;
-   const bodyHeight = enemy.height * 0.7;
+    // Create better physics body - positioned at the BOTTOM of the sprite
+    const bodyWidth = enemy.width * 0.6;
+    const bodyHeight = enemy.height * 0.7;
 
-   // Important: position body at BOTTOM of sprite with minimal offset
-   const offsetX = (enemy.width - bodyWidth) / 2;
-   const offsetY = enemy.height - bodyHeight - 2; // Only 2px offset from bottom
+    // Important: position body at BOTTOM of sprite with minimal offset
+    const offsetX = (enemy.width - bodyWidth) / 2;
+    const offsetY = enemy.height - bodyHeight - 2; // Only 2px offset from bottom
 
-   enemy.body.setSize(bodyWidth, bodyHeight);
-   enemy.body.setOffset(offsetX, offsetY);
+    enemy.body.setSize(bodyWidth, bodyHeight);
+    enemy.body.setOffset(offsetX, offsetY);
 
-   // Create visual indicator of position for debugging (remove in production)
-   /*const debugDot = this.add.circle(pos.x, pos.y, 5, 0xff0000);
+    // Create visual indicator of position for debugging (remove in production)
+    /*const debugDot = this.add.circle(pos.x, pos.y, 5, 0xff0000);
     debugDot.setDepth(100);*/
 
-   // Set patrol data
-   enemy.startX = pos.x;
-   enemy.leftBound = pos.x - pos.range / 2;
-   enemy.rightBound = pos.x + pos.range / 2;
-   enemy.speed = pos.speed;
-   enemy.direction = -1;
+    // Set patrol data
+    enemy.startX = pos.x;
+    enemy.leftBound = pos.x - pos.range / 2;
+    enemy.rightBound = pos.x + pos.range / 2;
+    enemy.speed = pos.speed;
+    enemy.direction = -1;
 
-   // Set initial velocity
-   enemy.setVelocityX(-pos.speed);
-   enemy.body.onWorldBounds = true;
-   enemy.anims.play("monster-run", true);
- }
+    // Set initial velocity
+    enemy.setVelocityX(-pos.speed);
+    enemy.body.onWorldBounds = true;
+    enemy.anims.play("monster-run", true);
+  }
 
   // Rest of the function remains the same
   this.physics.world.on("worldbounds", (body) => {
@@ -3643,20 +3716,7 @@ function createLevel3(bgRepeat) {
   const skillSize = Math.max(12 * scaleY, 10); // Minimum size of 10px
   const skillSpacing = 20 * scaleY;
 
-  const level3Skills = [
-    { icon: "🎤", name: "Public Speaking" },
-    { icon: "🔄", name: "Digital Consultancy" },
-    { icon: "🤖", name: "AI Business Implementation" },
-    { icon: "👥", name: "Team Collaboration" },
-    { icon: "♟️", name: "Strategic Thinking" },
-    { icon: "☁️", name: "Cloud & Security" },
-    { icon: "💸", name: "Finance" },
-    { icon: "⚡", name: "Fast Learner" },
-    { icon: "🚀", name: "Initiative" },
-    { icon: "🗃️", name: "IT Project Coordinator" },
-    { icon: "🖧", name: "ICT Infrastructure" },
-    { icon: "🌍", name: "Languages" },
-  ];
+  
 
   for (let i = 0; i < level3Skills.length; i++) {
     const skillText = this.add
@@ -4531,22 +4591,74 @@ function collectSkill(player, skill) {
     onComplete: () => skill.destroy(),
   });
 
-  // Hide the glow
-  const glow = skill.getData("glow");
-  if (glow) {
+  const skillIndex = itemIndex >= 6 ? itemIndex - 6 : itemIndex;
+  const skillData = level3Skills[itemIndex] || {};
+
+  // Get year and description if available
+  const year = skillData.year || "";
+  const description = skillData.desc || "";
+
+  // If we have year or description, show them
+  if (year || description) {
+    // Create text objects with nice formatting
+    const yearText = this.add
+      .text(skill.x, skill.y - 40, year ? `${year}` : "", {
+        fontSize: "18px",
+        fontStyle: "bold",
+        color: "#FFFFFF",
+        stroke: "#000000",
+        strokeThickness: 3,
+      })
+      .setOrigin(0.5);
+
+    const descText = this.add
+      .text(skill.x, skill.y - 15, description, {
+        fontSize: "14px",
+        color: "#FFFFFF",
+        stroke: "#000000",
+        strokeThickness: 2,
+        align: "center",
+        wordWrap: { width: 180 },
+      })
+      .setOrigin(0.5);
+
+    // Add particle effects around the text
+    /*const textParticles = this.add.particles(skill.x, skill.y - 30, "coin", {
+      speed: { min: 30, max: 70 },
+      scale: { start: 0.05, end: 0 },
+      alpha: { start: 0.7, end: 0 },
+      lifespan: 2000,
+      quantity: 1,
+      frequency: 200,
+      tint: itemType === "tech" ? 0x00ffff : 0x00ff00,
+    });*/
+
+    // Text animation sequence
     this.tweens.add({
-      targets: glow,
-      alpha: 0,
-      scale: 1.5,
-      duration: 500,
-      onComplete: () => glow.destroy(),
+      targets: [yearText, descText],
+      y: "-=30", // Float upward
+      duration: 3000,
+      ease: "Sine.easeOut",
+      onComplete: () => {
+        // Start fading out halfway through the upward animation
+        this.tweens.add({
+          targets: [yearText, descText],
+          alpha: 0,
+          duration: 1000,
+          onComplete: () => {
+            yearText.destroy();
+            descText.destroy();
+            //textParticles.destroy();
+          },
+        });
+      },
     });
   }
 
+  // Rest of your existing skill collection code
   // Update item count
   this.itemCount = (this.itemCount || 0) + 1;
   this.skillsCounter.setText(`Items: ${this.itemCount}/12`);
-  //this.smallCounter.setText(`Items: ${this.itemCount}/12`);
 
   // Update skill panel
   if (itemIndex < this.skillTexts.length) {
