@@ -1734,49 +1734,58 @@ function resetSkillPanel() {
 // Completely revised addEnemies function - simplified for reliable movement
 function addEnemies() {
   // Calculate responsive scaling
-  const scaleFactor = getResponsiveScaleFactor();
-  const enemyBaseScale = 5; // Your original enemy scale
-  const responsiveEnemyScale = enemyBaseScale * scaleFactor;
+  const scaleY = this.scale.height / 1080;
+  const groundHeight = 60 * scaleY;
+
+  // This is key: we need to get the exact Y coordinate of the top surface of the ground
+  // In createLevel1, the top ground layer is positioned at:
+  const groundBlockY = this.scale.height - groundHeight - groundHeight / 2 + 6;
+
+  // Calculate the VISIBLE top of the ground (where enemies should stand)
+  const groundTopY = groundBlockY - groundHeight / 2;
+
+  console.log("Ground top Y:", groundTopY);
 
   // Clear any existing enemies
   if (this.enemies) {
     this.enemies.clear(true, true);
   }
 
-  // Create new enemy group
+  // Create enemy group with improved physics settings
   this.enemies = this.physics.add.group({
     bounceX: 0,
     collideWorldBounds: true,
+    allowGravity: true,
   });
 
-  // Calculate ground top position THE EXACT SAME WAY as in createLevel1
-  const scaleY = this.scale.height / 1080;
-  const groundHeight = 40 * scaleY;
-  const groundTop = this.scale.height - groundHeight * 2 + 6; // Match ground top position exactly
-
-  // Define enemy positions with patrol ranges - using groundTop for positioning
+  // Define enemy positions - using precise groundTopY for positioning
   const enemyPositions = [
-    { x: 600, y: groundTop - 20, range: 300, speed: 60 }, // Position relative to ground top
-    { x: 1200, y: groundTop - 20, range: 300, speed: 80 }, // Not relative to screen height
-    { x: 1900, y: groundTop - 20, range: 300, speed: 70 },
-    { x: 2500, y: groundTop - 20, range: 300, speed: 90 },
+    { x: 600, y: groundTopY - 30, range: 300, speed: 60 },
+    { x: 1200, y: groundTopY - 30, range: 300, speed: 80 },
+    { x: 1900, y: groundTopY - 30, range: 300, speed: 70 },
+    { x: 2500, y: groundTopY - 30, range: 300, speed: 90 },
   ];
 
-  // Create each enemy with responsive scaling
+  // Create each enemy with proper vertical positioning
   for (const pos of enemyPositions) {
     const enemy = this.enemies
       .create(pos.x, pos.y, "monster-run")
-      .setScale(responsiveEnemyScale)
+      .setScale(getResponsiveScaleFactor() * 5)
       .setDepth(20);
 
-    // Better collision body setup
-    const bodyWidth = enemy.width * 0.5;
-    const bodyHeight = enemy.height * 0.6;
+    console.log(`Created enemy at: ${pos.x}, ${pos.y}`);
+
+    // More precise collision body with larger bottom part
+    const bodyWidth = enemy.width * 0.6; // Wider body
+    const bodyHeight = enemy.height * 0.7; // Taller body
     const offsetX = (enemy.width - bodyWidth) / 2;
-    const offsetY = enemy.height - bodyHeight - 2; // Small offset to keep above ground
+    const offsetY = enemy.height - bodyHeight;
 
     enemy.body.setSize(bodyWidth, bodyHeight);
     enemy.body.setOffset(offsetX, offsetY);
+
+    // Set a lower center of mass to prevent tipping
+    enemy.body.setMass(2);
 
     // Store patrol information
     enemy.startX = pos.x;
