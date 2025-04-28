@@ -1831,8 +1831,7 @@ function addEnemies() {
     { x: 600, y: enemyYPosition, range: 300, speed: 60 },
     { x: 1200, y: enemyYPosition, range: 300, speed: 80 },
     { x: 1900, y: enemyYPosition, range: 300, speed: 70 },
-    { x: 2000, y: enemyYPosition, range: 300, speed: 90 },
-  ];
+     ];
 
   // Create enemies
   for (const pos of enemyPositions) {
