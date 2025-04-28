@@ -1323,9 +1323,9 @@ function createLevel1(bgRepeat) {
   flag.setData("isPipe", true);
   const bossX = flagX + 150 * scaleX; // Position boss 100px to the right of flag
   this.boss = this.physics.add
-    .sprite(bossX, groundTop, "secondCharacter") // Using the second character sprite
+    .sprite(bossX, groundTop, "NavyBoy") // Using the second character sprite
     .setOrigin(0.5, 1)
-    .setScale(2 * objectScale)
+    .setScale(1.5 * objectScale)
     .setFlipX(true);
 
   // Make boss static and add animation if needed
