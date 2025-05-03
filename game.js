@@ -1322,7 +1322,7 @@ function createLevel1(bgRepeat) {
   flag.refreshBody();
   flag.setData("isPipe", true);
   const bossX = flagX + 150 * scaleX; // Position boss 100px to the right of flag
-  this.boss = this.physics.add
+  /*this.boss = this.physics.add
     .sprite(bossX, groundTop, "NavyBoy") // Using the second character sprite
     .setOrigin(0.5, 1)
     .setScale(1 * objectScale)
@@ -1330,7 +1330,7 @@ function createLevel1(bgRepeat) {
 
   // Make boss static and add animation if needed
   this.boss.setImmovable(true);
-  this.boss.body.allowGravity = false;
+  this.boss.body.allowGravity = false;*/
 
   // Add invisible barrier at the end
   const invisibleBarrier = this.physics.add.staticImage(
