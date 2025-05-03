@@ -3391,15 +3391,12 @@ function hitEnemy(player, enemy) {
       .setScrollFactor(0)
       .setScale(0.4, 0.4)
       .setDepth(1000);
-
-    // Add a pulsing effect to make it more visible
+    // Add fade-in effect
     this.tweens.add({
       targets: gameOverImage,
-      scale: 0.45,
-      duration: 800,
-      yoyo: true,
-      repeat: -1,
-      ease: "Sine.easeInOut",
+      alpha: 1, // Fade to fully visible
+      duration: 2000, // Fade in over 1 second
+      ease: "easeInOut", // Smooth linear transition
     });
   });
 
