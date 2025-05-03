@@ -332,7 +332,7 @@ function typeText(text, isLastDialog = false) {
 
     // Add Go to Videos button
     const videoButton = document.createElement("button");
-    videoButton.textContent = "GO TO VIDEOS";
+    videoButton.textContent = "GO TO RESUME PAGE";
     videoButton.style.backgroundColor = "#FF5722"; // Different color to distinguish
     videoButton.style.color = "#FFFFFF";
     videoButton.style.border = "none";
