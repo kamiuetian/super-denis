@@ -1246,7 +1246,7 @@ function createLevel1(bgRepeat) {
   ];
 
   // Fade out after 5 seconds
-  this.time.delayedCall(5000, () => {
+  this.time.delayedCall(7000, () => {
     this.tweens.add({
       targets: controlsElements,
       alpha: 0,
