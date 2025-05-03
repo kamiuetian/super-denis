@@ -1841,8 +1841,8 @@ function addEnemies() {
       .setDepth(20);
 
     // Create better physics body - positioned at the BOTTOM of the sprite
-    const bodyWidth = enemy.width * 0.6;
-    const bodyHeight = enemy.height * 0.7;
+    const bodyWidth = enemy.width * 0.4;
+    const bodyHeight = enemy.height * 0.4;
 
     // Important: position body at BOTTOM of sprite with minimal offset
     const offsetX = (enemy.width - bodyWidth) / 2;
