@@ -710,7 +710,14 @@ document.addEventListener("DOMContentLoaded", initMenu);
 // Add this function to menu.js (or modify your existing level selection handler)
 function selectLevel(level) {
   console.log("Selected level:", level);
-
+  if (level === 1) {
+    try {
+      localStorage.removeItem("level1Checkpoint");
+      console.log("Level 1 checkpoint data reset");
+    } catch (e) {
+      console.error("Error resetting Level 1 checkpoint data:", e);
+    }
+  }
   // For Level 3, redirect to video2.html to ensure the intro dialogue plays
   if (level === 3) {
     window.location.href = "video2.html?skip_button=true"; // Add skip_intro parameter to URL
