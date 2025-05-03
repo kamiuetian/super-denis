@@ -170,6 +170,7 @@ function initializeGame() {
 // Preload assets
 function preload() {
   if (!gameStarted) return;
+  this.load.image("gameOverImage", "assets/gameover.jpg");
   this.load.image("levelBackground", "assets/denis/bg.jpg");
   this.load.image("level1Background", "assets/denis/level1bg.png");
   this.load.spritesheet("secondCharacter", "assets/denis/SecondCharacter.png", {
@@ -3373,20 +3374,11 @@ function hitEnemy(player, enemy) {
 
   this.physics.pause();
   player.setTint(0xff0000);
-  this.add
-    .text(
-      this.scale.width / 2,
-      this.scale.height / 2 - 100,
-      "Game Over\nKilling applicants is againsts HR rules!\nPlease be mindful",
-      {
-        fontSize: "16px",
-        fill: "#ff0000",
-        backgroundColor: "#000000",
-      }
-    )
+  const gameOverImage = this.add
+    .image(this.scale.width / 2, this.scale.height / 2 - 80, "gameOverImage")
     .setScrollFactor(0)
-    .setAlign("center")
-    .setOrigin(0.5, 0);
+    .setScale(0.7, 0.7)
+    .setDepth(1000);
 
   this.time.delayedCall(
     5000,
@@ -4887,52 +4879,52 @@ function cloudFallDeath(player) {
   }
 
   // Define game over screen function with proper scene context
+  // Replace or modify your existing showGameOverScreen function
   function showGameOverScreen() {
     // Create full screen overlay
-    const overlay = currentScene.add
-      .rectangle(
-        0,
-        0,
-        currentScene.scale.width,
-        currentScene.scale.height,
-        0x000000,
-        0.8
-      )
+    const overlay = this.add
+      .rectangle(0, 0, this.scale.width, this.scale.height, 0x000000, 0.8)
       .setOrigin(0, 0)
       .setScrollFactor(0)
       .setDepth(999);
 
-    // Show custom message
-    const gameOverText = currentScene.add
-      .text(
-        currentScene.scale.width / 2,
-        currentScene.scale.height / 2 - 100,
-        "GAME OVER\n\nWhen reaching for the clouds,\nyou need to stay focused!",
-        {
-          fontSize: "18px",
-          fill: "#ff0000",
-          align: "center",
-          padding: 10,
-        }
-      )
+    // Show game over image instead of text
+    const gameOverImage = this.add
+      .image(this.scale.width / 2, this.scale.height / 2 - 80, "gameOverImage")
       .setScrollFactor(0)
-      .setAlign("center")
-      .setOrigin(0.5, 0)
       .setDepth(1000);
 
-    // Add restart button
-    const restartButton = currentScene.add
-      .text(
-        currentScene.scale.width / 2,
-        currentScene.scale.height / 2 + 80,
-        "[ Try Again ]",
-        {
-          fontSize: "20px",
-          fill: "#ffffff",
-          backgroundColor: "#880000",
-          padding: { x: 15, y: 10 },
-        }
-      )
+    // Scale the image appropriately
+    const maxWidth = this.scale.width * 0.7; // 70% of screen width
+    const maxHeight = this.scale.height * 0.4; // 40% of screen height
+
+    // Maintain aspect ratio while fitting within max dimensions
+    if (gameOverImage.width > maxWidth || gameOverImage.height > maxHeight) {
+      const scale = Math.min(
+        maxWidth / gameOverImage.width,
+        maxHeight / gameOverImage.height
+      );
+      gameOverImage.setScale(scale);
+    }
+
+    // Add a slight pulsing animation
+    this.tweens.add({
+      targets: gameOverImage,
+      scale: gameOverImage.scale * 1.1,
+      duration: 800,
+      yoyo: true,
+      repeat: -1,
+      ease: "Sine.easeInOut",
+    });
+
+    // Add restart button (keep this part from your existing code)
+    const restartButton = this.add
+      .text(this.scale.width / 2, this.scale.height / 2 + 80, "[ Try Again ]", {
+        fontSize: "20px",
+        fill: "#ffffff",
+        backgroundColor: "#880000",
+        padding: { x: 15, y: 10 },
+      })
       .setScrollFactor(0)
       .setAlign("center")
       .setOrigin(0.5, 0.5)
@@ -4950,8 +4942,8 @@ function cloudFallDeath(player) {
 
     // Restart on click
     restartButton.on("pointerdown", () => {
-      resetSkillPanel.call(currentScene);
-      currentScene.scene.restart();
+      resetSkillPanel.call(this);
+      this.scene.restart();
     });
   }
 }
