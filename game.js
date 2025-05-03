@@ -1297,7 +1297,7 @@ function createLevel1(bgRepeat) {
 
   // Add first pipe
   const pipe = this.physics.add
-    .staticImage(pipeX, groundTop+20, "pipe")
+    .staticImage(pipeX, groundTop + 20, "pipe")
     .setOrigin(0.5, 1);
   pipe.setScale(objectScale);
   this.platforms.add(pipe);
@@ -1306,7 +1306,7 @@ function createLevel1(bgRepeat) {
 
   // Add second pipe
   const pipe2 = this.physics.add
-    .staticImage(pipe2X, groundTop+20, "pipe2")
+    .staticImage(pipe2X, groundTop + 20, "pipe2")
     .setOrigin(0.5, 1);
   pipe2.setScale(objectScale);
   this.platforms.add(pipe2);
@@ -1828,7 +1828,7 @@ function addEnemies() {
   const enemyYPosition = groundVisualTop - 45; // 45px above ground visual top
 
   const enemyPositions = [
-    { x: 600, y: enemyYPosition, range: 300, speed: 60 },
+    //{ x: 600, y: enemyYPosition, range: 300, speed: 60 },
     { x: 1200, y: enemyYPosition, range: 300, speed: 80 },
     { x: 1900, y: enemyYPosition, range: 300, speed: 70 },
   ];
