@@ -1315,7 +1315,7 @@ function createLevel1(bgRepeat) {
 
   // Add flag
   const flag = this.physics.add
-    .staticImage(flagX, groundTop, "flag")
+    .staticImage(flagX, groundTop + 20, "flag")
     .setOrigin(0.5, 1);
   flag.setScale(objectScale);
   this.platforms.add(flag);
@@ -1441,7 +1441,7 @@ function createLevel1(bgRepeat) {
             this,
             this.player.x,
             this.player.y - 60,
-            "I need to find all 6 skills before moving to the next level!",
+            "I need to collect all 6 character traits before moving to the next level",
             3000
           );
           this.flagMessageShown = true;
