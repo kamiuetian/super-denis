@@ -332,7 +332,7 @@ canvas,
 .controls-panel {
     position: absolute;
     right: 10%;
-    top: 50%;
+    top: 60%;
     transform: translateY(-50%);
     background-color: rgba(0, 0, 0, 0.7);
     border-radius: 8px;
