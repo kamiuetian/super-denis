@@ -3372,23 +3372,42 @@ function hitEnemy(player, enemy) {
     return;
   }
 
+  // Stop all game physics immediately
   this.physics.pause();
   player.setTint(0xff0000);
+
+  // Create black overlay - set alpha to 0.8 directly instead of tweening
   const blackOverlay = this.add
-  .rectangle(0, 0, this.scale.width, this.scale.height, 0x000000, 1)
-  .setOrigin(0, 0)
-  .setScrollFactor(0)
-  .setDepth(999); // Just below the game over image depth
+    .rectangle(0, 0, this.scale.width, this.scale.height, 0x000000, 1)
+    .setOrigin(0, 0)
+    .setScrollFactor(0)
+    .setDepth(999);
 
- const gameOverImage = this.add
-  .image(this.scale.width / 2, this.scale.height / 2 - 80, "gameOverImage")
-  .setScrollFactor(0).setScale(0.7, 0.7)
-  .setDepth(1000);
+  // Add the game over image with a short delay to ensure overlay is visible first
+  this.time.delayedCall(500, () => {
+    // Create game over image at full opacity
+    const gameOverImage = this.add
+      .image(this.scale.width / 2, this.scale.height / 2 - 80, "gameOverImage")
+      .setScrollFactor(0)
+      .setScale(0.4, 0.4)
+      .setDepth(1000);
 
+    // Add a pulsing effect to make it more visible
+    this.tweens.add({
+      targets: gameOverImage,
+      scale: 0.45,
+      duration: 800,
+      yoyo: true,
+      repeat: -1,
+      ease: "Sine.easeInOut",
+    });
+  });
+
+  // Keep the automatic restart after delay as fallback
   this.time.delayedCall(
     5000,
     () => {
-      resetSkillPanel.call(this); // Add this line
+      resetSkillPanel.call(this);
       this.scene.restart();
     },
     [],
