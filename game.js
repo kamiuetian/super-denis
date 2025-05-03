@@ -4854,7 +4854,7 @@ function playerHitCloud(player, cloud) {
   // Animate the symbol falling from the cloud
   this.tweens.add({
     targets: skillIcon,
-    y: skillIcon.y + 200,
+    y: skillIcon.y + 130,
     duration: 3000,
     ease: "Bounce",
     onComplete: () => {
