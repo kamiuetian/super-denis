@@ -331,7 +331,7 @@ canvas,
 /* Game Controls Panel - smaller size */
 .controls-panel {
     position: absolute;
-    right: 10px;
+    right: 10%;
     top: 50%;
     transform: translateY(-50%);
     background-color: rgba(0, 0, 0, 0.7);
