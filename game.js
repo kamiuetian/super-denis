@@ -4848,7 +4848,7 @@ function playerHitCloud(player, cloud) {
     cloud.x,
     cloud.y,
     `${level2Skills[skillIndex].icon} ${level2Skills[skillIndex].name}`,
-    { fontSize: `${skillIconSize}px` }
+    { fontSize: `${skillIconSize}px`, color: "#00008B" }
   );
 
   // Animate the symbol falling from the cloud
@@ -4865,64 +4865,6 @@ function playerHitCloud(player, cloud) {
         delay: 100,
         onComplete: () => skillIcon.destroy(),
       });
-
-      // SPECIAL CASE FOR LANGUAGES (index 11)
-      /*if (skillIndex === 11) {
-        console.log("Falling languages animation triggered");
-        // Create language array if not already defined
-        const languages = [
-          "German",
-          "english",
-          "turkish",
-          "chinese",
-          "italien",
-          "spanish",
-        ];
-
-        // Add falling animation for each language
-        languages.forEach((language, i) => {
-          // Create text for each language
-          const langText = this.add
-            .text(
-              cloud.x + (Math.random() * 60 - 30), // Random horizontal offset
-              cloud.y - 40,
-              language,
-              {
-                fontSize: "20px",
-                fill: "#ffffff",
-                stroke: "#000000",
-                strokeThickness: 3,
-                fontStyle: "italic",
-              }
-            )
-            .setOrigin(0.5);
-
-          // Delay each language slightly
-          this.time.delayedCall(300 * (i + 1), () => {
-            // Add falling animation with slight horizontal movement
-            this.tweens.add({
-              targets: langText,
-              y: langText.y + 300,
-              x: langText.x + (Math.random() * 60 - 30), // Random drift
-              alpha: { from: 1, to: 0 },
-              duration: 3000,
-              ease: "Cubic.easeIn",
-              onComplete: () => langText.destroy(),
-            });
-          });
-        });
-
-        // For languages skill only - delay the level completion
-        if (this.skillCount >= level2Skills.length) {
-          // Wait for languages to fall before showing completion
-          this.time.delayedCall(6000, () => {
-            this.levelCompleting = true;
-            this.physics.pause();
-            levelComplete.call(this);
-          });
-          return; // Skip the normal completion check
-        }
-      }*/
     },
   });
 
