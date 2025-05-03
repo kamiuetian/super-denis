@@ -494,8 +494,8 @@ function typeText(text, isLastDialog = false) {
         videoButton.onclick = () => {
           // Show confirmation dialog
           showConfirmationModal(
-            "Playing through the game will give you the full experience of my interactive resume. Are you sure you want to skip to the videos?",
-            "Continue to Videos",
+            "Are you sure you want to skip to the resume?",
+            "Go to Resume",
             "Stay Here",
             () => {
               // This function runs if they confirm
