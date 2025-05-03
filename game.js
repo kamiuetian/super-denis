@@ -91,7 +91,7 @@ const config = {
     default: "arcade",
     arcade: {
       gravity: { y: GRAVITY },
-      debug: false,
+      debug: true,
     },
   },
   scene: {
@@ -1804,7 +1804,8 @@ function addEnemies() {
   const scaleY = this.scale.height / 1080;
 
   // First, get the ACTUAL positions of the ground blocks
-  const groundLayer2Y = this.scale.height - 40 * scaleY - (40 * scaleY) / 2 + 6;
+  const groundLayer2Y =
+    this.scale.height - 40 * scaleY - (40 * scaleY) / 2 + 12;
 
   // The visual top of the ground is the top of the second layer
   const groundVisualTop = groundLayer2Y - (40 * scaleY) / 2;
@@ -1842,7 +1843,7 @@ function addEnemies() {
 
     // Create better physics body - positioned at the BOTTOM of the sprite
     const bodyWidth = enemy.width * 0.4;
-    const bodyHeight = enemy.height * 0.4;
+    const bodyHeight = enemy.height * 0.35;
 
     // Important: position body at BOTTOM of sprite with minimal offset
     const offsetX = (enemy.width - bodyWidth) / 2;
