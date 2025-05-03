@@ -1179,6 +1179,85 @@ function explodeTennisBall(ball) {
 // Fix the createLevel1 function to ensure coins are visible
 // Updated createLevel1 function with new block layout
 function createLevel1(bgRepeat) {
+  const controlsPanel = this.add.graphics();
+  controlsPanel.fillStyle(0x000000, 0.7);
+  controlsPanel.fillRoundedRect(20, 70, 220, 140, 8);
+  controlsPanel.lineStyle(2, 0xf8c023, 1);
+  controlsPanel.strokeRoundedRect(20, 70, 220, 140, 8);
+  controlsPanel.setScrollFactor(0);
+  controlsPanel.setDepth(1000);
+
+  // Add controls title
+  const controlsTitle = this.add
+    .text(30, 80, "GAME CONTROLS:", {
+      fontSize: "16px",
+      fontFamily: "Arial",
+      color: "#f8c023",
+      fontWeight: "bold",
+    })
+    .setScrollFactor(0)
+    .setDepth(1000);
+
+  // Add arrow keys text
+  const leftKeyText = this.add
+    .text(40, 110, "← Move Left", {
+      fontSize: "14px",
+      fontFamily: "Arial",
+      color: "#ffffff",
+    })
+    .setScrollFactor(0)
+    .setDepth(1000);
+
+  const rightKeyText = this.add
+    .text(40, 135, "→ Move Right", {
+      fontSize: "14px",
+      fontFamily: "Arial",
+      color: "#ffffff",
+    })
+    .setScrollFactor(0)
+    .setDepth(1000);
+
+  const upKeyText = this.add
+    .text(40, 160, "↑ Jump", {
+      fontSize: "14px",
+      fontFamily: "Arial",
+      color: "#ffffff",
+    })
+    .setScrollFactor(0)
+    .setDepth(1000);
+
+  const spaceKeyText = this.add
+    .text(40, 185, "SPACE Jump", {
+      fontSize: "14px",
+      fontFamily: "Arial",
+      color: "#ffffff",
+    })
+    .setScrollFactor(0)
+    .setDepth(1000);
+
+  // Group all controls elements
+  const controlsElements = [
+    controlsPanel,
+    controlsTitle,
+    leftKeyText,
+    rightKeyText,
+    upKeyText,
+    spaceKeyText,
+  ];
+
+  // Fade out after 5 seconds
+  this.time.delayedCall(5000, () => {
+    this.tweens.add({
+      targets: controlsElements,
+      alpha: 0,
+      duration: 500,
+      ease: "Power2",
+      onComplete: () => {
+        // Destroy elements after fade
+        controlsElements.forEach((element) => element.destroy());
+      },
+    });
+  });
   this.skillCount = 0;
 
   // Define base dimensions that your level was designed for
