@@ -136,7 +136,7 @@ function createStartScreen() {
   title.id = "main-title";
   addBottomBorder(startContainer);
   const subtile = document.createElement("h2");
-  subtile.textContent = "Win Denis Tezerdi";
+  subtile.textContent = "Denis Tezerdi";
   subtile.className = "author";
   // Create start button
   const startButton = document.createElement("button");
