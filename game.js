@@ -1802,13 +1802,11 @@ function resetSkillPanel() {
 function addEnemies() {
   // Calculate responsive scaling
   const scaleY = this.scale.height / 1080;
-
   // First, get the ACTUAL positions of the ground blocks
-  const groundLayer2Y =
-    this.scale.height - 40 * scaleY - (40 * scaleY) / 2 + 12;
+  const groundLayer2Y = this.scale.height - 40 * scaleY - (40 * scaleY) / 2 - 6;
 
   // The visual top of the ground is the top of the second layer
-  const groundVisualTop = groundLayer2Y - (40 * scaleY) / 2;
+  const groundVisualTop = groundLayer2Y - (40 * scaleY) / 2 - 6;
 
   console.log("Ground visual top:", groundVisualTop);
 
