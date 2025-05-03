@@ -1217,7 +1217,7 @@ function createLevel1(bgRepeat) {
   for (let i = 0; i < numBlocks; i++) {
     const block = this.platforms.create(
       i * (blockWidth - 2), // Use exact width with no subtraction for overlap
-      currentHeight - groundHeight / 2,
+      currentHeight - groundHeight / 2 + 6,
       "block"
     );
 
@@ -1232,7 +1232,7 @@ function createLevel1(bgRepeat) {
   for (let i = 0; i < numBlocks; i++) {
     const block = this.platforms.create(
       i * (blockWidth - 4), // Use exact width with no subtraction
-      currentHeight - groundHeight - groundHeight / 2 + 6, // FIXED: Position exactly at top of first layer
+      currentHeight - groundHeight - groundHeight / 2 + 12, // FIXED: Position exactly at top of first layer
       // Exactly half a block above first layer
       "block"
     );
@@ -1297,7 +1297,7 @@ function createLevel1(bgRepeat) {
 
   // Add first pipe
   const pipe = this.physics.add
-    .staticImage(pipeX, groundTop, "pipe")
+    .staticImage(pipeX, groundTop+20, "pipe")
     .setOrigin(0.5, 1);
   pipe.setScale(objectScale);
   this.platforms.add(pipe);
@@ -1306,7 +1306,7 @@ function createLevel1(bgRepeat) {
 
   // Add second pipe
   const pipe2 = this.physics.add
-    .staticImage(pipe2X, groundTop, "pipe2")
+    .staticImage(pipe2X, groundTop+20, "pipe2")
     .setOrigin(0.5, 1);
   pipe2.setScale(objectScale);
   this.platforms.add(pipe2);
