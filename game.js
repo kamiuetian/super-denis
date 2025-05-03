@@ -3375,16 +3375,15 @@ function hitEnemy(player, enemy) {
   this.physics.pause();
   player.setTint(0xff0000);
   const blackOverlay = this.add
-    .rectangle(0, 0, this.scale.width, this.scale.height, 0x000000, 0.9)
-    .setOrigin(0, 0)
-    .setScrollFactor(0)
-    .setDepth(999); // Just below the game over image depth
+  .rectangle(0, 0, this.scale.width, this.scale.height, 0x000000, 1)
+  .setOrigin(0, 0)
+  .setScrollFactor(0)
+  .setDepth(999); // Just below the game over image depth
 
-  const gameOverImage = this.add
-    .image(this.scale.width / 2, this.scale.height / 2 - 80, "gameOverImage")
-    .setScrollFactor(0)
-    .setScale(0.7, 0.7)
-    .setDepth(1000);
+ const gameOverImage = this.add
+  .image(this.scale.width / 2, this.scale.height / 2 - 80, "gameOverImage")
+  .setScrollFactor(0).setScale(0.7, 0.7)
+  .setDepth(1000);
 
   this.time.delayedCall(
     5000,
