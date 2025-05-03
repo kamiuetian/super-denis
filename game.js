@@ -3477,13 +3477,13 @@ function hitEnemy(player, enemy) {
     const gameOverImage = this.add
       .image(this.scale.width / 2, this.scale.height / 2 - 80, "gameOverImage")
       .setScrollFactor(0)
-      .setScale(0.4, 0.4)
+      .setScale(0.3, 0.3)
       .setDepth(1000);
     // Add fade-in effect
     this.tweens.add({
       targets: gameOverImage,
       alpha: 1, // Fade to fully visible
-      duration: 2000, // Fade in over 1 second
+      duration: 3000, // Fade in over 1 second
       ease: "easeInOut", // Smooth linear transition
     });
   });
