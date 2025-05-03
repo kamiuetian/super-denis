@@ -419,7 +419,7 @@ function create() {
 
   // Setup input
   this.cursors = this.input.keyboard.createCursorKeys();
-
+this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
   // Create explosion animation
   this.anims.create({
     key: "explode",
@@ -706,7 +706,7 @@ function update(time, delta) {
       }
 
       // ADD THIS SECTION - Missing jump control for Level 2
-      if (this.cursors.up.isDown && this.player.body.touching.down) {
+      if ((this.cursors.up.isDown || this.spaceKey.isDown) && this.player.body.touching.down) {
         // Get the scaling factor
         const physicsScale = getPhysicsScaleFactors();
 
@@ -741,7 +741,7 @@ function update(time, delta) {
       }
 
       // Jump handling - add a debug message to see if touching.down is working
-      if (this.cursors.up.isDown) {
+      if ((this.cursors.up.isDown || this.spaceKey.isDown)) {
         console.log(
           "Up pressed, touching down:",
           this.player.body.touching.down
@@ -784,7 +784,7 @@ function update(time, delta) {
         this.player.anims.play("jump");
       }
 
-      if (this.cursors.up.isDown && this.player.body.touching.down) {
+      if ((this.cursors.up.isDown || this.spaceKey.isDown) && this.player.body.touching.down) {
         // Get the scaling factor
         const physicsScale = getPhysicsScaleFactors();
 
