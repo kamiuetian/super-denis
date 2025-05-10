@@ -1913,7 +1913,7 @@ function addEnemies() {
 
   // Define positions at a FIXED HEIGHT above the ground visual top
   // This ensures consistent positioning regardless of screen size
-  const enemyYPosition = groundVisualTop - 45; // 45px above ground visual top
+  const enemyYPosition = groundVisualTop - 145; // 45px above ground visual top
 
   const enemyPositions = [
     //{ x: 600, y: enemyYPosition, range: 300, speed: 60 },
