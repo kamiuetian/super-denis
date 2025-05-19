@@ -3795,7 +3795,7 @@ function createLevel3(bgRepeat) {
     .text(
       panelX + 30 * scaleX,
       panelY + (panelHeight - 30 * scaleY),
-      "Skills: 0/12",
+      "Skills: 0/11",
       {
         fontSize: `${counterSize}px`,
         fill: "#FFFFFF",
@@ -3861,9 +3861,9 @@ function createLevel3(bgRepeat) {
   // 13. Create platforms with responsive positioning
   const platformPositions = [
     { xRatio: 450 / baseWidth, yFromBottom: 250 },
-    { xRatio: 600 / baseWidth, yFromBottom: 310 },
-    { xRatio: 830 / baseWidth, yFromBottom: 350 },
-    { xRatio: 1000 / baseWidth, yFromBottom: 490 },
+    { xRatio: 700 / baseWidth, yFromBottom: 310 },
+    { xRatio: 880 / baseWidth, yFromBottom: 350 },
+    { xRatio: 1050 / baseWidth, yFromBottom: 490 },
     { xRatio: 1250 / baseWidth, yFromBottom: 310 },
     { xRatio: 1500 / baseWidth, yFromBottom: 450 },
     { xRatio: 1750 / baseWidth, yFromBottom: 600 },
@@ -3871,7 +3871,6 @@ function createLevel3(bgRepeat) {
     { xRatio: 2300 / baseWidth, yFromBottom: 550 },
     { xRatio: 2600 / baseWidth, yFromBottom: 400 },
     { xRatio: 2850 / baseWidth, yFromBottom: 600 },
-    { xRatio: 3100 / baseWidth, yFromBottom: 750 },
     { xRatio: 250 / baseWidth, yFromBottom: 170 },
   ];
 
@@ -3895,8 +3894,8 @@ function createLevel3(bgRepeat) {
     const skillType = isFinance ? "finance" : "tech";
 
     // Create visible skill item using specific asset with responsive scaling
-    if (i != 12) {
-      const assetKey = `${skillType}${itemIndex + 1}`; // tech1, tech2, finance1, etc.
+    if (i != 12 && i < level3Skills.length) {
+      const assetKey = `${i >= 6 ? "finance" : "tech"}${(i % 6) + 1}`;
       const skill = this.physics.add.staticSprite(x, y - 60 * scaleY, assetKey);
       skill.setScale(0.5 * objectScale);
       skill.setDepth(15);
@@ -4777,7 +4776,7 @@ function collectSkill(player, skill) {
   }
 
   // Check if all items collected to lower bridge
-  if (this.itemCount >= 12) {
+  if (this.itemCount >= 11) {
     // Delay bridge animation slightly
     this.time.delayedCall(1000, () => {
       lowerBridge.call(this);
