@@ -14,67 +14,67 @@ const level3Skills = [
     icon: "🏛",
     name: "Politics on Digital Education",
     year: "2016",
-    desc: "🏛 Working in Politics on Digital Education initiatives (2016)",
+    desc: "Working in Politics on Digital Education initiatives ",
   },
   {
     icon: "👨‍💻",
     name: "First Coding Experience",
     year: "2018",
-    desc: "👨‍💻 First Coding Experience with Python, Stata and R (2018)",
+    desc: "First Coding Experience with Python, Stata and R ",
   },
   {
     icon: "📃",
     name: "Research Paper on AR & VR",
     year: "2022",
-    desc: "📃 Research Paper on the Impact of AR & VR on E Commerce (2022)",
+    desc: "Research Paper on the Impact of AR & VR on E Commerce ",
   },
   {
     icon: "🗣",
     name: "Panel on Digitalization",
     year: "2023",
-    desc: "🗣Moderated a panel on the impact of digitalization on industrial productivity (2023)",
+    desc: "Moderated a panel on the impact of digitalization on industrial productivity ",
   },
   {
     icon: "🎓",
     name: "Bachelor Degree",
     year: "2024",
-    desc: "🎓 Bachelor of Science in Economics & Finance (2024)",
+    desc: "Bachelor of Science in Economics & Finance ",
   },
   {
     icon: "☁",
     name: "Cloud & Security Presentation",
     year: "2024",
-    desc: "☁ Work presentation delivered on Cloud & Security (2024)",
+    desc: "Work presentation delivered on Cloud & Security ",
   },
   {
     icon: "📈",
     name: "Project Management Experience",
     year: "2024",
-    desc: "📈 Digital Project Management Experience (2024)",
+    desc: "Digital Project Management Experience ",
   },
   {
     icon: "🤝",
     name: "Cient Deal",
     year: "2025",
-    desc: "🤝 Negotiating and closing the first client deal (2025)",
+    desc: "Negotiating and closing the first client deal ",
   },
   {
     icon: "🤖",
     name: "Workshop on AI",
     year: "2025",
-    desc: "🤖 Delivered a client workshop on AI with solution partner (2025)",
+    desc: "Delivered a client workshop on AI with solution partner ",
   },
   {
     icon: "🖥",
     name: "Digitalization Project",
     year: "2025",
-    desc: "🖥 First successful client digitalization project (CRM/AI) (2025)",
+    desc: "First successful client digitalization project (CRM/AI) ",
   },
   {
     icon: "🎮",
     name: "Game Development",
     year: "2025",
-    desc: "🎮 Developing this game as a Project (2025)",
+    desc: "Developing this game as a Project ",
   },
 ];
 // Game configuration
@@ -262,7 +262,6 @@ function preload() {
   this.load.image("finance3", "assets/level3/money-bag.png");
   this.load.image("finance4", "assets/level3/programming.png");
   this.load.image("finance5", "assets/level3/satellite.png");
-
   this.load.image("finance6", "assets/level3/smartphone.png");
   // Load background images
   this.load.image("background11", "assets/Level 1 - Image 1.png");
@@ -3861,10 +3860,10 @@ function createLevel3(bgRepeat) {
 
   // 13. Create platforms with responsive positioning
   const platformPositions = [
-    { xRatio: 250 / baseWidth, yFromBottom: 200 },
-    { xRatio: 500 / baseWidth, yFromBottom: 310 },
-    { xRatio: 750 / baseWidth, yFromBottom: 290 },
-    { xRatio: 1000 / baseWidth, yFromBottom: 390 },
+    { xRatio: 450 / baseWidth, yFromBottom: 250 },
+    { xRatio: 600 / baseWidth, yFromBottom: 310 },
+    { xRatio: 830 / baseWidth, yFromBottom: 350 },
+    { xRatio: 1000 / baseWidth, yFromBottom: 490 },
     { xRatio: 1250 / baseWidth, yFromBottom: 310 },
     { xRatio: 1500 / baseWidth, yFromBottom: 450 },
     { xRatio: 1750 / baseWidth, yFromBottom: 600 },
@@ -3873,6 +3872,7 @@ function createLevel3(bgRepeat) {
     { xRatio: 2600 / baseWidth, yFromBottom: 400 },
     { xRatio: 2850 / baseWidth, yFromBottom: 600 },
     { xRatio: 3100 / baseWidth, yFromBottom: 750 },
+    { xRatio: 250 / baseWidth, yFromBottom: 170 },
   ];
 
   // 14. Create platforms and skill items with responsive scaling
@@ -3895,34 +3895,35 @@ function createLevel3(bgRepeat) {
     const skillType = isFinance ? "finance" : "tech";
 
     // Create visible skill item using specific asset with responsive scaling
-    const assetKey = `${skillType}${itemIndex + 1}`; // tech1, tech2, finance1, etc.
-    const skill = this.physics.add.staticSprite(x, y - 60 * scaleY, assetKey);
-    skill.setScale(0.5 * objectScale);
-    skill.setDepth(15);
+    if (i != 12) {
+      const assetKey = `${skillType}${itemIndex + 1}`; // tech1, tech2, finance1, etc.
+      const skill = this.physics.add.staticSprite(x, y - 60 * scaleY, assetKey);
+      skill.setScale(0.5 * objectScale);
+      skill.setDepth(15);
 
-    // If asset doesn't exist, use fallback
-    if (!this.textures.exists(assetKey)) {
-      skill.setTexture("tech1");
-      skill.setTint(isFinance ? 0x00ff00 : 0x00ffff);
+      // If asset doesn't exist, use fallback
+      if (!this.textures.exists(assetKey)) {
+        skill.setTexture("tech1");
+        skill.setTint(isFinance ? 0x00ff00 : 0x00ffff);
+      }
+
+      skill.setData("index", i);
+      skill.setData("type", skillType);
+      skill.setData("collected", false);
+
+      // Add floating animation scaled to screen size
+      this.tweens.add({
+        targets: skill,
+        y: skill.y - 5 * scaleY,
+        duration: 1500,
+        yoyo: true,
+        repeat: -1,
+        ease: "Sine.easeInOut",
+      });
+
+      // Add collection overlap
+      this.physics.add.overlap(this.player, skill, collectSkill, null, this);
     }
-
-    skill.setData("index", i);
-    skill.setData("type", skillType);
-    skill.setData("collected", false);
-
-    // Add floating animation scaled to screen size
-    this.tweens.add({
-      targets: skill,
-      y: skill.y - 5 * scaleY,
-      duration: 1500,
-      yoyo: true,
-      repeat: -1,
-      ease: "Sine.easeInOut",
-    });
-
-    // Add collection overlap
-    this.physics.add.overlap(this.player, skill, collectSkill, null, this);
-
     // Add floating animation to platforms
     this.tweens.add({
       targets: platform,
