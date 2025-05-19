@@ -3872,8 +3872,8 @@ function createLevel3(bgRepeat) {
     { xRatio: 2600 / baseWidth, yFromBottom: 400 },
     { xRatio: 2850 / baseWidth, yFromBottom: 600 },
     { xRatio: 250 / baseWidth, yFromBottom: 170 },
-    { xRatio: 1750 / baseWidth, yFromBottom: 310 },
-    { xRatio: 2350 / baseWidth, yFromBottom: 150 },
+    { xRatio: 1750 / baseWidth, yFromBottom: 200 },
+    { xRatio: 2400 / baseWidth, yFromBottom: 200 },
   ];
 
   // 14. Create platforms and skill items with responsive scaling
