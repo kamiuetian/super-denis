@@ -2350,7 +2350,7 @@ function createLevel2(bgRepeat) {
   }
 
   // 8. Add Johann (boss) in the top right corner
-  const bossCloudX = 3300 * scaleX;
+  /*const bossCloudX = 3300 * scaleX;
   const bossCloudY = currentHeight * 0.13;
   const bossCloud = this.platforms.create(bossCloudX, bossCloudY, "cloud");
   bossCloud.setScale(0.25 * objectScale);
@@ -2373,7 +2373,7 @@ function createLevel2(bgRepeat) {
   bossCloud.setScale(0.25 * objectScale);
   bossCloud.setData("isPlatform", true);
   bossCloud.refreshBody();
-
+*/
   // 9. Add collision detection
   this.physics.add.collider(
     this.player,
