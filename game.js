@@ -14,67 +14,67 @@ const level3Skills = [
     icon: "🏛",
     name: "Politics on Digital Education",
     year: "2016",
-    desc: "Worked in politics focusing on digital education initiatives.",
+    desc: "🏛 Working in Politics on Digital Education initiatives (2016)",
   },
   {
     icon: "👨‍💻",
     name: "First Coding Experience",
     year: "2018",
-    desc: "Gained first hands-on coding experience with Python, Stata, and R.",
+    desc: "👨‍💻 First Coding Experience with Python, Stata and R (2018)",
   },
   {
-    icon: "📈",
-    name: "Digital Project Management",
-    year: "2024",
-    desc: "Acquired experience in managing digital projects.",
-  },
-  {
-    icon: "☁",
-    name: "Cloud & Security Seminar",
-    year: "2024",
-    desc: "Delivered a seminar on cloud technologies and security topics.",
-  },
-  {
-    icon: "🤖",
-    name: "AI Workshop",
-    year: "2025",
-    desc: "Conducted a workshop focused on Artificial Intelligence.",
-  },
-  {
-    icon: "🎮",
-    name: "Game Development Project",
-    year: "2025",
-    desc: "Worked on a project involving game development.",
-  },
-  {
-    icon: "💳",
-    name: "FinTech Tools and Investments",
-    year: "2021",
-    desc: "Gained experience with financial technology tools and investment strategies.",
-  },
-  {
-    icon: "🛒",
-    name: "Research on AR & VR in Commerce",
+    icon: "📃",
+    name: "Research Paper on AR & VR",
     year: "2022",
-    desc: "Authored a research paper on the impact of Augmented and Virtual Reality on commerce.",
+    desc: "📃 Research Paper on the Impact of AR & VR on E Commerce (2022)",
+  },
+  {
+    icon: "🗣",
+    name: "Panel on Digitalization",
+    year: "2023",
+    desc: "🗣Moderated a panel on the impact of digitalization on industrial productivity (2023)",
   },
   {
     icon: "🎓",
-    name: "Bachelor of Science",
+    name: "Bachelor Degree",
     year: "2024",
-    desc: "Completed Bachelor of Science in Wirtschaftswissenschaften.",
+    desc: "🎓 Bachelor of Science in Economics & Finance (2024)",
+  },
+  {
+    icon: "☁",
+    name: "Cloud & Security Presentation",
+    year: "2024",
+    desc: "☁ Work presentation delivered on Cloud & Security (2024)",
+  },
+  {
+    icon: "📈",
+    name: "Project Management Experience",
+    year: "2024",
+    desc: "📈 Digital Project Management Experience (2024)",
   },
   {
     icon: "🤝",
-    name: "Client Account Management",
-    year: "2024",
-    desc: "Handled client accounts and relationship management.",
+    name: "Cient Deal",
+    year: "2025",
+    desc: "🤝 Negotiating and closing the first client deal (2025)",
+  },
+  {
+    icon: "🤖",
+    name: "Workshop on AI",
+    year: "2025",
+    desc: "🤖 Delivered a client workshop on AI with solution partner (2025)",
   },
   {
     icon: "🖥",
-    name: "First IT Solution Sale",
+    name: "Digitalization Project",
     year: "2025",
-    desc: "Closed the first sale of an IT solution.",
+    desc: "🖥 First successful client digitalization project (CRM/AI) (2025)",
+  },
+  {
+    icon: "🎮",
+    name: "Game Development",
+    year: "2025",
+    desc: "🎮 Developing this game as a Project (2025)",
   },
 ];
 // Game configuration
@@ -2731,7 +2731,7 @@ function levelComplete() {
   });
 
   // Function to create typing animation for a text object
-  const typeText = (textObj, fullText, onComplete, charDelay = 120) => {
+  const typeText = (textObj, fullText, onComplete, charDelay = 580) => {
     let currentIndex = 0;
     const length = fullText.length;
 
@@ -4755,14 +4755,10 @@ function collectSkill(player, skill) {
   // Update skill panel
   if (itemIndex < this.skillTexts.length) {
     const skillText = this.skillTexts[itemIndex];
+    const currentSkill = level3Skills[itemIndex];
 
-    // Get emoji icon for this skill type and index
-    const techIcons = ["📊", "📡", "🪙", "🤖", "💻"];
-    const financeIcons = ["🔏", "💳", "📱", "💰", "📈"];
-    const iconToShow =
-      itemType === "tech"
-        ? techIcons[itemIndex % techIcons.length]
-        : financeIcons[(itemIndex - 6) % financeIcons.length];
+    // Get the icon directly from the level3Skills array
+    const iconToShow = currentSkill.icon;
 
     // Update the text
     skillText.setText(`• ${iconToShow}`);
