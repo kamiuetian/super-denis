@@ -3775,7 +3775,7 @@ function createLevel3(bgRepeat) {
   this.skillsPanel = this.add.graphics();
   this.skillsPanel.fillStyle(0x000000, 0.8);
   this.skillsPanel.fillRect(panelX, panelY, panelWidth, panelHeight);
-  this.skillsPanel.lineStyle(2 * scaleY, 0xffd700, 1);
+  this.skillsPanel.lineStyle(2 * scaleY, 0xffffff, 1);
   this.skillsPanel.strokeRect(panelX, panelY, panelWidth, panelHeight);
   this.skillsPanel.setScrollFactor(0);
 
@@ -3784,7 +3784,7 @@ function createLevel3(bgRepeat) {
   this.add
     .text(panelX + 30 * scaleX, panelY + 30 * scaleY, "MY SKILLS", {
       fontSize: `${titleSize}px`,
-      fill: "#FFD700",
+      fill: "#ffffff",
       fontWeight: "bold",
     })
     .setScrollFactor(0);
@@ -3798,7 +3798,7 @@ function createLevel3(bgRepeat) {
       "Skills: 0/12",
       {
         fontSize: `${counterSize}px`,
-        fill: "#FFD700",
+        fill: "#ffffff",
         fontWeight: "bold",
       }
     )
