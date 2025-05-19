@@ -4880,6 +4880,10 @@ function playerHitCloud(player, cloud) {
   // 6. Check if all skills collected
   if (this.skillCount >= level2Skills.length) {
     this.levelCompleting = true;
+    this.physics.pause();
+    player.setVelocityX(0);
+    player.setVelocityY(0);
+    player.anims.play("tennis-stand");
 
     this.time.delayedCall(4000, () => {
       this.physics.pause();
