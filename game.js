@@ -3872,7 +3872,7 @@ function createLevel3(bgRepeat) {
     { xRatio: 2600 / baseWidth, yFromBottom: 400 },
     { xRatio: 2850 / baseWidth, yFromBottom: 600 },
     { xRatio: 250 / baseWidth, yFromBottom: 170 },
-    { xRatio: 1600 / baseWidth, yFromBottom: 200 },
+    { xRatio: 1630 / baseWidth, yFromBottom: 200 },
     { xRatio: 2400 / baseWidth, yFromBottom: 200 },
   ];
 
