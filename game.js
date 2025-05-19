@@ -4750,7 +4750,7 @@ function collectSkill(player, skill) {
   // Rest of your existing skill collection code
   // Update item count
   this.itemCount = (this.itemCount || 0) + 1;
-  this.skillsCounter.setText(`Items: ${this.itemCount}/12`);
+  this.skillsCounter.setText(`Items: ${this.itemCount}/11`);
 
   // Update skill panel
   if (itemIndex < this.skillTexts.length) {
