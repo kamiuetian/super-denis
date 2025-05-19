@@ -2946,8 +2946,9 @@ function lowerBridge() {
     // Create a container for the bridge (containers support rotation with pivot points)
     this.bridgeContainer = this.add.container(
       this.bridgeX - this.gapWidth / 2,
-      this.bridgeY - 10
+      this.bridgeY - 30
     );
+    this.bridgeContainer.setDepth(25); // Add this line - higher than river's depth (10)
 
     // Create a visual placeholder for the bridge
     this.bridgeGraphics = this.add.graphics();
