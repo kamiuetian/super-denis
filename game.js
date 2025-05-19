@@ -4912,70 +4912,42 @@ function cloudFallDeath(player) {
   });
   fallTrail.explode(15);
 
-  // Store scene reference to avoid 'this' context issues
-  const currentScene = this;
+  // IMPORTANT: Create a direct reference to the scene
+  const scene = this;
 
-  // Try to play death animation if available
-  try {
-    player.anims.play("dead");
-
-    // Use a direct timeout instead of relying on animation complete
-    this.time.delayedCall(1300, function () {
-      showGameOverScreen();
-    });
-  } catch (error) {
-    console.error("Error playing death animation:", error);
-    // Fallback if animation play fails - show game over immediately
-    showGameOverScreen();
-  }
-
-  // Define game over screen function with proper scene context
-  // Replace or modify your existing showGameOverScreen function
-  function showGameOverScreen() {
+  // Create the game over screen directly instead of through a callback function
+  this.time.delayedCall(1300, function () {
     // Create full screen overlay
-    const overlay = this.add
-      .rectangle(0, 0, this.scale.width, this.scale.height, 0x000000, 0.8)
+    const overlay = scene.add
+      .rectangle(0, 0, scene.scale.width, scene.scale.height, 0x000000, 0.8)
       .setOrigin(0, 0)
       .setScrollFactor(0)
       .setDepth(999);
 
-    // Show game over image instead of text
-    const gameOverImage = this.add
-      .image(this.scale.width / 2, this.scale.height / 2 - 80, "gameOverImage")
+    // Show game over image
+    const gameOverImage = scene.add
+      .image(
+        scene.scale.width / 2,
+        scene.scale.height / 2 - 80,
+        "gameOverImage"
+      )
       .setScrollFactor(0)
+      .setScale(0.4)
       .setDepth(1000);
 
-    // Scale the image appropriately
-    const maxWidth = this.scale.width * 0.7; // 70% of screen width
-    const maxHeight = this.scale.height * 0.4; // 40% of screen height
-
-    // Maintain aspect ratio while fitting within max dimensions
-    if (gameOverImage.width > maxWidth || gameOverImage.height > maxHeight) {
-      const scale = Math.min(
-        maxWidth / gameOverImage.width,
-        maxHeight / gameOverImage.height
-      );
-      gameOverImage.setScale(scale);
-    }
-
-    // Add a slight pulsing animation
-    this.tweens.add({
-      targets: gameOverImage,
-      scale: gameOverImage.scale * 1.1,
-      duration: 800,
-      yoyo: true,
-      repeat: -1,
-      ease: "Sine.easeInOut",
-    });
-
-    // Add restart button (keep this part from your existing code)
-    const restartButton = this.add
-      .text(this.scale.width / 2, this.scale.height / 2 + 80, "[ Try Again ]", {
-        fontSize: "20px",
-        fill: "#ffffff",
-        backgroundColor: "#880000",
-        padding: { x: 15, y: 10 },
-      })
+    // Add restart button
+    const restartButton = scene.add
+      .text(
+        scene.scale.width / 2,
+        scene.scale.height / 2 + 80,
+        "[ Try Again ]",
+        {
+          fontSize: "20px",
+          fill: "#ffffff",
+          backgroundColor: "#880000",
+          padding: { x: 15, y: 10 },
+        }
+      )
       .setScrollFactor(0)
       .setAlign("center")
       .setOrigin(0.5, 0.5)
@@ -4993,10 +4965,10 @@ function cloudFallDeath(player) {
 
     // Restart on click
     restartButton.on("pointerdown", () => {
-      resetSkillPanel.call(this);
-      this.scene.restart();
+      resetSkillPanel.call(scene);
+      scene.scene.restart();
     });
-  }
+  });
 }
 // Modify the showLevel3Intro function to auto-start after dialogue
 function showLevel3Intro(callback) {
