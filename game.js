@@ -3960,14 +3960,14 @@ function createLevel3(bgRepeat) {
   riverGraphics.setDepth(10); // Higher depth to ensure visibility
   riverArea.add(riverGraphics);
 
-  const towerX = this.bridgeX + this.gapWidth;
+  const towerX = this.bridgeX - this.gapWidth / 2 - 50; // Position on left side of river
   const towerY = currentHeight - groundHeight;
   this.bridgeTower = this.add
     .sprite(towerX, towerY, "drawbridge", 0)
     .setOrigin(0.5, 1)
     .setScale(3 * objectScale)
-    .setDepth(50)
-    .setFlipX(true); // ADDED: Flip horizontally
+    .setDepth(-1)
+    .setFlipX(false); // ADDED: Flip horizontally
 
   // Mark that bridge needs to be created
   this.bridgeCreated = false;
