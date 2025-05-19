@@ -1582,7 +1582,7 @@ function createLevel1(bgRepeat) {
   this.skillsPanel = this.add.graphics();
   this.skillsPanel.fillStyle(0x000000, 0.8);
   this.skillsPanel.fillRect(panelX, panelY, panelWidth, panelHeight);
-  this.skillsPanel.lineStyle(2 * scaleY, 0xFFFFFF, 1);
+  this.skillsPanel.lineStyle(2 * scaleY, 0xffffff, 1);
   this.skillsPanel.strokeRect(panelX, panelY, panelWidth, panelHeight);
   this.skillsPanel.setScrollFactor(0);
 
@@ -1624,7 +1624,7 @@ function createLevel1(bgRepeat) {
         }
       )
       .setScrollFactor(0);
-
+    skillText.setFill("#FFFFFF");
     // Initially hide skill text
     skillText.setAlpha(0);
     this.skillTexts.push(skillText);
@@ -2195,7 +2195,7 @@ function createLevel2(bgRepeat) {
   this.skillsPanel = this.add.graphics();
   this.skillsPanel.fillStyle(0x000000, 0.8);
   this.skillsPanel.fillRect(panelX, panelY, panelWidth, panelHeight);
-  this.skillsPanel.lineStyle(2 * scaleY, 0xFFFFFF, 1);
+  this.skillsPanel.lineStyle(2 * scaleY, 0xffffff, 1);
   this.skillsPanel.strokeRect(panelX, panelY, panelWidth, panelHeight);
   this.skillsPanel.setScrollFactor(0);
 
@@ -2580,6 +2580,7 @@ function hitCloud(player, cloud) {
 
       // Update the text and animate appearance
       skillText.setText("• " + currentSkill.icon + " " + currentSkill.name);
+      skillText.setFill("#FFFFFF"); // Explicitly set text to white
 
       // Fade in animation
       this.tweens.add({
@@ -3152,7 +3153,7 @@ function showSuccessScreen() {
     500,
     300
   );
-  dialog.lineStyle(2, 0xFFFFFF, 1);
+  dialog.lineStyle(2, 0xffffff, 1);
   dialog.strokeRect(
     this.scale.width / 2 - 250,
     this.scale.height / 2 - 150,
@@ -3775,7 +3776,7 @@ function createLevel3(bgRepeat) {
   this.skillsPanel = this.add.graphics();
   this.skillsPanel.fillStyle(0x000000, 0.8);
   this.skillsPanel.fillRect(panelX, panelY, panelWidth, panelHeight);
-  this.skillsPanel.lineStyle(2 * scaleY, 0xFFFFFF, 1);
+  this.skillsPanel.lineStyle(2 * scaleY, 0xffffff, 1);
   this.skillsPanel.strokeRect(panelX, panelY, panelWidth, panelHeight);
   this.skillsPanel.setScrollFactor(0);
 
