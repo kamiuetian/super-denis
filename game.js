@@ -2731,7 +2731,7 @@ function levelComplete() {
   });
 
   // Function to create typing animation for a text object
-  const typeText = (textObj, fullText, onComplete, charDelay = 40) => {
+  const typeText = (textObj, fullText, onComplete, charDelay = 120) => {
     let currentIndex = 0;
     const length = fullText.length;
 
