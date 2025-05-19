@@ -3872,6 +3872,8 @@ function createLevel3(bgRepeat) {
     { xRatio: 2600 / baseWidth, yFromBottom: 400 },
     { xRatio: 2850 / baseWidth, yFromBottom: 600 },
     { xRatio: 250 / baseWidth, yFromBottom: 170 },
+    { xRatio: 1750 / baseWidth, yFromBottom: 310 },
+    { xRatio: 2350 / baseWidth, yFromBottom: 150 },
   ];
 
   // 14. Create platforms and skill items with responsive scaling
@@ -3894,7 +3896,7 @@ function createLevel3(bgRepeat) {
     const skillType = isFinance ? "finance" : "tech";
 
     // Create visible skill item using specific asset with responsive scaling
-    if (i != 12 && i < level3Skills.length) {
+    if (i < level3Skills.length) {
       const assetKey = `${i >= 6 ? "finance" : "tech"}${(i % 6) + 1}`;
       const skill = this.physics.add.staticSprite(x, y - 60 * scaleY, assetKey);
       skill.setScale(0.5 * objectScale);
