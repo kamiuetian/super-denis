@@ -4865,7 +4865,6 @@ function playerHitCloud(player, cloud) {
         delay: 100,
         onComplete: () => skillIcon.destroy(),
       });
-
     },
   });
 
@@ -5393,7 +5392,7 @@ function animatedSpeechBubble(x, y, text, duration = 3000, skill) {
   container.setDepth(1000);
 
   // Typing animation
-  const typingSpeed = Math.max(80, Math.min(150, 3000 / text.length));
+  const typingSpeed = Math.max(40, Math.min(80, 2000 / text.length));
   let currentCharIndex = 0;
 
   const typingTimer = this.time.addEvent({
