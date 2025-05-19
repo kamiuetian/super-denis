@@ -4762,7 +4762,7 @@ function collectSkill(player, skill) {
 
     // Update the text
     skillText.setText(`• ${iconToShow}`);
-    skillText.setFill(itemType === "tech" ? "#00FFFF" : "#00FF00");
+    skillText.setFill(itemType === "tech" ? "#FFFFFF" : "#FFFFFF");
     skillText.setAlpha(1);
 
     // Animate skill text appearance
