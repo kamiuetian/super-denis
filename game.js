@@ -1582,7 +1582,7 @@ function createLevel1(bgRepeat) {
   this.skillsPanel = this.add.graphics();
   this.skillsPanel.fillStyle(0x000000, 0.8);
   this.skillsPanel.fillRect(panelX, panelY, panelWidth, panelHeight);
-  this.skillsPanel.lineStyle(2 * scaleY, 0xffd700, 1);
+  this.skillsPanel.lineStyle(2 * scaleY, 0xFFFFFF, 1);
   this.skillsPanel.strokeRect(panelX, panelY, panelWidth, panelHeight);
   this.skillsPanel.setScrollFactor(0);
 
@@ -1591,7 +1591,7 @@ function createLevel1(bgRepeat) {
   this.add
     .text(panelX + 30, panelY + 10, "My Character", {
       fontSize: titleSize + "px",
-      fill: "#FFD700",
+      fill: "#FFFFFF",
       fontWeight: "bold",
     })
     .setScrollFactor(0);
@@ -1601,7 +1601,7 @@ function createLevel1(bgRepeat) {
   this.skillsCounter = this.add
     .text(panelX + 30, panelY + panelHeight - 30, "Traits: 0/6", {
       fontSize: counterSize + "px",
-      fill: "#FFD700",
+      fill: "#FFFFFF",
       fontWeight: "bold",
     })
     .setScrollFactor(0);
@@ -2195,7 +2195,7 @@ function createLevel2(bgRepeat) {
   this.skillsPanel = this.add.graphics();
   this.skillsPanel.fillStyle(0x000000, 0.8);
   this.skillsPanel.fillRect(panelX, panelY, panelWidth, panelHeight);
-  this.skillsPanel.lineStyle(2 * scaleY, 0xffd700, 1);
+  this.skillsPanel.lineStyle(2 * scaleY, 0xFFFFFF, 1);
   this.skillsPanel.strokeRect(panelX, panelY, panelWidth, panelHeight);
   this.skillsPanel.setScrollFactor(0);
 
@@ -2204,7 +2204,7 @@ function createLevel2(bgRepeat) {
   this.add
     .text(panelX + 30 * scaleX, panelY + 15 * scaleY, "MY SKILLS", {
       fontSize: `${titleSize}px`,
-      fill: "#FFD700",
+      fill: "#FFFFFF",
       fontWeight: "bold",
     })
     .setScrollFactor(0);
@@ -2214,7 +2214,7 @@ function createLevel2(bgRepeat) {
   this.skillsCounter = this.add
     .text(panelX + 30 * scaleX, panelY + 330 * scaleY, "Skills: 0/12", {
       fontSize: `${counterSize}px`,
-      fill: "#FFD700",
+      fill: "#FFFFFF",
       fontWeight: "bold",
     })
     .setScrollFactor(0);
@@ -3152,7 +3152,7 @@ function showSuccessScreen() {
     500,
     300
   );
-  dialog.lineStyle(2, 0xffd700, 1);
+  dialog.lineStyle(2, 0xFFFFFF, 1);
   dialog.strokeRect(
     this.scale.width / 2 - 250,
     this.scale.height / 2 - 150,
@@ -3170,7 +3170,7 @@ function showSuccessScreen() {
       {
         fontSize: "32px",
         fontStyle: "bold",
-        fill: "#ffd700",
+        fill: "#FFFFFF",
       }
     )
     .setScrollFactor(0)
@@ -3775,7 +3775,7 @@ function createLevel3(bgRepeat) {
   this.skillsPanel = this.add.graphics();
   this.skillsPanel.fillStyle(0x000000, 0.8);
   this.skillsPanel.fillRect(panelX, panelY, panelWidth, panelHeight);
-  this.skillsPanel.lineStyle(2 * scaleY, 0xffffff, 1);
+  this.skillsPanel.lineStyle(2 * scaleY, 0xFFFFFF, 1);
   this.skillsPanel.strokeRect(panelX, panelY, panelWidth, panelHeight);
   this.skillsPanel.setScrollFactor(0);
 
@@ -3784,7 +3784,7 @@ function createLevel3(bgRepeat) {
   this.add
     .text(panelX + 30 * scaleX, panelY + 30 * scaleY, "MY SKILLS", {
       fontSize: `${titleSize}px`,
-      fill: "#ffffff",
+      fill: "#FFFFFF",
       fontWeight: "bold",
     })
     .setScrollFactor(0);
@@ -3798,7 +3798,7 @@ function createLevel3(bgRepeat) {
       "Skills: 0/12",
       {
         fontSize: `${counterSize}px`,
-        fill: "#ffffff",
+        fill: "#FFFFFF",
         fontWeight: "bold",
       }
     )
