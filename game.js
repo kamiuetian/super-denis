@@ -252,17 +252,17 @@ function preload() {
   this.load.image("flag", "assets/overworld/flag-mast.png");
   this.load.image("emptyBlock", "assets/overworld/emptyBlock.png");
 
-  this.load.image("tech1", "assets/level3/ai-assistant.png");
-  this.load.image("tech2", "assets/level3/analytics.png");
-  this.load.image("tech3", "assets/level3/atm-card.png");
-  this.load.image("tech4", "assets/level3/bank.png");
-  this.load.image("tech5", "assets/level3/bitcoin.png");
-  this.load.image("finance1", "assets/level3/encryption.png");
-  this.load.image("finance2", "assets/level3/increase.png");
-  this.load.image("finance3", "assets/level3/money-bag.png");
-  this.load.image("finance4", "assets/level3/programming.png");
-  this.load.image("finance5", "assets/level3/satellite.png");
-  this.load.image("finance6", "assets/level3/smartphone.png");
+  this.load.image("tech1", "assets/level3/buildings.png");
+  this.load.image("tech2", "assets/level3/man.png");
+  this.load.image("tech3", "assets/level3/emojipng.com-2216968.png");
+  this.load.image("tech4", "assets/level3/speaking.png");
+  this.load.image("tech5", "assets/level3/graduation-hat.png");
+  this.load.image("tech6", "assets/level3/server_2316109.png");
+  this.load.image("tech7", "assets/level3/statistics.png");
+  this.load.image("tech8", "assets/level3/handshake.png");
+  this.load.image("tech9", "assets/level3/robot.png");
+  this.load.image("tech10", "assets/level3/emojipng.com-2216968.png");
+  this.load.image("tech11", "assets/level3/playing-videogame_8176146.png");
   // Load background images
   this.load.image("background11", "assets/Level 1 - Image 1.png");
   this.load.image("background12", "assets/Level 1 - Image 2.png");
@@ -3898,9 +3898,9 @@ function createLevel3(bgRepeat) {
 
     // Create visible skill item using specific asset with responsive scaling
     if (i < level3Skills.length) {
-      const assetKey = `${i >= 6 ? "finance" : "tech"}${(i % 6) + 1}`;
+      const assetKey = `${"tech"}${i + 1}`;
       const skill = this.physics.add.staticSprite(x, y - 60 * scaleY, assetKey);
-      skill.setScale(0.5 * objectScale);
+      skill.setScale(0.8 * objectScale);
       skill.setDepth(15);
 
       // If asset doesn't exist, use fallback
