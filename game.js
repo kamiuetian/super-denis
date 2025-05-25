@@ -4220,15 +4220,31 @@ function triggerFinalDialogue(player, johann) {
 // Function to show Level 3 start dialogue
 function showLevel3StartDialogue() {
   // Add dialogue box with Denis's intro
+  this.dialogueActive = true; // Freeze player immediately
+
   const startText = createSpeechBubble.call(
     this,
     this.player.x,
     this.player.y - 60,
-    "Lets Go !",
-    1000
+    "This level is all about my past experiences in business and digitalization and how they have shaped my motivation to apply for the IDDP",
+    4000
   );
-  this.dialogueActive = false;
-  // Show second part after delay
+
+  // Show "Let's go!" message after first dialogue completes
+  this.time.delayedCall(4000, () => {
+    const startText2 = createSpeechBubble.call(
+      this,
+      this.player.x,
+      this.player.y - 60,
+      "Let's Go!",
+      2000
+    );
+
+    // Only unfreeze player after second dialogue completes
+    this.time.delayedCall(2000, () => {
+      this.dialogueActive = false; // Unfreeze player after all dialogues
+    });
+  });
 }
 
 // Add this function to your game.js file if it's not already present:
