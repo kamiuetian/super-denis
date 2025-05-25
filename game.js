@@ -91,7 +91,7 @@ const config = {
     default: "arcade",
     arcade: {
       gravity: { y: GRAVITY },
-      debug: false,
+      debug: true,
     },
   },
   scene: {
@@ -4091,8 +4091,8 @@ function createLevel3(bgRepeat) {
 
   // Left barrier - at the left edge of the river
   const leftBarrier = this.physics.add.staticImage(
-    this.bridgeX - this.gapWidth / 4, // Position at left edge of river
-    this.scale.height / 3, // Position in middle of visible screen
+    this.bridgeX - this.gapWidth / 2 + 200, // Position at left edge of river
+    this.scale.height / 2, // Position in middle of visible screen
     null // No texture
   );
   // Make it thin but very tall
