@@ -101,6 +101,22 @@
             display: none !important;
             /* Hide logo when game is active */
         }
+
+        /* Back button styling */
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            color: #fed200;
+            font-size: 1.5rem;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .back-button:hover {
+            color: #ffea80;
+        }
     </style>
     <scrpt src="game.js"></scrpt>
     <script>
@@ -126,9 +142,10 @@
         <img src="assets/logo.png" alt="Super Denis Logo">
     </div>
 
+    <!-- Back button in top left corner -->
+    <a href="index.html?skip_intro=true" class="back-button">← Back</a>
+
     <div id="video" class="bg">
-        <img src="assets/enemy.png" />
-        <p>This is the description of the second video</p>
         <a href="#" class="next-button" onclick="startLevel3(); return false;">Go to next level</a>
     </div>
 
