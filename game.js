@@ -3938,9 +3938,9 @@ function createLevel3(bgRepeat) {
 
   // 13. Create platforms with responsive positioning
   const platformPositions = [
-    { xRatio: 450 / baseWidth, yFromBottom: 250 },
-    { xRatio: 700 / baseWidth, yFromBottom: 310 },
-    { xRatio: 880 / baseWidth, yFromBottom: 350 },
+    { xRatio: 300 / baseWidth, yFromBottom: 200 },
+    { xRatio: 500 / baseWidth, yFromBottom: 300 },
+    { xRatio: 780 / baseWidth, yFromBottom: 360 },
     { xRatio: 1050 / baseWidth, yFromBottom: 490 },
     { xRatio: 1250 / baseWidth, yFromBottom: 310 },
     { xRatio: 1500 / baseWidth, yFromBottom: 450 },
@@ -3949,7 +3949,6 @@ function createLevel3(bgRepeat) {
     { xRatio: 2300 / baseWidth, yFromBottom: 550 },
     { xRatio: 2600 / baseWidth, yFromBottom: 400 },
     { xRatio: 2850 / baseWidth, yFromBottom: 600 },
-    { xRatio: 250 / baseWidth, yFromBottom: 170 },
     { xRatio: 1630 / baseWidth, yFromBottom: 200 },
     { xRatio: 2400 / baseWidth, yFromBottom: 200 },
   ];
