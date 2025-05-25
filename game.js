@@ -3052,16 +3052,16 @@ function lowerBridge() {
     // Create a container for the bridge (containers support rotation with pivot points)
     this.bridgeContainer = this.add.container(
       this.bridgeX - this.gapWidth / 2,
-      this.bridgeY - 30
+      this.bridgeY - 20
     );
     this.bridgeContainer.setDepth(25); // Add this line - higher than river's depth (10)
 
     // Create a visual placeholder for the bridge
     this.bridgeGraphics = this.add.graphics();
     this.bridgeGraphics.fillStyle(0x8b4513); // Brown wood color
-    this.bridgeGraphics.fillRect(0, -10, this.gapWidth, 5); // Bridge rectangle
+    this.bridgeGraphics.fillRect(0, -10, this.gapWidth, 10); // Bridge rectangle
     this.bridgeGraphics.lineStyle(2, 0x663300, 1);
-    this.bridgeGraphics.strokeRect(0, -10, this.gapWidth, 5);
+    this.bridgeGraphics.strokeRect(0, -10, this.gapWidth, 10);
     this.bridgeGraphics.setDepth(15); // Set depth for visibility
     // Add the graphics to the container
     this.bridgeContainer.add(this.bridgeGraphics);
