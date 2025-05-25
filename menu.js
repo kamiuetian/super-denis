@@ -25,7 +25,7 @@ const introDialogs = [
   `Here is my offer: five minutes of your attention, in exchange for something memorable.
 Through three levels, you’ll get to know me: my personality, what I bring to the table, and what motivates me.
 `,
-  `Your mission is to play through each level and see how I could grow with your team.`,
+  `your mission, should you choose to accept it, is to play through each level and see how I could grow with your team.`,
 ];
 
 // Add these variables at the top of your file (with your other variables)
@@ -494,8 +494,8 @@ function typeText(text, isLastDialog = false) {
         videoButton.onclick = () => {
           // Show confirmation dialog
           showConfirmationModal(
-            "Playing through the game will give you the full experience of my interactive resume. Are you sure you want to skip to the resume?",
-            "Go to Resume",
+            "Playing through the game will give you the full experience of my interactive resume. Are you sure you want to skip to the landing page?",
+            "Go to landing page",
             "Stay Here",
             () => {
               // This function runs if they confirm
