@@ -16,7 +16,7 @@
             overflow-x: hidden;
         }
 
-        /* Bottom border styling */
+        /* Bottom border styling - increase z-index */
         body::after {
             content: '';
             position: fixed;
@@ -26,15 +26,17 @@
             height: 10px;
             background-color: #fed200;
             /* Yellow border */
-            z-index: 100;
+            z-index: 1005;
+            /* Increased z-index */
         }
 
-        /* Logo container */
+        /* Logo container - increase z-index */
         .logo-container {
             position: absolute;
             top: 20px;
             right: 20px;
-            z-index: 999;
+            z-index: 1010;
+            /* Increased z-index */
         }
 
         .logo-container img {
@@ -102,6 +104,33 @@
             /* Hide logo when game is active */
         }
 
+        /* Back button styling */
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 8px 10px;
+            background-color: #444444;
+            color: #ffffff;
+            text-decoration: none;
+            font-family: Arial, sans-serif;
+            font-size: 18px;
+            border-radius: 4px;
+            z-index: 1000;
+            cursor: pointer;
+            border: 2px solid #000000;
+            transition: all 0.2s ease;
+        }
+
+        .back-button:hover {
+            background-color: #666666;
+            color: #ffff00;
+        }
+
+        .game-active .back-button {
+            display: none !important;
+        }
+
         #fade-overlay {
             position: fixed;
             top: 0;
@@ -117,6 +146,16 @@
 
         #fade-overlay.fade-out {
             opacity: 0;
+        }
+
+        /* Adjust dialogue container to not cover everything */
+        #final-dialogue-container {
+            z-index: 1000;
+            /* Ensure it doesn't cover logo and border */
+            top: 80px;
+            /* Leave room for logo */
+            height: calc(100% - 90px);
+            /* Leave room for border */
         }
     </style>
 
@@ -148,7 +187,8 @@
         <img src="assets/logo.png" alt="Super Denis Logo">
     </div>
 
-
+    <!-- Back button in top left corner -->
+    <a href="index.html?skip_intro=true" class="back-button">← Back</a>
 
     <!-- Game container div -->
     <div id="game-container"></div>
@@ -158,9 +198,6 @@
 
     <!-- Your game script -->
     <script src="game.js"></script>
-
-    // Add this script to replace the existing dialogue script in video3.html
-    - Update the dialogue script in video3.html -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // Start Level 4 dialogue automatically
