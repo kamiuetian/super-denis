@@ -211,7 +211,7 @@ function preload() {
     );
 
     // Update text with percentage
-    loadingText.setText(`Loading Game Assets... ${Math.round(value * 100)}%`);
+    loadingText.setText(`Loading Game ... ${Math.round(value * 100)}%`);
   });
 
   // Register complete event
