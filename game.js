@@ -3059,9 +3059,9 @@ function lowerBridge() {
     // Create a visual placeholder for the bridge
     this.bridgeGraphics = this.add.graphics();
     this.bridgeGraphics.fillStyle(0x8b4513); // Brown wood color
-    this.bridgeGraphics.fillRect(0, -10, this.gapWidth, 20); // Bridge rectangle
+    this.bridgeGraphics.fillRect(0, -10, this.gapWidth, 5); // Bridge rectangle
     this.bridgeGraphics.lineStyle(2, 0x663300, 1);
-    this.bridgeGraphics.strokeRect(0, -10, this.gapWidth, 20);
+    this.bridgeGraphics.strokeRect(0, -10, this.gapWidth, 5);
     this.bridgeGraphics.setDepth(15); // Set depth for visibility
     // Add the graphics to the container
     this.bridgeContainer.add(this.bridgeGraphics);
