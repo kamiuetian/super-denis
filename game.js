@@ -1848,7 +1848,7 @@ function resizeLevel() {
   }
 }
 
-// Helper function to create speech bubbles at specific positions
+// Function to create animated speech bubbles at specific positions
 function createSpeechBubble(x, y, text, duration = 3000) {
   // Create speech bubble container
   this.physics.pause(); // Pause physics during bubble creation
@@ -1857,19 +1857,19 @@ function createSpeechBubble(x, y, text, duration = 3000) {
 
   const bubblePadding = 10;
   const bubbleWidth = Math.min(text.length * 7 + bubblePadding * 2, 220);
-  const bubbleHeight = 40 + bubblePadding * 2;
+  const bubbleHeight = 40 + bubblePadding * 5;
 
   // Create speech bubble background
   const bubble = this.add.graphics();
   bubble.fillStyle(0xffffff, 0.9);
   bubble.fillRoundedRect(0, 0, bubbleWidth, bubbleHeight, 10);
-  bubble.lineStyle(3, 0x000000, 1);
+  bubble.lineStyle(1, 0x000000, 1);
   bubble.strokeRoundedRect(0, 0, bubbleWidth, bubbleHeight, 10);
 
   // Create speech bubble tail
   const tail = this.add.graphics();
   tail.fillStyle(0xffffff, 0.9);
-  tail.lineStyle(3, 0x000000, 1);
+  tail.lineStyle(1, 0x000000, 1);
   tail.beginPath();
   tail.moveTo(bubbleWidth / 2 - 10, bubbleHeight);
   tail.lineTo(bubbleWidth / 2, bubbleHeight + 15);
@@ -1878,9 +1878,9 @@ function createSpeechBubble(x, y, text, duration = 3000) {
   tail.fillPath();
   tail.strokePath();
 
-  // Create text
+  // Create text (starting empty for typing animation)
   const bubbleText = this.add
-    .text(bubbleWidth / 2, bubbleHeight / 2, text, {
+    .text(bubbleWidth / 2, bubbleHeight / 2, "", {
       fontSize: "14px",
       fontFamily: "Arial",
       color: "#000000",
@@ -1898,8 +1898,33 @@ function createSpeechBubble(x, y, text, duration = 3000) {
   bubbleContainer.x = x - bubbleWidth / 2;
   bubbleContainer.y = y - bubbleHeight - 20;
 
-  // Remove bubble after duration
-  this.time.delayedCall(duration, () => {
+  // Add typing animation
+  const typingSpeed = Math.max(40, Math.min(80, 2000 / text.length));
+  let currentCharIndex = 0;
+
+  const typingTimer = this.time.addEvent({
+    delay: typingSpeed,
+    callback: () => {
+      if (currentCharIndex < text.length) {
+        // Add next character
+        bubbleText.text += text[currentCharIndex];
+        currentCharIndex++;
+      } else {
+        typingTimer.destroy();
+        // Resume physics after typing is complete
+        this.physics.resume();
+      }
+    },
+    callbackScope: this,
+    repeat: text.length - 1,
+  });
+
+  // Calculate total duration including typing time
+  const typingDuration = typingSpeed * text.length;
+  const totalDuration = duration + typingDuration;
+
+  // Remove bubble after adjusted duration
+  this.time.delayedCall(totalDuration, () => {
     // Fade out animation
     this.tweens.add({
       targets: bubbleContainer,
@@ -1908,7 +1933,6 @@ function createSpeechBubble(x, y, text, duration = 3000) {
       duration: 300,
       onComplete: () => {
         bubbleContainer.destroy();
-        this;
       },
     });
   });
@@ -4258,98 +4282,6 @@ function showLevel3StartDialogue() {
       });
     });
   });
-}
-
-// Function to create animated speech bubbles at specific positions
-function createSpeechBubble(x, y, text, duration = 3000) {
-  // Create speech bubble container
-  this.physics.pause(); // Pause physics during bubble creation
-  const bubbleContainer = this.add.container(0, 0);
-  bubbleContainer.setDepth(1000); // Ensure it's on top
-
-  const bubblePadding = 10;
-  const bubbleWidth = Math.min(text.length * 7 + bubblePadding * 2, 220);
-  const bubbleHeight = 40 + bubblePadding * 5;
-
-  // Create speech bubble background
-  const bubble = this.add.graphics();
-  bubble.fillStyle(0xffffff, 0.9);
-  bubble.fillRoundedRect(0, 0, bubbleWidth, bubbleHeight, 10);
-  bubble.lineStyle(3, 0x000000, 1);
-  bubble.strokeRoundedRect(0, 0, bubbleWidth, bubbleHeight, 10);
-
-  // Create speech bubble tail
-  const tail = this.add.graphics();
-  tail.fillStyle(0xffffff, 0.9);
-  tail.lineStyle(3, 0x000000, 1);
-  tail.beginPath();
-  tail.moveTo(bubbleWidth / 2 - 10, bubbleHeight);
-  tail.lineTo(bubbleWidth / 2, bubbleHeight + 15);
-  tail.lineTo(bubbleWidth / 2 + 10, bubbleHeight);
-  tail.closePath();
-  tail.fillPath();
-  tail.strokePath();
-
-  // Create text (starting empty for typing animation)
-  const bubbleText = this.add
-    .text(bubbleWidth / 2, bubbleHeight / 2, "", {
-      fontSize: "14px",
-      fontFamily: "Arial",
-      color: "#000000",
-      align: "center",
-      wordWrap: { width: bubbleWidth - bubblePadding * 2 },
-    })
-    .setOrigin(0.5, 0.5);
-
-  // Add elements to container
-  bubbleContainer.add(bubble);
-  bubbleContainer.add(tail);
-  bubbleContainer.add(bubbleText);
-
-  // Position bubble at specified coordinates
-  bubbleContainer.x = x - bubbleWidth / 2;
-  bubbleContainer.y = y - bubbleHeight - 20;
-
-  // Add typing animation
-  const typingSpeed = Math.max(40, Math.min(80, 2000 / text.length));
-  let currentCharIndex = 0;
-
-  const typingTimer = this.time.addEvent({
-    delay: typingSpeed,
-    callback: () => {
-      if (currentCharIndex < text.length) {
-        // Add next character
-        bubbleText.text += text[currentCharIndex];
-        currentCharIndex++;
-      } else {
-        typingTimer.destroy();
-        // Resume physics after typing is complete
-        this.physics.resume();
-      }
-    },
-    callbackScope: this,
-    repeat: text.length - 1,
-  });
-
-  // Calculate total duration including typing time
-  const typingDuration = typingSpeed * text.length;
-  const totalDuration = duration + typingDuration;
-
-  // Remove bubble after adjusted duration
-  this.time.delayedCall(totalDuration, () => {
-    // Fade out animation
-    this.tweens.add({
-      targets: bubbleContainer,
-      alpha: 0,
-      y: bubbleContainer.y - 20,
-      duration: 300,
-      onComplete: () => {
-        bubbleContainer.destroy();
-      },
-    });
-  });
-
-  return bubbleContainer;
 }
 
 function showSpeechBubble(player, text, duration = 3000) {
