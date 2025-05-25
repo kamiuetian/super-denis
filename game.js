@@ -170,6 +170,9 @@ function initializeGame() {
 // Preload assets
 function preload() {
   if (!gameStarted) return;
+  this.load.audio("music-level1", "assets/music/level1music.mp3");
+  this.load.audio("music-level2", "assets/music/level2music.mp3");
+  this.load.audio("music-level3", "assets/music/level2music.mp3");
   this.load.image("gameOverImage", "assets/gameover.jpg");
   this.load.image("levelBackground", "assets/denis/bg.jpg");
   this.load.image("level1Background", "assets/denis/level1bg.png");
@@ -456,7 +459,28 @@ function create() {
     repeat: 0,
   });
 }
-
+// Add this function to manage music playback
+function playLevelMusic(scene, level) {
+  // Stop any currently playing music
+  if (scene.currentMusic) {
+    scene.currentMusic.stop();
+  }
+  
+  // Select the appropriate music track for the level
+  const musicKey = `music-level${level}`;
+  
+  // Create and configure the music
+  scene.currentMusic = scene.sound.add(musicKey, {
+    volume: 0.5,
+    loop: true
+  });
+  
+  // Start playing the music
+  scene.currentMusic.play();
+  
+  console.log(`Playing ${musicKey}`);
+  return scene.currentMusic;
+}
 // Set up the background
 function setupBackground() {
   const screenHeight = this.scale.height;
@@ -1178,6 +1202,7 @@ function explodeTennisBall(ball) {
 // Fix the createLevel1 function to ensure coins are visible
 // Updated createLevel1 function with new block layout
 function createLevel1(bgRepeat) {
+  playLevelMusic(this, 1);
   const controlsPanel = this.add.graphics();
   controlsPanel.fillStyle(0x000000, 0.7);
   controlsPanel.fillRoundedRect(20, 70, 220, 140, 8);
@@ -2077,6 +2102,7 @@ const level2Skills = [
 // Replace the existing createLevel2 function with this complete implementation
 function createLevel2(bgRepeat) {
   // Calculate responsive scaling
+  playLevelMusic(this, 2);
   const baseWidth = 1920;
   const baseHeight = 1080;
   const currentWidth = this.scale.width;
@@ -3651,6 +3677,7 @@ this.boss.update = function (time) {
 
 // Create Level 3 function by duplicating Level 2 function
 function createLevel3(bgRepeat) {
+  playLevelMusic(this, 3);
   if (this.player) {
     const bodyWidth = Math.floor(this.player.width * 0.6);
     const bodyHeight = Math.floor(this.player.height * 0.9);

@@ -25,7 +25,7 @@ const introDialogs = [
   `Here is my offer: five minutes of your attention, in exchange for something memorable.
 Through three levels, you’ll get to know me: my personality, what I bring to the table, and what motivates me.
 `,
-  `your mission, should you choose to accept it, is to play through each level and see how I could grow with your team.`,
+  `Your mission, should you choose to accept it, is to play through each level and see how I could grow with your team.`,
 ];
 
 // Add these variables at the top of your file (with your other variables)
