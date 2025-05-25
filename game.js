@@ -3072,7 +3072,17 @@ function lowerBridge() {
     // Mark bridge as created
     this.bridgeCreated = true;
   }
-
+  if (this.riverBarriers && this.riverBarriers.length > 0) {
+    // Loop through all barriers and destroy them
+    this.riverBarriers.forEach((barrier) => {
+      if (barrier && barrier.active) {
+        barrier.body.enable = false; // Disable physics body
+        barrier.destroy(); // Completely remove the barrier
+      }
+    });
+    console.log("Left river barrier destroyed");
+    this.riverBarriers = []; // Clear the array
+  }
   // Disable river collision if it exists
   if (this.riverCollider) {
     this.riverCollider.active = false;
@@ -4233,7 +4243,7 @@ function triggerFinalDialogue(player, johann) {
 
   // Stop player movement
   player.setVelocityX(0);
-  player.anims.play("stand");
+  player.anims.play("l3player-stand");
 
   // Pause physics to prevent any further movement
   this.physics.pause();
