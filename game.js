@@ -753,7 +753,13 @@ function update(time, delta) {
     // Force player to stay still during dialogue
     if (this.player && this.player.body) {
       this.player.setVelocityX(0);
-      this.player.anims.play("stand");
+      if (selectedLevel === 3) {
+        this.player.anims.play("l3player-stand", true);
+      } else if (selectedLevel === 2) {
+        this.player.anims.play("tennis-stand", true);
+      } else {
+        this.player.anims.play("stand", true);
+      }
     }
     return;
   }
@@ -4146,14 +4152,14 @@ function createLevel3(bgRepeat) {
   // 17. Position the player with responsive coordinates
   if (this.player) {
     // Position at start of level
-    this.player.x = 150 * scaleX;
+    this.player.x = 200 * scaleX;
     this.player.y = currentHeight - 150 * scaleY;
 
     // Reset player velocity
     this.player.setVelocity(0, 0);
     this.player.clearTint();
     this.player.setAlpha(1);
-    this.player.anims.play("stand");
+    this.player.anims.play("l3player-stand");
   }
 
   // 18. Apply camera bounds
