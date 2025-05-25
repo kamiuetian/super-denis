@@ -170,6 +170,56 @@ function initializeGame() {
 // Preload assets
 function preload() {
   if (!gameStarted) return;
+  // Create loading screen
+  const loadingText = this.add
+    .text(
+      this.scale.width / 2,
+      this.scale.height / 2 - 50,
+      "Loading Game Assets...",
+      {
+        fontSize: "28px",
+        fill: "#FFFFFF",
+        fontFamily: "Arial",
+        stroke: "#000000",
+        strokeThickness: 4,
+      }
+    )
+    .setOrigin(0.5);
+
+  // Add progress bar background
+  const progressBarBg = this.add.graphics();
+  progressBarBg.fillStyle(0x222222, 0.8);
+  progressBarBg.fillRect(
+    this.scale.width / 2 - 160,
+    this.scale.height / 2,
+    320,
+    30
+  );
+
+  // Add progress bar
+  const progressBar = this.add.graphics();
+
+  // Register progress event
+  this.load.on("progress", (value) => {
+    progressBar.clear();
+    progressBar.fillStyle(0x00ff00, 1);
+    progressBar.fillRect(
+      this.scale.width / 2 - 150,
+      this.scale.height / 2 + 5,
+      300 * value,
+      20
+    );
+
+    // Update text with percentage
+    loadingText.setText(`Loading Game Assets... ${Math.round(value * 100)}%`);
+  });
+
+  // Register complete event
+  this.load.on("complete", () => {
+    progressBar.destroy();
+    progressBarBg.destroy();
+    loadingText.destroy();
+  });
   this.load.audio("music-level1", "assets/music/level1music.mp3");
   this.load.audio("music-level2", "assets/music/level2music.mp3");
   this.load.audio("music-level3", "assets/music/level3music.mp3");
@@ -4955,19 +5005,6 @@ function cloudFallDeath(player) {
       .setScrollFactor(0)
       .setDepth(999);
     // Create text box
-    const textBox = scene.add
-      .rectangle(
-        scene.scale.width / 2,
-        scene.scale.height / 2,
-        scene.scale.width * 0.7,
-        scene.scale.height * 0.3,
-        0x000000,
-        0.9
-      )
-      .setOrigin(0.5)
-      .setScrollFactor(0)
-      .setStrokeStyle(4, 0xff0000)
-      .setDepth(1000);
 
     // Add game over text
     const gameOverText = scene.add
