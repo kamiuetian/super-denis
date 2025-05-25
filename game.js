@@ -3115,7 +3115,7 @@ function lowerBridge() {
         bridgeEndX,
         this.scale.height - 50,
         30, // narrow width so it triggers just as player crosses
-        100 // tall enough to catch the player
+        700 // tall enough to catch the player
       );
       this.physics.world.enable(triggerZone);
       triggerZone.body.setAllowGravity(false);
