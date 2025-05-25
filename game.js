@@ -172,7 +172,7 @@ function preload() {
   if (!gameStarted) return;
   this.load.audio("music-level1", "assets/music/level1music.mp3");
   this.load.audio("music-level2", "assets/music/level2music.mp3");
-  this.load.audio("music-level3", "assets/music/level2music.mp3");
+  this.load.audio("music-level3", "assets/music/level3music.mp3");
   this.load.image("gameOverImage", "assets/gameover.jpg");
   this.load.image("levelBackground", "assets/denis/bg.jpg");
   this.load.image("level1Background", "assets/denis/level1bg.png");
