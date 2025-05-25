@@ -4217,122 +4217,139 @@ function triggerFinalDialogue(player, johann) {
   });
 }
 
-// Function to show Level 3 start dialogue
+// Function to show Level 3 start dialogue with proper timing and prevent overlap
 function showLevel3StartDialogue() {
   // Add dialogue box with Denis's intro
   this.dialogueActive = true; // Freeze player immediately
 
+  const firstBubbleDuration = 7000;
+  const bubbleFadeTime = 300; // Reduced fade time
+
+  // Store reference to first bubble
   const startText = createSpeechBubble.call(
     this,
     this.player.x,
     this.player.y - 60,
     "This level is all about my past experiences in business and digitalization and how they have shaped my motivation to apply for the IDDP",
-    4000
+    firstBubbleDuration
   );
 
-  // Show "Let's go!" message after first dialogue completes
-  this.time.delayedCall(4000, () => {
-    const startText2 = createSpeechBubble.call(
-      this,
-      this.player.x,
-      this.player.y - 60,
-      "Let's Go!",
-      2000
-    );
+  // Force destroy first bubble completely before showing second one
+  this.time.delayedCall(firstBubbleDuration, () => {
+    // Explicitly destroy first bubble
+    if (startText) {
+      startText.destroy();
+    }
 
-    // Only unfreeze player after second dialogue completes
-    this.time.delayedCall(2000, () => {
-      this.dialogueActive = false; // Unfreeze player after all dialogues
+    // Short delay before showing second bubble
+    this.time.delayedCall(400, () => {
+      // Now show second bubble
+      const startText2 = createSpeechBubble.call(
+        this,
+        this.player.x,
+        this.player.y - 60,
+        "Let's Go!",
+        2000
+      );
+
+      // Only unfreeze player after second dialogue completes
+      this.time.delayedCall(2000 + bubbleFadeTime, () => {
+        this.dialogueActive = false; // Unfreeze player after all dialogues
+      });
     });
   });
 }
 
-// Add this function to your game.js file if it's not already present:
-
-// Function to create speech bubbles for dialogue
+// Function to create animated speech bubbles at specific positions
 function createSpeechBubble(x, y, text, duration = 3000) {
-  // Calculate text width and height for proper bubble sizing
-  const textObj = this.make.text({
-    x: 0,
-    y: 0,
-    text: text,
-    style: {
-      fontSize: "16px",
-      wordWrap: { width: 200, useAdvancedWrap: true },
-    },
-  });
-  const textWidth = textObj.width;
-  const textHeight = textObj.height;
-  textObj.destroy(); // We just needed this to measure
+  // Create speech bubble container
+  this.physics.pause(); // Pause physics during bubble creation
+  const bubbleContainer = this.add.container(0, 0);
+  bubbleContainer.setDepth(1000); // Ensure it's on top
 
-  // Calculate total bubble height and width
   const bubblePadding = 10;
-  const bubbleWidth = Math.min(textWidth + bubblePadding * 2, 220);
-  const bubbleHeight = textHeight + bubblePadding * 2;
+  const bubbleWidth = Math.min(text.length * 7 + bubblePadding * 2, 220);
+  const bubbleHeight = 40 + bubblePadding * 5;
 
-  // Position the bubble above the character with proper spacing
-  const bubbleX = x - bubbleWidth / 2;
-  const bubbleY = y - bubbleHeight - 20; // Position above character
-
-  // Create bubble graphics
+  // Create speech bubble background
   const bubble = this.add.graphics();
-  bubble.x = bubbleX;
-  bubble.y = bubbleY;
-
-  // Bubble background
-  bubble.fillStyle(0xffffff, 0.8);
+  bubble.fillStyle(0xffffff, 0.9);
   bubble.fillRoundedRect(0, 0, bubbleWidth, bubbleHeight, 10);
-
-  // Bubble border
-  bubble.lineStyle(2, 0x000000, 1);
+  bubble.lineStyle(3, 0x000000, 1);
   bubble.strokeRoundedRect(0, 0, bubbleWidth, bubbleHeight, 10);
 
-  // Add text inside bubble
-  const bubbleText = this.add.text(
-    bubbleX + bubblePadding,
-    bubbleY + bubblePadding,
-    text,
-    {
-      fontSize: "16px",
-      fill: "#000000",
-      wordWrap: { width: 200, useAdvancedWrap: true },
-    }
-  );
-
-  // Create the tail/pointer correctly positioned at bottom of bubble
+  // Create speech bubble tail
   const tail = this.add.graphics();
-  tail.fillStyle(0xffffff, 0.8);
-  tail.lineStyle(2, 0x000000, 1);
-
-  // Draw pointing DOWN triangle at the bottom center of the bubble
-  const tailX = bubbleX + bubbleWidth / 2;
-  const tailY = bubbleY + bubbleHeight; // Position at bottom of bubble
-
+  tail.fillStyle(0xffffff, 0.9);
+  tail.lineStyle(3, 0x000000, 1);
   tail.beginPath();
-  tail.moveTo(tailX - 10, tailY); // Left point of triangle
-  tail.lineTo(tailX + 10, tailY); // Right point of triangle
-  tail.lineTo(tailX, tailY + 15); // Bottom point (pointing down)
+  tail.moveTo(bubbleWidth / 2 - 10, bubbleHeight);
+  tail.lineTo(bubbleWidth / 2, bubbleHeight + 15);
+  tail.lineTo(bubbleWidth / 2 + 10, bubbleHeight);
   tail.closePath();
   tail.fillPath();
   tail.strokePath();
 
-  // Group everything for easy manipulation
-  const container = this.add.container(0, 0, [bubble, bubbleText, tail]);
-  container.setDepth(1000); // Make sure it's on top of everything
+  // Create text (starting empty for typing animation)
+  const bubbleText = this.add
+    .text(bubbleWidth / 2, bubbleHeight / 2, "", {
+      fontSize: "14px",
+      fontFamily: "Arial",
+      color: "#000000",
+      align: "center",
+      wordWrap: { width: bubbleWidth - bubblePadding * 2 },
+    })
+    .setOrigin(0.5, 0.5);
 
-  // Auto-destroy after duration
-  if (duration > 0) {
-    this.time.delayedCall(duration, () => {
-      this.tweens.add({
-        targets: container,
-        alpha: 0,
-        duration: 300,
-        onComplete: () => container.destroy(),
-      });
+  // Add elements to container
+  bubbleContainer.add(bubble);
+  bubbleContainer.add(tail);
+  bubbleContainer.add(bubbleText);
+
+  // Position bubble at specified coordinates
+  bubbleContainer.x = x - bubbleWidth / 2;
+  bubbleContainer.y = y - bubbleHeight - 20;
+
+  // Add typing animation
+  const typingSpeed = Math.max(40, Math.min(80, 2000 / text.length));
+  let currentCharIndex = 0;
+
+  const typingTimer = this.time.addEvent({
+    delay: typingSpeed,
+    callback: () => {
+      if (currentCharIndex < text.length) {
+        // Add next character
+        bubbleText.text += text[currentCharIndex];
+        currentCharIndex++;
+      } else {
+        typingTimer.destroy();
+        // Resume physics after typing is complete
+        this.physics.resume();
+      }
+    },
+    callbackScope: this,
+    repeat: text.length - 1,
+  });
+
+  // Calculate total duration including typing time
+  const typingDuration = typingSpeed * text.length;
+  const totalDuration = duration + typingDuration;
+
+  // Remove bubble after adjusted duration
+  this.time.delayedCall(totalDuration, () => {
+    // Fade out animation
+    this.tweens.add({
+      targets: bubbleContainer,
+      alpha: 0,
+      y: bubbleContainer.y - 20,
+      duration: 300,
+      onComplete: () => {
+        bubbleContainer.destroy();
+      },
     });
-  }
+  });
 
-  return container;
+  return bubbleContainer;
 }
 
 function showSpeechBubble(player, text, duration = 3000) {
