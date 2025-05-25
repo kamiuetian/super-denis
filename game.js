@@ -1905,7 +1905,7 @@ function createSpeechBubble(x, y, text, duration = 3000) {
   bubbleContainer.y = y - bubbleHeight - 20;
 
   // Add typing animation
-  const typingSpeed = Math.max(40, Math.min(80, 2000 / text.length));
+  const typingSpeed = Math.max(50, Math.min(80, 2000 / text.length));
   let currentCharIndex = 0;
 
   const typingTimer = this.time.addEvent({
@@ -3940,7 +3940,7 @@ function createLevel3(bgRepeat) {
   const smallCounterSize = Math.max(20 * scaleY, 16); // Minimum size of 16px
 */
   // 12. Add instructions with responsive text
-  const instructionSize = Math.max(24 * scaleY, 18); // Minimum size of 18px
+  /*const instructionSize = Math.max(24 * scaleY, 18); // Minimum size of 18px
   const instructionText = this.add
     .text(
       currentWidth / 2,
@@ -3964,7 +3964,7 @@ function createLevel3(bgRepeat) {
     delay: 3000,
     duration: 1000,
     ease: "Power2",
-  });
+  });*/
 
   // 13. Create platforms with responsive positioning
   const platformPositions = [
@@ -4253,11 +4253,11 @@ function showLevel3StartDialogue() {
   this.dialogueActive = true; // Freeze player immediately
   this.physics.pause(); // Explicitly pause physics
 
-  const firstBubbleDuration = 7000;
+  const firstBubbleDuration = 6000;
   const bubbleFadeTime = 300; // Reduced fade time
   let startText = ``;
   // Store reference to first bubble
-  this.time.delayedCall(3000, () => {
+  this.time.delayedCall(1000, () => {
     startText = createSpeechBubble.call(
       this,
       this.player.x,
