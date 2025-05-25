@@ -2073,7 +2073,7 @@ const level2Skills = [
   },
   {
     icon: "🚀",
-    name: "Initiative",
+    name: "Initiative taker",
     message: "I don't wait for instructions",
   },
   {
@@ -2089,7 +2089,7 @@ const level2Skills = [
 
   {
     icon: "♟️",
-    name: "Solution Oriented",
+    name: "Solution oriented mindset",
     message: "Always thinking three steps ahead",
   },
 
@@ -3535,7 +3535,7 @@ function fallDown(player, sky) {
     .text(
       this.scale.width / 2,
       this.scale.height / 2 - 100,
-      "Game Over\nKilling applicants is againsts HR rules!\nPlease be mindful",
+      "Game Over\nWhen reaching for the clouds, remember to stay focused and give it your best!",
       {
         fontSize: "16px",
         fill: "#ff0000",
@@ -4954,9 +4954,50 @@ function cloudFallDeath(player) {
       .setOrigin(0, 0)
       .setScrollFactor(0)
       .setDepth(999);
+    // Create text box
+    const textBox = scene.add
+      .rectangle(
+        scene.scale.width / 2,
+        scene.scale.height / 2,
+        scene.scale.width * 0.7,
+        scene.scale.height * 0.3,
+        0x000000,
+        0.9
+      )
+      .setOrigin(0.5)
+      .setScrollFactor(0)
+      .setStrokeStyle(4, 0xff0000)
+      .setDepth(1000);
 
+    // Add game over text
+    const gameOverText = scene.add
+      .text(scene.scale.width / 2, scene.scale.height / 2 - 30, "Game Over", {
+        fontSize: "32px",
+        fontStyle: "bold",
+        fill: "#ff0000",
+        align: "center",
+      })
+      .setOrigin(0.5)
+      .setScrollFactor(0)
+      .setDepth(1001);
+
+    // Add motivational message
+    const messageText = scene.add
+      .text(
+        scene.scale.width / 2,
+        scene.scale.height / 2 + 20,
+        "When reaching for the clouds, remember to\nstay focused and give it your best!",
+        {
+          fontSize: "20px",
+          fill: "#ff0000",
+          align: "center",
+        }
+      )
+      .setOrigin(0.5)
+      .setScrollFactor(0)
+      .setDepth(1001);
     // Show game over image
-    const gameOverImage = scene.add
+    /*const gameOverImage = scene.add
       .image(
         scene.scale.width / 2,
         scene.scale.height / 2 - 80,
@@ -4964,7 +5005,7 @@ function cloudFallDeath(player) {
       )
       .setScrollFactor(0)
       .setScale(0.4)
-      .setDepth(1000);
+      .setDepth(1000);*/
 
     // Add restart button
     const restartButton = scene.add
