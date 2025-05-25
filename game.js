@@ -465,19 +465,19 @@ function playLevelMusic(scene, level) {
   if (scene.currentMusic) {
     scene.currentMusic.stop();
   }
-  
+
   // Select the appropriate music track for the level
   const musicKey = `music-level${level}`;
-  
+
   // Create and configure the music
   scene.currentMusic = scene.sound.add(musicKey, {
     volume: 0.5,
-    loop: true
+    loop: true,
   });
-  
+
   // Start playing the music
   scene.currentMusic.play();
-  
+
   console.log(`Playing ${musicKey}`);
   return scene.currentMusic;
 }
@@ -2283,7 +2283,7 @@ function createLevel2(bgRepeat) {
     .text(
       currentWidth / 2,
       80 * scaleY,
-      "Jump on clouds to discover my professional skills!",
+      "Jump on the clouds to discover my professional skills",
       {
         fontSize: `${instructionSize}px`,
         fill: "#ffffff",
@@ -2300,7 +2300,7 @@ function createLevel2(bgRepeat) {
     targets: instructionText,
     alpha: { from: 1, to: 0 },
     delay: 5000,
-    duration: 1000,
+    duration: 3000,
     ease: "Power2",
   });
 
