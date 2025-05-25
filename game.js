@@ -3850,7 +3850,7 @@ function createLevel3(bgRepeat) {
   const panelX = currentWidth - panelWidth - 20 * scaleX;
   const panelY = 20 * scaleY;
   //
-  this.skillsPanel = this.add.graphics();
+  /*this.skillsPanel = this.add.graphics();
   this.skillsPanel.fillStyle(0x000000, 0.8);
   this.skillsPanel.fillRect(panelX, panelY, panelWidth, panelHeight);
   this.skillsPanel.lineStyle(2 * scaleY, 0xffffff, 1);
@@ -3908,7 +3908,7 @@ function createLevel3(bgRepeat) {
 
   // 11. Small skills counter with responsive positioning and font
   const smallCounterSize = Math.max(20 * scaleY, 16); // Minimum size of 16px
-
+*/
   // 12. Add instructions with responsive text
   const instructionSize = Math.max(24 * scaleY, 18); // Minimum size of 18px
   const instructionText = this.add
@@ -4829,7 +4829,7 @@ function collectSkill(player, skill) {
   // Rest of your existing skill collection code
   // Update item count
   this.itemCount = (this.itemCount || 0) + 1;
-  this.skillsCounter.setText(`Items: ${this.itemCount}/11`);
+  /*this.skillsCounter.setText(`Items: ${this.itemCount}/11`);
 
   // Update skill panel
   if (itemIndex < this.skillTexts.length) {
@@ -4853,7 +4853,7 @@ function collectSkill(player, skill) {
       ease: "Back.easeOut",
     });
   }
-
+*/
   // Check if all items collected to lower bridge
   if (this.itemCount >= 11) {
     // Delay bridge animation slightly
