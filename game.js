@@ -918,7 +918,7 @@ function update(time, delta) {
       this.waitingForLanding = false;
 
       // Small delay to ensure player is fully landed
-      this.time.delayedCall(300, () => {
+      this.time.delayedCall(3000, () => {
         // Freeze player
         this.dialogueActive = true;
         this.playerVelocityBeforeDialogue = {
@@ -926,7 +926,7 @@ function update(time, delta) {
           y: this.player.body.velocity.y,
         };
         this.player.setVelocity(0, 0);
-        this.player.anims.play("stand");
+        this.player.anims.play("l3player-stand");
 
         // Show dialogue
         showLevel3StartDialogue.call(this);
