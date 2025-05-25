@@ -918,7 +918,7 @@ function update(time, delta) {
       this.waitingForLanding = false;
 
       // Small delay to ensure player is fully landed
-      this.time.delayedCall(3000, () => {
+      this.time.delayedCall(300, () => {
         // Freeze player
         this.dialogueActive = true;
         this.playerVelocityBeforeDialogue = {
@@ -4247,31 +4247,32 @@ function triggerFinalDialogue(player, johann) {
   });
 }
 
-// Function to show Level 3 start dialogue with proper timing and prevent overlap
+// Update showLevel3StartDialogue function to properly resume physics
 function showLevel3StartDialogue() {
   // Add dialogue box with Denis's intro
   this.dialogueActive = true; // Freeze player immediately
+  this.physics.pause(); // Explicitly pause physics
 
   const firstBubbleDuration = 7000;
   const bubbleFadeTime = 300; // Reduced fade time
-
+  let startText = ``;
   // Store reference to first bubble
-  const startText = createSpeechBubble.call(
-    this,
-    this.player.x,
-    this.player.y - 60,
-    "This level is all about my past experiences in business and digitalization and how they have shaped my motivation to apply for the IDDP",
-    firstBubbleDuration
-  );
-
+  this.time.delayedCall(3000, () => {
+    startText = createSpeechBubble.call(
+      this,
+      this.player.x,
+      this.player.y - 60,
+      "This level is all about my past experiences in business and digitalization and how they have shaped my motivation to apply for the IDDP",
+      firstBubbleDuration
+    );
+  });
   // Force destroy first bubble completely before showing second one
-  this.time.delayedCall(firstBubbleDuration, () => {
-    // Explicitly destroy first bubble
+  this.time.delayedCall(firstBubbleDuration + 3000, () => {
+    // Short delay before showing second bubble
     if (startText) {
-      startText.destroy();
+      startText.destroy(); // Destroy first bubble
     }
 
-    // Short delay before showing second bubble
     this.time.delayedCall(400, () => {
       // Now show second bubble
       const startText2 = createSpeechBubble.call(
@@ -4285,6 +4286,10 @@ function showLevel3StartDialogue() {
       // Only unfreeze player after second dialogue completes
       this.time.delayedCall(2000 + bubbleFadeTime, () => {
         this.dialogueActive = false; // Unfreeze player after all dialogues
+        this.physics.resume(); // EXPLICITLY resume physics
+
+        // Debug log to confirm execution
+        console.log("Dialogue complete - physics resumed");
       });
     });
   });
