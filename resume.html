@@ -23,15 +23,14 @@
                 <a href="#skills" class="nav-link">My Experience</a>
                 <a href="#contact" class="nav-link">Contact</a>
             </nav>
-            <button class="btn btn-outline">
+            <a href="assets/videos/CV.pdf" download class="btn btn-outline">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                     <polyline points="7 10 12 15 17 10"></polyline>
                     <line x1="12" y1="15" x2="12" y2="3"></line>
                 </svg>
-                Download CV
-            </button>
+                Download CV </a>
             <button class="mobile-menu-btn">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -72,7 +71,52 @@
                 </div>
             </div>
         </section>
+        <!-- Add this video section after the hero section and before the timeline section -->
+        <section class="video-section container">
+            <div class="section-header">
+                <div class="badge">Video Introduction</div>
+                <h2 class="section-title">Watch My Introduction</h2>
+            </div>
 
+            <div class="video-container">
+                <video controls width="100%">
+                    <source src="assets/videos/intro.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+        </section>
+
+        <!-- Add this CSS in the head section -->
+        <!-- Update this CSS in the head section -->
+        <style>
+            .video-section {
+                padding: 40px 0;
+                text-align: center;
+            }
+
+            .video-container {
+                max-width: 800px;
+                max-height: 450px;
+                /* Added height restriction */
+                margin: 0 auto;
+                box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+                border-radius: 8px;
+                overflow: hidden;
+                position: relative;
+                /* Added for aspect ratio control */
+            }
+
+            .video-container video {
+                display: block;
+                width: 100%;
+                height: 100%;
+                /* Changed from auto to 100% */
+                max-height: 450px;
+                /* Added direct height restriction */
+                object-fit: contain;
+                /* Ensures video maintains aspect ratio within container */
+            }
+        </style>
         <!-- Timeline Section -->
         <section class="timeline container">
             <div class="section-header">
