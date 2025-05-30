@@ -227,17 +227,112 @@
         </div>
 
         <div class="contact-form-container">
-            <!-- Replace your current form with this -->
-            <form action="https://api.web3forms.com/submit" method="POST">
+            <!-- Replace your current form with this updated version -->
+            <form action="https://api.web3forms.com/submit" method="POST" class="styled-form">
+                <input type="hidden" name="access_key" value="ccd131e6-efdb-4c62-904e-f3d8f0d19561">
 
-                <input type="hidden" name="access_key" value="e25d7e3b-3e7f-4026-a01f-d62a6648b50b">
+                <div class="form-group">
+                    <input type="text" placeholder="Name" name="name" required class="form-control">
+                </div>
 
-                <input type="text" name="name" required>
-                <input type="email" name="email" required>
-                <textarea name="message" required></textarea>
+                <div class="form-group">
+                    <input type="email" placeholder="Your Email" name="email" required class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <textarea name="message" placeholder="Your Message" required class="form-control"
+                        rows="5">Hello Denis,More actions I really enjoyed experiencing your interactive game, it was a creative and engaging way to learn more about you. You seem like a strong fit for our team, and I believe there's real potential for you to grow with us. I'll be reaching out to you through the contacts you provided.</textarea>
+                </div>
+
                 <input type="hidden" name="redirect" value="https://web3forms.com/success">
-                <button type="submit">Submit Form</button>
+
+                <button type="submit" class="btn btn-primary submit-btn">
+                    <span>Submit Message</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="icon">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                </button>
             </form>
+
+            <!-- Add this CSS to your style section -->
+            <style>
+                .styled-form {
+                    max-width: 100%;
+                    margin-bottom: 30px;
+                }
+
+                .form-group {
+                    margin-bottom: 20px;
+                }
+
+                .form-control {
+                    width: 100%;
+                    padding: 15px;
+                    border: 2px solid rgba(255, 255, 255, 0.3);
+                    /* Increased border width and opacity */
+                    border-radius: 8px;
+                    background-color: rgba(255, 255, 255, 0.1);
+                    /* Slightly more visible background */
+                    color: #ffffff;
+                    font-family: 'Inter', sans-serif;
+                    font-size: 16px;
+                    transition: all 0.3s ease;
+                    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+                    /* Subtle shadow for depth */
+                }
+
+                .form-control:focus {
+                    outline: none;
+                    border-color: #fed200;
+                    box-shadow: 0 0 0 3px rgba(254, 210, 0, 0.3);
+                    /* More prominent focus state */
+                }
+
+                /* Add a subtle highlight effect on hover */
+                .form-control:hover {
+                    border-color: rgba(255, 255, 255, 0.5);
+                }
+
+                .form-control::placeholder {
+                    color: rgba(0, 0, 0, 0.6);
+                }
+
+                textarea.form-control {
+                    min-height: 150px;
+                    resize: vertical;
+                    color: #000000;
+                }
+
+                .submit-btn {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 10px;
+                    padding: 14px 28px;
+                    font-weight: 500;
+                    transition: all 0.3s ease;
+                    width: auto;
+                }
+
+                .submit-btn .icon {
+                    transition: transform 0.3s ease;
+                }
+
+                .submit-btn:hover .icon {
+                    transform: translateX(5px);
+                }
+
+                /* For dark mode compatibility */
+                @media (prefers-color-scheme: dark) {
+                    .form-control {
+                        background-color: rgba(255, 255, 255, 0.05);
+                        color: #ffffff;
+                    }
+                }
+            </style>
 
             <div class="contact-info">
                 <div class="contact-item">
