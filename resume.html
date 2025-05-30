@@ -79,203 +79,211 @@
             </div>
 
             <div class="video-container">
-                <video controls width="100%">
-                    <source src="assets/videos/intro.mp4" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
+                <iframe width="100%" height="350" src="https://www.youtube.com/embed/dZUjm76wFyE?si=ftPu76WI3rxi7yOt"
+                    title="Denis Introduction Video" frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen>
+                </iframe>
             </div>
-        </section>
+    </div>
+    </section>
 
-        <!-- Add this CSS in the head section -->
-        <!-- Update this CSS in the head section -->
-        <style>
-            .video-section {
-                padding: 40px 0;
-                text-align: center;
-            }
+    <!-- Add this CSS in the head section -->
+    <!-- Update this CSS in the head section -->
+    <style>
+        .video-section {
+            padding: 40px 0;
+            text-align: center;
+        }
 
-            .video-container {
-                max-width: 800px;
-                max-height: 450px;
-                /* Added height restriction */
-                margin: 0 auto;
-                box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-                border-radius: 8px;
-                overflow: hidden;
-                position: relative;
-                /* Added for aspect ratio control */
-            }
+        .video-container {
+            width: 100%;
+            max-width: 800px;
+            max-height: 450px;
+            margin: 0 auto;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            padding-top: 56.25%;
+            /* 16:9 Aspect Ratio */
+        }
 
-            .video-container video {
-                display: block;
-                width: 100%;
-                height: 100%;
-                /* Changed from auto to 100% */
-                max-height: 450px;
-                /* Added direct height restriction */
-                object-fit: contain;
-                /* Ensures video maintains aspect ratio within container */
-            }
-        </style>
-        <!-- Timeline Section -->
-        <section class="timeline container">
-            <div class="section-header">
-                <div class="badge">My Experience</div>
-                <p class="section-text">
-                    My professional journey and experience over the years
-                </p>
-            </div>
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
 
-            <div class="timeline-container">
-                <div class="timeline-line"></div>
+        .video-container video {
+            display: block;
+            width: 100%;
+            height: 100%;
+            /* Changed from auto to 100% */
+            max-height: 450px;
+            /* Added direct height restriction */
+            object-fit: contain;
+            /* Ensures video maintains aspect ratio within container */
+        }
+    </style>
+    <!-- Timeline Section -->
+    <section class="timeline container">
+        <div class="section-header">
+            <div class="badge">My Experience</div>
+            <p class="section-text">
+                My professional journey and experience over the years
+            </p>
+        </div>
 
-                <!-- Timeline Item 1 -->
-                <div class="timeline-item left">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content">
-                        <div class="timeline-date">08.2024 - Present</div>
-                        <h3 class="timeline-title">Junior IT Sales Solution Manager</h3>
-                        <div class="timeline-company">Vodafone GmbH</div>
-                        <p class="timeline-description">
-                            I manage a portfolio of 140 medium enterprise clients, generating €2.7M in annual revenue.
-                            My role focuses on driving growth, client retention, and upselling through end-to-end
-                            digital solutions. As a project lead I advise clients on digital strategies, coordinating
-                            internal teams, solution partners, and client stakeholders to execute a project
-                            successuflly. I own the full sales cycle across Vodafone's complete IT portfolio, including
-                            Connectivity, Cloud, Cybersecurity, IoT, and AI-driven solutions. With a digital-first
-                            mindset, I help clients modernize, transfom and innovate their IT.
-                        </p>
-                    </div>
-                </div>
+        <div class="timeline-container">
+            <div class="timeline-line"></div>
 
-                <!-- Timeline Item 2 -->
-                <div class="timeline-item right">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content">
-                        <div class="timeline-date">01.2018 - 10.2024</div>
-                        <h3 class="timeline-title">Tennis instructor and program coordinator</h3>
-                        <div class="timeline-company">TuS Zeppelinheim Frankfurt; Tennis Academy Wiesbaden</div>
-                        <p class="timeline-description">
-                            As a tennis coach, I trained players of all ages and skill levels, managed youth programs
-                            and organized training camps, tournaments, and events. I focused on a creative, hands-on
-                            coaching method, designing each lesson individually with creative elements to keep players
-                            motivated and engaged. Working with a wide range of personalities helped me develop
-                            effective communication skills, allowing me to support each persons individual needs and
-                            goals with clarity and understanding.
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Timeline Item 3 -->
-                <div class="timeline-item left">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content">
-                        <div class="timeline-date">08.2021 - 02.2023</div>
-                        <h3 class="timeline-title">Valet Services</h3>
-                        <div class="timeline-company">American Food Corporation GmbH</div>
-                        <p class="timeline-description">
-                            I was responsible for managing operational logistics and coordinating food deliveries. A key
-                            part of my role involved the careful and professional handling of clients' luxury cars,
-                            requiring a high level of precision and accountability. This experience helped me develop a
-                            strong sense of responsibility and taught me how to handle important tasks and valuable
-                            assets with care and accuracy. Throughout my time in this position, I maintained a
-                            client-focused mindset to provide a professional and enjoyable experience for our clients.
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Timeline Item 4 -->
-                <div class="timeline-item right">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content">
-                        <div class="timeline-date">02.2016 - 02.2017</div>
-                        <h3 class="timeline-title">Press Spokesperson and Board Member of the Jusos Wiesbaden</h3>
-                        <div class="timeline-company">SPD Wiesbaden</div>
-                        <p class="timeline-description">
-                            In this role, I coordinated and organized initiatives at both district and regional levels,
-                            with a focus on youth engagement. I represented the organization in public discussions,
-                            panels, and committee meetings, addressing key topics such as policy development, digital
-                            infrastructure, innovation, and sustainability. I was responsible for planning and executing
-                            projects, events, and campaigns, while also managing relationships with various public
-                            stakeholders to ensure effective collaboration with us.
-                        </p>
-                    </div>
+            <!-- Timeline Item 1 -->
+            <div class="timeline-item left">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-date">08.2024 - Present</div>
+                    <h3 class="timeline-title">Junior IT Sales Solution Manager</h3>
+                    <div class="timeline-company">Vodafone GmbH</div>
+                    <p class="timeline-description">
+                        I manage a portfolio of 140 medium enterprise clients, generating €2.7M in annual revenue.
+                        My role focuses on driving growth, client retention, and upselling through end-to-end
+                        digital solutions. As a project lead I advise clients on digital strategies, coordinating
+                        internal teams, solution partners, and client stakeholders to execute a project
+                        successuflly. I own the full sales cycle across Vodafone's complete IT portfolio, including
+                        Connectivity, Cloud, Cybersecurity, IoT, and AI-driven solutions. With a digital-first
+                        mindset, I help clients modernize, transfom and innovate their IT.
+                    </p>
                 </div>
             </div>
-        </section>
 
-        <!-- Contact Section -->
-        <section id="contact" class="contact container">
-            <div class="section-header">
-                <div class="badge">Contact</div>
-                <h2 class="section-title">Let's get in contact!
-                </h2>
-                <p class="section-text">
-                </p>
+            <!-- Timeline Item 2 -->
+            <div class="timeline-item right">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-date">01.2018 - 10.2024</div>
+                    <h3 class="timeline-title">Tennis instructor and program coordinator</h3>
+                    <div class="timeline-company">TuS Zeppelinheim Frankfurt; Tennis Academy Wiesbaden</div>
+                    <p class="timeline-description">
+                        As a tennis coach, I trained players of all ages and skill levels, managed youth programs
+                        and organized training camps, tournaments, and events. I focused on a creative, hands-on
+                        coaching method, designing each lesson individually with creative elements to keep players
+                        motivated and engaged. Working with a wide range of personalities helped me develop
+                        effective communication skills, allowing me to support each persons individual needs and
+                        goals with clarity and understanding.
+                    </p>
+                </div>
             </div>
 
-            <div class="contact-form-container">
-                <form class="contact-form">
-                    <div class="form-grid">
-                        <div class="form-group full-width">
-                            <textarea placeholder="Description" rows="6"
-                                class="form-control">Hello Denis,
-I really enjoyed experiencing your interactive game, it was a creative and engaging way to learn more about you. You seem like a strong fit for our team, and I believe there's real potential for you to grow with us. I'll be reaching out to you through the contacts you provided.</textarea>
-                        </div>
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-primary">Submit Message</button>
-                        </div>
-                    </div>
-                </form>
+            <!-- Timeline Item 3 -->
+            <div class="timeline-item left">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-date">08.2021 - 02.2023</div>
+                    <h3 class="timeline-title">Valet Services</h3>
+                    <div class="timeline-company">American Food Corporation GmbH</div>
+                    <p class="timeline-description">
+                        I was responsible for managing operational logistics and coordinating food deliveries. A key
+                        part of my role involved the careful and professional handling of clients' luxury cars,
+                        requiring a high level of precision and accountability. This experience helped me develop a
+                        strong sense of responsibility and taught me how to handle important tasks and valuable
+                        assets with care and accuracy. Throughout my time in this position, I maintained a
+                        client-focused mindset to provide a professional and enjoyable experience for our clients.
+                    </p>
+                </div>
+            </div>
 
-                <div class="contact-info">
-                    <div class="contact-item">
-                        <div class="contact-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round">
-                                <path
-                                    d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
-                                </path>
-                            </svg>
-                        </div>
-                        <div class="contact-text">
-                            <h3>Call me</h3>
-                            <p>+491 522 7771531</p>
-                        </div>
+            <!-- Timeline Item 4 -->
+            <div class="timeline-item right">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-date">02.2016 - 02.2017</div>
+                    <h3 class="timeline-title">Press Spokesperson and Board Member of the Jusos Wiesbaden</h3>
+                    <div class="timeline-company">SPD Wiesbaden</div>
+                    <p class="timeline-description">
+                        In this role, I coordinated and organized initiatives at both district and regional levels,
+                        with a focus on youth engagement. I represented the organization in public discussions,
+                        panels, and committee meetings, addressing key topics such as policy development, digital
+                        infrastructure, innovation, and sustainability. I was responsible for planning and executing
+                        projects, events, and campaigns, while also managing relationships with various public
+                        stakeholders to ensure effective collaboration with us.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact container">
+        <div class="section-header">
+            <div class="badge">Contact</div>
+            <h2 class="section-title">Let's get in contact!
+            </h2>
+            <p class="section-text">
+            </p>
+        </div>
+
+        <div class="contact-form-container">
+            <!-- Replace your current form with this -->
+            <form action="https://api.web3forms.com/submit" method="POST">
+
+                <input type="hidden" name="access_key" value="e25d7e3b-3e7f-4026-a01f-d62a6648b50b">
+
+                <input type="text" name="name" required>
+                <input type="email" name="email" required>
+                <textarea name="message" required></textarea>
+                <input type="hidden" name="redirect" value="https://web3forms.com/success">
+                <button type="submit">Submit Form</button>
+            </form>
+
+            <div class="contact-info">
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path
+                                d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
+                            </path>
+                        </svg>
                     </div>
-                    <div class="contact-item">
-                        <div class="contact-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round">
-                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z">
-                                </path>
-                                <polyline points="22,6 12,13 2,6"></polyline>
-                            </svg>
-                        </div>
-                        <div class="contact-text">
-                            <h3>Email me</h3>
-                            <p>tezerdi.denis@web.de</p>
-                        </div>
+                    <div class="contact-text">
+                        <h3>Call me</h3>
+                        <p>+491 522 7771531</p>
                     </div>
-                    <div class="contact-item">
-                        <div class="contact-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round">
-                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                                <circle cx="12" cy="10" r="3"></circle>
-                            </svg>
-                        </div>
-                        <div class="contact-text">
-                            <h3>Address</h3>
-                            <p>USA</p>
-                        </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z">
+                            </path>
+                            <polyline points="22,6 12,13 2,6"></polyline>
+                        </svg>
+                    </div>
+                    <div class="contact-text">
+                        <h3>Email me</h3>
+                        <p>tezerdi.denis@web.de</p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                    </div>
+                    <div class="contact-text">
+                        <h3>Address</h3>
+                        <p>USA</p>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
     </div>
 
