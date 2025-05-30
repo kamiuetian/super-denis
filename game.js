@@ -4907,12 +4907,12 @@ function playerHitCloud(player, cloud) {
 
   // 3. Create the falling skill symbol effect
   const scaleFactor = getResponsiveScaleFactor();
-  const skillIconSize = Math.max(24 * scaleFactor, 18); // Minimum size of 18px
+  const skillIconSize = Math.max(26 * scaleFactor, 24); // Minimum size of 18px
   const skillIcon = this.add.text(
     cloud.x,
     cloud.y,
     `${level2Skills[skillIndex].icon} ${level2Skills[skillIndex].name}`,
-    { fontSize: `${skillIconSize}px`, color: "#00000" }
+    { fontSize: `${skillIconSize}px`, color: "#ffffff" }
   );
 
   // Animate the symbol falling from the cloud
