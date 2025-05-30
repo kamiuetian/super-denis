@@ -4763,6 +4763,7 @@ function collectSkill(player, skill) {
         fontSize: "18px",
         fontStyle: "bold",
         color: "#FFFFFF",
+        stroke: "#000000",
         strokeThickness: 3,
       })
       .setOrigin(0.5)
