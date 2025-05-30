@@ -1613,10 +1613,15 @@ function createLevel1(bgRepeat) {
             "I need to collect all 6 character traits before moving to the next level",
             3000
           );
+          
           this.flagMessageShown = true;
 
           // Reset flag message cooldown after 3 seconds
           this.time.delayedCall(3000, () => {
+            const pushDirection = this.player.x > triggerZone.x ? 1 : -1;
+          this.player.setVelocityX(150 * pushDirection);
+
+            this.physics.resume();
             this.flagMessageShown = false;
           });
         }
