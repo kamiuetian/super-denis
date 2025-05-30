@@ -4022,7 +4022,7 @@ function createLevel3(bgRepeat) {
       // If asset doesn't exist, use fallback
       if (!this.textures.exists(assetKey)) {
         skill.setTexture("tech1");
-        skill.setTint(isFinance ? 0x00ff00 : 0x00ffff);
+        skill.setTint(isFinance ? 0xffffff : 0xffffff);
       }
 
       skill.setData("index", i);
@@ -4763,21 +4763,20 @@ function collectSkill(player, skill) {
         fontSize: "18px",
         fontStyle: "bold",
         color: "#FFFFFF",
-        stroke: "#000000",
         strokeThickness: 3,
       })
-      .setOrigin(0.5);
+      .setOrigin(0.5)
+      .setAlpha(1);
 
     const descText = this.add
       .text(skill.x, skill.y - 10, description, {
         fontSize: "14px",
         color: "#FFFFFF",
-        stroke: "#000000",
-        strokeThickness: 2,
         align: "center",
         wordWrap: { width: 180 },
       })
-      .setOrigin(0.5);
+      .setOrigin(0.5)
+      .setAlpha(1);
 
     // Add particle effects around the text
     /*const textParticles = this.add.particles(skill.x, skill.y - 30, "coin", {
@@ -4798,15 +4797,17 @@ function collectSkill(player, skill) {
       ease: "Sine.easeOut",
       onComplete: () => {
         // Start fading out halfway through the upward animation
-        this.tweens.add({
-          targets: [yearText, descText],
-          alpha: 0,
-          duration: 1000,
-          onComplete: () => {
-            yearText.destroy();
-            descText.destroy();
-            //textParticles.destroy();
-          },
+        this.time.delayedCall(500, () => {
+          this.tweens.add({
+            targets: [yearText, descText],
+            alpha: 0,
+            duration: 1000,
+            onComplete: () => {
+              yearText.destroy();
+              descText.destroy();
+              //textParticles.destroy();
+            },
+          });
         });
       },
     });
